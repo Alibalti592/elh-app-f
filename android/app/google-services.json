@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "238687313253",
+    "project_id": "mc-connect-5bd22",
+    "storage_bucket": "mc-connect-5bd22.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:238687313253:android:e9c99f7e7283b2a6eb158c",
+        "android_client_info": {
+          "package_name": "com.elh.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC48AbdByb6UBnF6kRi6wbQdDY1lbxRvVI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

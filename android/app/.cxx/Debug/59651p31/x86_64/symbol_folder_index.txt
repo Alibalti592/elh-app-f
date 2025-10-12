@@ -1,0 +1,1 @@
+/home/boris/Applications/elhapp/build/app/intermediates/cxx/Debug/59651p31/obj/x86_64

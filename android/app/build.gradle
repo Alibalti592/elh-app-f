@@ -1,0 +1,91 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'  // This is fine; you have it here
+}
+
+// Load keystore properties
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+// Load local properties
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+// Set Flutter version code and name
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '1'
+def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0'
+
+android {
+    // Android configuration
+    compileSdkVersion 35
+    namespace "com.elh.app"
+    ndkVersion "26.1.10909125"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        // Default app configuration
+        applicationId "com.elh.app"
+        minSdkVersion 26
+        targetSdkVersion 35
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        multiDexEnabled true
+    }
+
+    // Signing configuration for release build
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        release {
+            // Use the release signing configuration
+            signingConfig signingConfigs.release
+             minifyEnabled false
+            shrinkResources false
+        }
+    }
+}
+
+// Flutter configuration
+flutter {
+    source '../..'
+}
+
+// Firebase and Google Play Services dependencies
+dependencies {
+    implementation 'com.google.firebase:firebase-messaging:23.0.0' // Update to latest version
+    implementation 'com.google.firebase:firebase-core:21.0.0' // Make sure firebase-core is added
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+}
+
+// Add Google services plugin at the bottom of the file (ensure this is at the very end)
+apply plugin: 'com.google.gms.google-services'  // This should be at the bottom

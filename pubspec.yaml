@@ -1,0 +1,165 @@
+name: elh
+description: Muslim connect
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.01+43
+build_number: 43
+build_name: 1.0.01
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_widget_from_html_core: ^0.16.0
+  provider: ^6.0.5
+  google_sign_in: ^6.2.1
+  http: ^1.5.0
+  material_design_icons_flutter: ^7.0.7296
+  fancy_bottom_navigation: ^0.3.3
+  flutter_secure_storage: ^9.0.0
+  get_it: ^8.0.3
+  datetime_picker_formfield: ^2.0.1
+  intl: 0.20.2
+  expandable: ^5.0.1
+  expandable_bottom_bar: any
+  flutter_placeholder_textlines: ^1.2.0
+  scrollable_positioned_list: any
+  firebase_core: ^3.15.2
+  firebase_messaging: ^15.2.5
+  flutter_local_notifications: ^19.1.0
+  # state management
+  stacked: ^3.4.1
+  stacked_hooks: ^0.2.3
+  stacked_services:
+  percent_indicator: ^4.2.3
+  flutter_datetime_picker_plus: ^2.0.1
+  duration_picker: ^1.1.1
+  url_launcher: ^6.3.2
+  get: ^4.6.5
+  observable_ish: ^6.0.5
+  carousel_slider: ^5.0.0
+  package_info_plus: ^8.3.0
+  share_plus: ^11.0.0
+  path_provider: ^2.1.1
+  buttons_tabbar: ^1.3.15
+  visibility_detector: ^0.4.0+2
+  #  colorful_safe_area: 0.2.1
+  cached_network_image: ^3.2.3
+  expandable_text: ^2.3.0
+  #app_links: ^3.0.1
+  shared_preferences: ^2.2.1
+  #IMAGE -> recréer ?!
+  image_picker: ^1.0.4
+  image_cropper: ^9.1.0
+  #heic_to_jpg: ^0.2.0
+  exif: ^3.1.4
+  youtube_player_flutter: ^9.1.2
+  file_picker: ^10.2.4
+  #  flutter_exif_rotation: ^0.4.1
+  flutter_linkify: ^6.0.0 #auto add link in text widget
+  in_app_review: ^2.0.6
+  app_install_date: ^0.1.2
+  synchronized: ^3.1.0
+  awesome_select: ^6.0.0
+  geolocator: ^13.0.4
+  flutter_qiblah: ^3.0.3
+  flutter_svg: ^2.0.10+1
+  #  curved_navigation_bar: ^1.0.3
+  convex_bottom_bar: ^3.2.0
+  google_places_flutter: ^2.0.8
+  intl_phone_number_input: 0.7.4
+  flutter_contacts: ^1.1.7+1
+  pdf: ^3.11.2
+  timezone: ^0.10.0
+  geocoding: ^3.0.0
+  photo_view: ^0.15.0
+  mime_type: ^1.0.1
+  flutter_image_compress: ^2.3.0
+  device_info_plus: ^11.4.0
+  dio: ^5.4.1
+  open_file: ^3.3.2
+  permission_handler: ^12.0.0+1
+  fluttertoast: ^8.1.4
+  firebase_storage: ^12.4.10
+  badges: ^3.1.2
+  #use flutter_inapwebview 6.0 ??
+  #error inapp webview => youtube, trouver une laternative : flutter_youtube: ^2.0.0 ??
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.14.3
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/
+    - assets/icon/
+    - assets/images/app-img/
+    - assets/images/qiblah/
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware.
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  fonts:
+    - family: HelveticaNeu
+      fonts:
+        - asset: assets/fonts/HelveticaNeueLight.ttf
+        - asset: assets/fonts/HelveticaNeuBold.ttf
+          weight: 700
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Light.ttf
+          weight: 300
+    - family: Karla
+      fonts:
+        - asset: assets/fonts/Karla-Regular.ttf
+        - asset: assets/fonts/Karla-Bold.ttf
+          weight: 700
+    - family: ElhIcons
+      fonts:
+        - asset: assets/fonts/elhicon6.ttf
+#    - family: IdoIconsv2
+#      fonts:
+#        - asset: assets/fonts/icon_ido-v2.ttf
+#       - asset: fonts/Schyler-Italic.ttf
+#         style: italic
+#   - family: Trajan Pro
+#     fonts:
+#       - asset: fonts/TrajanPro.ttf
+#       - asset: fonts/TrajanPro_Bold.ttf
+#         weight: 700
+#
+# For details regarding fonts from package dependencies,
+# see https://flutter.dev/custom-fonts/#from-packages
