@@ -15,8 +15,10 @@ import 'package:stacked_services/stacked_services.dart';
 
 class DrawerViewModel extends FutureViewModel<dynamic> {
   final NavigationService _navigationService = locator<NavigationService>();
-  final AuthenticationService _authenticationService = locator<AuthenticationService>();
-  final UserInfoReactiveService _userInfoReactiveService = locator<UserInfoReactiveService>();
+  final AuthenticationService _authenticationService =
+      locator<AuthenticationService>();
+  final UserInfoReactiveService _userInfoReactiveService =
+      locator<UserInfoReactiveService>();
   final DialogService _dialogService = locator<DialogService>();
   final PompeRepository _pompeRepository = locator<PompeRepository>();
   final DashboardStore _dashboardStore = locator<DashboardStore>();
@@ -56,7 +58,7 @@ class DrawerViewModel extends FutureViewModel<dynamic> {
   }
 
   String pfLabel() {
-    if(this.isPF) {
+    if (this.isPF) {
       return 'Espace pompes funèbres';
     }
     return "Vous êtes une pompe funèbre ? Enregistrez-vous !";
@@ -71,19 +73,19 @@ class DrawerViewModel extends FutureViewModel<dynamic> {
     this.loadIsPf();
     this.userInfos = await _userInfoReactiveService.getUserInfos();
     notifyListeners();
-
   }
 
   Future logout() async {
-
     var confirm = await _dialogService.showConfirmationDialog(
-        title: 'Déconnexion', description: "Vous êtes certain de vouloir vous déconnecter ?", cancelTitle: 'Annuler', confirmationTitle: 'Confirmer');
-    if(confirm?.confirmed == true) {
+        title: 'Déconnexion',
+        description: "Vous êtes certain de vouloir vous déconnecter ?",
+        cancelTitle: 'Annuler',
+        confirmationTitle: 'Confirmer');
+    if (confirm?.confirmed == true) {
       _dashboardStore.fisrtDashboardloading.value = true;
       _dashboardStore.cleanTimer();
       _authenticationService.logoutUser();
     }
-
   }
 
   navigateToView(view) {
@@ -103,23 +105,18 @@ class DrawerViewModel extends FutureViewModel<dynamic> {
   }
 
   navigateToParameters() {
-    _navigationService.navigateTo('navigationParameters', arguments : {
-      "userInfos": userInfos
-    });
+    _navigationService.navigateTo('navigationParameters',
+        arguments: {"userInfos": userInfos});
   }
 
   navigateToViewNotDevelopped(title) {
-    _navigationService.navigateTo('noteYetDevelopped',
-        arguments : {
-          "appBarTitle": title
-        }
-    );
+    _navigationService
+        .navigateTo('noteYetDevelopped', arguments: {"appBarTitle": title});
   }
 
   setAppVersion() async {
-   PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
     this.versionName = packageInfo.version;
     notifyListeners();
   }
-
 }

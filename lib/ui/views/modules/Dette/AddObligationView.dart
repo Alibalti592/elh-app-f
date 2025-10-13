@@ -608,7 +608,7 @@ class AddObligationViewState extends State<AddObligationView> {
                                                     textController: controller
                                                         .phoneTextController,
                                                     type:
-                                                        'string'), // phones are strings
+                                                        'phone'), // phones are strings
 
                                                 UIHelper.verticalSpace(5),
                                               ],
@@ -806,7 +806,6 @@ class AddObligationViewState extends State<AddObligationView> {
     }
   }
 
-  // Input Form
   Widget inputForm(
     AddObligationController controller,
     String key,
@@ -819,75 +818,118 @@ class AddObligationViewState extends State<AddObligationView> {
     TextInputType keyboardType = TextInputType.multiline;
     List<TextInputFormatter>? inputFormatters = [];
 
+    // --- Définir le type de clavier ---
     if (type == "number") {
-      keyboardType = TextInputType.numberWithOptions(decimal: true);
+      keyboardType = const TextInputType.numberWithOptions(decimal: true);
       inputFormatters = [FilteringTextInputFormatter.allow(RegExp('[0-9.,]'))];
+    } else if (type == "phone" || key == "tel") {
+      keyboardType = TextInputType.phone;
+      inputFormatters = [FilteringTextInputFormatter.digitsOnly];
+    } else {
+      keyboardType = TextInputType.text;
     }
 
     textController ??= TextEditingController(text: initValue);
 
+    bool isOptional = label.toLowerCase().contains('(facultative)');
+
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(label,
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color.fromRGBO(55, 65, 81, 1))),
-        const SizedBox(height: 5),
-        TextFormField(
-          controller: textController,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          validator: (value) {
-            if (key == 'note') return null; // optional
-            if (value == null || value.isEmpty) return 'Champ obligatoire';
-            if (type == 'string') return ValidatorHelpers.validateName(value);
-            if (type == 'number' &&
-                num.tryParse(value.replaceAll(',', '.')) == null) {
-              return 'Veuillez entrer un nombre valide';
-            }
-            return null;
-          },
-          onChanged: (text) {
-            // Update the obligation object
-            switch (key) {
-              case "firstname":
-                controller.obligation.firstname = text;
-                break;
-              case "lastname":
-                controller.obligation.lastname = text;
-                break;
-              case "tel":
-                controller.obligation.tel = text;
-                break;
-              case "note":
-                controller.obligation.note = text;
-                break;
-              case "amount":
-                controller.obligation.amount =
-                    num.tryParse(text.replaceAll(',', '.')) ?? 0;
-                break;
-              default:
-                controller.obligation.set(key, text);
-                break;
-            }
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // --- Label ---
+          isOptional
+              ? RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text:
+                            label.replaceAll('(facultative)', '').trim() + ' ',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromRGBO(55, 65, 81, 1),
+                        ),
+                      ),
+                      TextSpan(
+                        text: '(facultative)',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.amber[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color.fromRGBO(55, 65, 81, 1),
+                  ),
+                ),
+          const SizedBox(height: 5),
 
-            // ✅ Validate form and update button state
-            controller.validateForm();
-          },
-          decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
-            enabledBorder: OutlineInputBorder(
+          // --- Input field ---
+          TextFormField(
+            controller: textController,
+            maxLines: maxLines,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            validator: (value) {
+              if (key == 'note') return null; // optionnel
+              if (value == null || value.isEmpty) return 'Champ obligatoire';
+              if (type == 'string') return ValidatorHelpers.validateName(value);
+              if (type == 'number' &&
+                  num.tryParse(value.replaceAll(',', '.')) == null) {
+                return 'Veuillez entrer un nombre valide';
+              }
+              return null;
+            },
+            onChanged: (text) {
+              switch (key) {
+                case "firstname":
+                  controller.obligation.firstname = text;
+                  break;
+                case "lastname":
+                  controller.obligation.lastname = text;
+                  break;
+                case "tel":
+                  controller.obligation.tel = text;
+                  break;
+                case "note":
+                  controller.obligation.note = text;
+                  break;
+                case "amount":
+                  controller.obligation.amount =
+                      num.tryParse(text.replaceAll(',', '.')) ?? 0;
+                  break;
+                default:
+                  controller.obligation.set(key, text);
+                  break;
+              }
+
+              controller.validateForm();
+            },
+            decoration: InputDecoration(
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+              enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
                 borderSide: const BorderSide(
-                    color: Color.fromRGBO(229, 231, 235, 1), width: 2)),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                  color: Color.fromRGBO(229, 231, 235, 1),
+                  width: 2,
+                ),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 

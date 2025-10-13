@@ -315,20 +315,31 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
             ListTile(
                 leading: const Icon(Icons.camera_alt),
                 title: const Text("Prendre une photo"),
-                onTap: () => {
-                      Navigator.pop(context),
-                      _pickAndUploadFile(ImageSource.camera)
-                    }),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickAndUploadFile(ImageSource.camera);
+                }),
             ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text("Choisir depuis la galerie"),
-                onTap: () => {
-                      Navigator.pop(context),
-                      _pickAndUploadFile(ImageSource.gallery),
-                    }),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickAndUploadFile(ImageSource.gallery);
+                }),
           ],
         ),
       ),
+    );
+  }
+
+  void _deleteFile() {
+    setState(() {
+      _selectedFile = null;
+      _uploadedFileUrl = null;
+    });
+    widget.controller.setFileUrl("");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Fichier supprimé.")),
     );
   }
 
@@ -339,18 +350,20 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
       children: [
         ElevatedButton.icon(
           onPressed: _isUploading ? null : _showPickerOptions,
-          // icon: _isUploading
-          //     ? const SizedBox(
-          //         width: 20,
-          //         height: 20,
-          //         child: CircularProgressIndicator(
-          //             color: Colors.white, strokeWidth: 2),
-          //       )
-          //     : const Icon(Icons.attach_file, color: Colors.white),
-          label: const Text(
-            "Attacher une preuve ",
-            style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: white),
+          icon: _isUploading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                      color: Colors.white, strokeWidth: 2),
+                )
+              : const Icon(Icons.attach_file, color: Colors.white),
+          label: Text(
+            _uploadedFileUrl != null
+                ? "Changer le fichier"
+                : "Attacher une preuve",
+            style: const TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
@@ -360,11 +373,35 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
           ),
         ),
         if (_selectedFile != null) ...[
-          const SizedBox(height: 10),
-          Image.file(
-            _selectedFile!,
-            height: 150,
-            fit: BoxFit.cover,
+          const SizedBox(height: 12),
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(
+                  _selectedFile!,
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: InkWell(
+                  onTap: _deleteFile,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child:
+                        const Icon(Icons.delete, color: Colors.white, size: 20),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ],

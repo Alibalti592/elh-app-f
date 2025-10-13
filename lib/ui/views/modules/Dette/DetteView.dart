@@ -24,9 +24,9 @@ class DetteViewState extends State<DetteView> {
   DetteViewState(this.detteType, {this.tab = 'processing'});
   String getTitle(String type) {
     if (type == 'jed') {
-      return "Ce qu'on me doit";
+      return "On me doit";
     } else if (type == 'onm') {
-      return "Ce que je dois";
+      return "Je dois";
     } else if (type == 'amana') {
       return "Mes Amanas";
     } else {

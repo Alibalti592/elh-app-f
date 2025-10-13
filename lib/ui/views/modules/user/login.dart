@@ -955,111 +955,143 @@ class Login extends StatelessWidget {
                                   const SizedBox(height: 15),
 
                                   // First & Last name
-                                  Row(
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      // Firstname
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Prénom",
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    55, 65, 81, 1),
-                                                fontFamily: 'inter',
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 15,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            TextFormField(
-                                              validator:
-                                                  ValidatorHelpers.validateName,
-                                              autofillHints: const [
-                                                AutofillHints.givenName
-                                              ],
-                                              onChanged: (text) => model
-                                                  .userRegistrationController(
-                                                      'firstname', text),
-                                              decoration: InputDecoration(
-                                                isDense: true,
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10,
-                                                        horizontal: 12),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  borderSide: const BorderSide(
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start, // 👈 important
+                                        children: [
+                                          // --- Firstname ---
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  "Prénom",
+                                                  style: TextStyle(
                                                     color: Color.fromRGBO(
-                                                        229, 231, 235, 1),
-                                                    width: 2,
+                                                        55, 65, 81, 1),
+                                                    fontFamily: 'inter',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 15,
                                                   ),
                                                 ),
-                                              ),
+                                                const SizedBox(height: 5),
+                                                TextFormField(
+                                                  validator: ValidatorHelpers
+                                                      .validateName,
+                                                  autofillHints: const [
+                                                    AutofillHints.givenName
+                                                  ],
+                                                  onChanged: (text) => model
+                                                      .userRegistrationController(
+                                                          'firstname', text),
+                                                  decoration: InputDecoration(
+                                                    isDense: true,
+                                                    errorMaxLines:
+                                                        3, // 👈 allows full text
+                                                    errorStyle: const TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.red,
+                                                      height: 1.3,
+                                                    ),
+                                                    contentPadding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                      vertical: 10,
+                                                      horizontal: 12,
+                                                    ),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                    ),
+                                                    enabledBorder:
+                                                        OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                        color: Color.fromRGBO(
+                                                            229, 231, 235, 1),
+                                                        width: 2,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
+                                          ),
+                                          const SizedBox(width: 10),
 
-                                      // Lastname
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Nom",
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    55, 65, 81, 1),
-                                                fontFamily: 'inter',
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 15,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            TextFormField(
-                                              validator:
-                                                  ValidatorHelpers.validateName,
-                                              autofillHints: const [
-                                                AutofillHints.familyName
-                                              ],
-                                              onChanged: (text) => model
-                                                  .userRegistrationController(
-                                                      'lastname', text),
-                                              decoration: InputDecoration(
-                                                isDense: true,
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10,
-                                                        horizontal: 12),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  borderSide: const BorderSide(
+                                          // --- Lastname ---
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  "Nom",
+                                                  style: TextStyle(
                                                     color: Color.fromRGBO(
-                                                        229, 231, 235, 1),
-                                                    width: 2,
+                                                        55, 65, 81, 1),
+                                                    fontFamily: 'inter',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 15,
                                                   ),
                                                 ),
-                                              ),
+                                                const SizedBox(height: 5),
+                                                TextFormField(
+                                                  validator: ValidatorHelpers
+                                                      .validateName,
+                                                  autofillHints: const [
+                                                    AutofillHints.familyName
+                                                  ],
+                                                  onChanged: (text) => model
+                                                      .userRegistrationController(
+                                                          'lastname', text),
+                                                  decoration: InputDecoration(
+                                                    isDense: true,
+                                                    errorMaxLines:
+                                                        3, // 👈 same fix
+                                                    errorStyle: const TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.red,
+                                                      height: 1.3,
+                                                    ),
+                                                    contentPadding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                      vertical: 10,
+                                                      horizontal: 12,
+                                                    ),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                    ),
+                                                    enabledBorder:
+                                                        OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                        color: Color.fromRGBO(
+                                                            229, 231, 235, 1),
+                                                        width: 2,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
