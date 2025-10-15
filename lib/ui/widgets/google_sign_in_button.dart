@@ -11,8 +11,8 @@ class GoogleSignInButton extends StatelessWidget {
   // ✅ IMPORTANT: use your real client IDs
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
-    serverClientId: '604698170711-sd9g9snrhl6rh430lvto1p9t7nch1qpo.apps.googleusercontent.com
-', // audience
+    serverClientId:
+        '604698170711-sd9g9snrhl6rh430lvto1p9t7nch1qpo.apps.googleusercontent.com',
     clientId: Platform.isIOS
         ? '604698170711-2e1f7s55594v6pms7v43i1orkdrn6dh3.apps.googleusercontent.com' // iOS only
         : null,
@@ -30,7 +30,8 @@ class GoogleSignInButton extends StatelessWidget {
       }
 
       final resp = await http.post(
-        Uri.parse('https://test.muslim-connect.fr/elh-api/auth/google'), // 👈 match Symfony
+        Uri.parse(
+            'https://test.muslim-connect.fr/elh-api/auth/google'), // 👈 match Symfony
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'idToken': idToken}), // 👈 key expected by Symfony
       );
@@ -48,7 +49,9 @@ class GoogleSignInButton extends StatelessWidget {
       } else {
         final body = resp.body.isNotEmpty ? resp.body : 'Unknown error';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erreur de connexion Google (${resp.statusCode}) : $body")),
+          SnackBar(
+              content: Text(
+                  "Erreur de connexion Google (${resp.statusCode}) : $body")),
         );
       }
     } catch (e) {

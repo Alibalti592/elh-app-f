@@ -162,10 +162,6 @@ class _ObligationViewState extends State<ObligationView> {
                       // ),
                       UploadFileWidget(
                         controller: _controller,
-                        onFileUploaded: (fileUrl) {
-                          _controller.setFileUrl(
-                              fileUrl); // ensures controller updates
-                        },
                       ),
                     ]),
                 const SizedBox(height: 12),

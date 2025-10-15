@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:elh/locator.dart';
 import 'package:elh/models/Obligation.dart';
 import 'package:elh/models/Testament.dart';
@@ -30,11 +31,22 @@ class DetteRepository {
         .get('/load-dettes-testament?testament=${testament.id}');
   }
 
-  Future<ApiResponse> saveDette(Map<String, dynamic> obligation) async {
-    return _authApiHelper.post(
+  Future<ApiResponse> saveDette(
+    Map<String, dynamic> obligation, {
+    String? filePath, // pass when you want to send the image
+  }) async {
+    if (filePath == null) {
+      return _authApiHelper.post(
+        '/save-dette',
+        {'obligation': json.encode(obligation)},
+        type: 'x-www-form-urlencoded',
+      );
+    }
+
+    return _authApiHelper.postMultipart(
       '/save-dette',
-      {'obligation': json.encode(obligation)},
-      type: 'x-www-form-urlencoded',
+      fields: {'obligation': json.encode(obligation)},
+      filePath: filePath, // sent as "file"
     );
   }
 

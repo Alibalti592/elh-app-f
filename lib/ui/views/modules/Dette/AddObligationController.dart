@@ -1,5 +1,8 @@
 import 'dart:async';
+
+import 'package:dio/dio.dart';
 import 'dart:convert';
+import 'dart:io';
 import 'package:elh/models/Obligation.dart';
 import 'package:elh/models/Relation.dart';
 import 'package:elh/models/userInfos.dart';
@@ -27,8 +30,6 @@ class AddObligationController extends FutureViewModel<dynamic> {
   DialogService _dialogService = locator<DialogService>();
   String title = "On me prête";
   bool isLoading = true;
-  String?
-      _uploadedFileUrl; // Define the variable to store the uploaded file URL
   bool isAlreadyRegistred = false;
   Obligation obligation = new Obligation();
   TextEditingController firstnameTextController = TextEditingController();
@@ -101,9 +102,9 @@ class AddObligationController extends FutureViewModel<dynamic> {
   }
 
 // Method to update fileUrl
-  void setFileUrl(String url) {
-    fileUrl.value = url;
-    obligation.fileUrl = url; // also store in your obligation map
+
+  void setFile(String? file) {
+    obligation.file = file; // also store in your obligation map
     notifyListeners();
   }
 
@@ -193,7 +194,6 @@ class AddObligationController extends FutureViewModel<dynamic> {
     this.isSaving.value = true;
 
     try {
-      // Prepare only the fields backend expects
       Map<String, dynamic> payload = {
         'type': obligation.type,
         'amount': obligation.amount,
@@ -206,10 +206,11 @@ class AddObligationController extends FutureViewModel<dynamic> {
         'date': obligation.date?.toIso8601String(),
         'dateStart': obligation.dateStart?.toIso8601String(),
       };
-
       print("this is comming from controller : ${payload}");
+      print("filePath: ${obligation.file}");
 
-      ApiResponse apiResponse = await _detteRepository.saveDette(payload);
+      ApiResponse apiResponse =
+          await _detteRepository.saveDette(payload, filePath: obligation.file);
 
       if (apiResponse.status == 200) {
         this.isSaving.value = false;

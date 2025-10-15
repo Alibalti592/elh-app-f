@@ -47,8 +47,10 @@ class Obligation {
   String status = "ini";
   bool isRelatedToUser = false;
   String? fileUrl; // <-- add this
+  String? file;
 
   Obligation({
+    this.file,
     this.id,
     this.type = 'jed',
     this.preteurName = "",
@@ -86,7 +88,8 @@ class Obligation {
   })  : this.date = date ?? DateTime.now(),
         this.dateDisplay = dateDisplay ?? DateTime.now().toString();
   int? getEmprunteurId() => relatedUserId;
-
+  String? getFile() => file;
+  String? setFile(String? file) => this.file = file;
   factory Obligation.fromJson(Map<String, dynamic> json) => Obligation(
         id: json["id"],
         type: json["type"],

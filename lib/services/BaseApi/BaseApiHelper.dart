@@ -12,39 +12,50 @@ class BaseApiHelper {
   final String? baseApiUrlPublic = environment['baseApiUrlPublic'];
   ErrorMessageService _errorMessageService = locator<ErrorMessageService>();
 
-  Future<ApiResponse> get(String url, requestHeaders, { public = false }) async {
+  Future<ApiResponse> get(String url, requestHeaders, {public = false}) async {
     var apiResponse;
     try {
-      final response = await http.get(this.getFullURL(url, public: public), headers: requestHeaders);
+      final response = await http.get(this.getFullURL(url, public: public),
+          headers: requestHeaders);
       apiResponse = _returnResponse(response);
-      if(apiResponse.status == 401) {
+      if (apiResponse.status == 401) {
         try {
-          if(json.decode(apiResponse.data)['message'] == "JWT Token not found"
-              || json.decode(apiResponse.data)['message'] == "Invalid credentials.") {
-            if (!url.contains("chat/has-messages") && !url.contains("load-last-messages")) {
+          if (json.decode(apiResponse.data)['message'] ==
+                  "JWT Token not found" ||
+              json.decode(apiResponse.data)['message'] ==
+                  "Invalid credentials.") {
+            if (!url.contains("chat/has-messages") &&
+                !url.contains("load-last-messages")) {
               //_localAuthService.logoutUserLocaly();
             }
           }
-        } catch(e) {}
-      } else if(apiResponse.data is String && apiResponse.status == 403) {
+        } catch (e) {}
+      } else if (apiResponse.data is String && apiResponse.status == 403) {
         _errorMessageService.errorOnAPICall(message: apiResponse.data);
-      } else if(apiResponse.status != 200) { //ou cas plus spé ??
+      } else if (apiResponse.status != 200) {
+        //ou cas plus spé ??
         throw new ApiException(apiResponse);
       }
     } on SocketException {
-      _errorMessageService.errorShoMessage("Veuillez vérifier votre connexion internet !", title: 'Aucune connexion');
+      _errorMessageService.errorShoMessage(
+          "Veuillez vérifier votre connexion internet !",
+          title: 'Aucune connexion');
       apiResponse = new ApiResponse(500, 'Aucune connexion internet !');
     }
     return apiResponse;
   }
 
-  Future<ApiResponse> post(String url, requestHeaders, body, { public = false }) async {
+  Future<ApiResponse> post(String url, requestHeaders, body,
+      {public = false}) async {
     var apiResponse;
     try {
-      final response = await http.post(this.getFullURL(url, public: public), headers: requestHeaders, body: body);
+      final response = await http.post(this.getFullURL(url, public: public),
+          headers: requestHeaders, body: body);
       apiResponse = _returnResponse(response);
     } on SocketException {
-      _errorMessageService.errorShoMessage("Veuillez vérifier votre connexion internet !", title: 'Aucune connexion');
+      _errorMessageService.errorShoMessage(
+          "Veuillez vérifier votre connexion internet !",
+          title: 'Aucune connexion');
       apiResponse = new ApiResponse(500, 'Aucune connexion internet !');
     }
     return apiResponse;
@@ -55,19 +66,21 @@ class BaseApiHelper {
     try {
       final response = await http.get(Uri.parse(url), headers: requestHeaders);
       apiResponse = _returnResponse(response);
-       if(apiResponse.status != 200) {
-            throw new ApiException(apiResponse);
-        }
+      if (apiResponse.status != 200) {
+        throw new ApiException(apiResponse);
+      }
     } on SocketException {
-      _errorMessageService.errorShoMessage("Veuillez vérifier votre connexion internet !", title: 'Aucune connexion');
+      _errorMessageService.errorShoMessage(
+          "Veuillez vérifier votre connexion internet !",
+          title: 'Aucune connexion');
       apiResponse = new ApiResponse(500, 'Aucune connexion internet !');
     }
     return apiResponse;
   }
 
-  Uri getFullURL(url, { public = false }) {
+  Uri getFullURL(url, {public = false}) {
 //    String extraParam = isProduction ? "" : "?XDEBUG_SESSION_START=PHPSTORM"; //pbs avec autres paramters
-    if(public) {
+    if (public) {
       return Uri.parse(baseApiUrlPublic! + url);
     }
     return Uri.parse(baseApiUrl! + url);
@@ -78,22 +91,24 @@ class BaseApiHelper {
       case 200:
         return new ApiResponse(200, response.body);
       case 307:
-        return new ApiResponse(200, null); //Redirect, used for in App link research !
+        return new ApiResponse(
+            200, null); //Redirect, used for in App link research !
       case 401:
-        return new ApiResponse(401,  response.body);
+        return new ApiResponse(401, response.body);
       case 409:
-        return new ApiResponse(409,  response.body); //already exist
+        return new ApiResponse(409, response.body); //already exist
       case 403:
         var message = "Accès non autorisé à la ressource !";
         try {
           var decodeBody = json.decode(response.body);
-          if(decodeBody is String) {
+          if (decodeBody is String) {
             message = response.body;
           } else {
-            message = decodeBody['message'] ?? "Une erreur s'est  produite : ${response.body.toString()}";
+            message = decodeBody['message'] ??
+                "Une erreur s'est  produite : ${response.body.toString()}";
           }
         } on FormatException {
-         //if AccesDednied body is HTML PAGE and canot be decoded !!
+          //if AccesDednied body is HTML PAGE and canot be decoded !!
         }
         return new ApiResponse(403, message);
       case 404:
@@ -102,8 +117,46 @@ class BaseApiHelper {
         return new ApiResponse(500, response.body);
       case 400:
       default:
-      return new ApiResponse(500, "Une erreur s'est  produite : ${response.statusCode}");
+        return new ApiResponse(
+            500, "Une erreur s'est  produite : ${response.statusCode}");
     }
   }
 
+  Future<ApiResponse> postMultipart(
+    String url,
+    Map<String, String> requestHeaders, {
+    Map<String, String>? fields,
+    List<http.MultipartFile> files = const [],
+    bool public = false,
+  }) async {
+    var apiResponse;
+    try {
+      final uri = getFullURL(url, public: public);
+
+      final req = http.MultipartRequest('POST', uri);
+
+      // Do NOT send Content-Type; let MultipartRequest set the boundary.
+      final safeHeaders = Map<String, String>.from(requestHeaders)
+        ..removeWhere((k, _) => k.toLowerCase() == 'content-type');
+      req.headers.addAll(safeHeaders);
+
+      if (fields != null && fields.isNotEmpty) {
+        req.fields.addAll(fields);
+      }
+      if (files.isNotEmpty) {
+        req.files.addAll(files);
+      }
+
+      final streamed = await req.send();
+      final response = await http.Response.fromStream(streamed);
+      apiResponse = _returnResponse(response);
+    } on SocketException {
+      _errorMessageService.errorShoMessage(
+        "Veuillez vérifier votre connexion internet !",
+        title: 'Aucune connexion',
+      );
+      apiResponse = ApiResponse(500, 'Aucune connexion internet !');
+    }
+    return apiResponse;
+  }
 }

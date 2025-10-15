@@ -225,7 +225,6 @@ class UploadFileWidget extends StatefulWidget {
 
 class _UploadFileWidgetState extends State<UploadFileWidget> {
   File? _selectedFile;
-  bool _isUploading = false;
   String? _uploadedFileUrl;
 
   final ImagePicker _picker = ImagePicker();
@@ -239,71 +238,11 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
     final pickedFile = await _picker.pickImage(source: source);
     if (pickedFile == null) return;
 
+    widget.controller.setFile(pickedFile.path);
+
     setState(() {
       _selectedFile = File(pickedFile.path);
-      _uploadedFileUrl = null;
-      _isUploading = true;
     });
-
-    final token = await getToken();
-    if (token == null || token.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content:
-                Text("Vous devez être connecté pour uploader un fichier.")),
-      );
-      setState(() => _isUploading = false);
-      return;
-    }
-
-    try {
-      String url = "https://test.muslim-connect.fr/elh-api/upload";
-
-      FormData formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(
-          _selectedFile!.path,
-          filename: _selectedFile!.path.split('/').last,
-        ),
-      });
-
-      final dio = Dio();
-      final response = await dio.post(
-        url,
-        data: formData,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-            "Content-Type": "multipart/form-data",
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        String uploadedUrl = response.data['fileUrl'];
-        widget.controller.setFileUrl(uploadedUrl);
-        _uploadedFileUrl = uploadedUrl;
-
-        if (widget.onFileUploaded != null) widget.onFileUploaded!(uploadedUrl);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                "Échec de l'upload : ${response.data['error'] ?? 'Erreur inconnue'}"),
-          ),
-        );
-      }
-    } on DioException catch (e) {
-      String message = "Erreur lors de l'upload";
-      if (e.response != null) {
-        message += ": ${e.response?.statusCode} ${e.response?.statusMessage}";
-      } else {
-        message += ": ${e.message}";
-      }
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
-    } finally {
-      setState(() => _isUploading = false);
-    }
   }
 
   void _showPickerOptions() {
@@ -335,9 +274,8 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
   void _deleteFile() {
     setState(() {
       _selectedFile = null;
-      _uploadedFileUrl = null;
     });
-    widget.controller.setFileUrl("");
+    widget.controller.setFile(null);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Fichier supprimé.")),
     );
@@ -349,15 +287,8 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ElevatedButton.icon(
-          onPressed: _isUploading ? null : _showPickerOptions,
-          icon: _isUploading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                      color: Colors.white, strokeWidth: 2),
-                )
-              : const Icon(Icons.attach_file, color: Colors.white),
+          onPressed: _showPickerOptions,
+          icon: const Icon(Icons.attach_file, color: Colors.white),
           label: Text(
             _uploadedFileUrl != null
                 ? "Changer le fichier"
