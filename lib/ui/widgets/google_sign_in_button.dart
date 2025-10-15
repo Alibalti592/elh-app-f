@@ -11,9 +11,10 @@ class GoogleSignInButton extends StatelessWidget {
   // ✅ IMPORTANT: use your real client IDs
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
-    serverClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com', // audience
+    serverClientId: '604698170711-sd9g9snrhl6rh430lvto1p9t7nch1qpo.apps.googleusercontent.com
+', // audience
     clientId: Platform.isIOS
-        ? 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com' // iOS only
+        ? '604698170711-2e1f7s55594v6pms7v43i1orkdrn6dh3.apps.googleusercontent.com' // iOS only
         : null,
   );
 
