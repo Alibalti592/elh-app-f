@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationService {
-  final String baseUrl = 'https://muslim-connect.fr/elh-api';
+  final String baseUrl = 'https://test.muslim-connect.fr/elh-api';
 
   Future<List<AppNotification>> fetchNotifications() async {
     final prefs = await SharedPreferences.getInstance();

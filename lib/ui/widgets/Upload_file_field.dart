@@ -257,7 +257,7 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
     }
 
     try {
-      String url = "https://muslim-connect.fr/elh-api/upload";
+      String url = "https://test.muslim-connect.fr/elh-api/upload";
 
       FormData formData = FormData.fromMap({
         "file": await MultipartFile.fromFile(

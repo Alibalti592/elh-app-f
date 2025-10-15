@@ -31,7 +31,7 @@ class _FileUploaderState extends State<FileUploader> {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse("https://muslim-connect.fr/elh-api/upload"),
+      Uri.parse("https://test.muslim-connect.fr/elh-api/upload"),
     );
 
     request.files.add(await http.MultipartFile.fromPath('file', file.path));

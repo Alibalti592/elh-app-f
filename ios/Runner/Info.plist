@@ -13,24 +13,27 @@
 	<key>CFBundleName</key>
 	<string>MuslimConnect</string>
 	<key>CFBundleDisplayName</key>
-    <string>MuslimConnect</string>
+	<string>MuslimConnect</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+
+	<!-- URL schemes (si tu en as besoin pour deep links / SSO) -->
 	<key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>com.elh.app</string>
-            </array>
-        </dict>
-    </array>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.elh.app</string>
+			</array>
+		</dict>
+	</array>
+
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
@@ -38,49 +41,72 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
-    <string>13.0</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>To get location and direction</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>To get location and direction</string>
+	<string>13.0</string>
+
+	<!-- Localisation -->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Pour déterminer votre position et la direction de la Qibla.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Pour déterminer votre position et la direction de la Qibla.</string>
+
+	<!-- Caméra / Photos (corrige le crash quand tu ouvres l’appareil photo) -->
+	<key>NSCameraUsageDescription</key>
+	<string>Nous utilisons la caméra pour prendre des photos comme justificatifs.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Nous accédons à votre photothèque pour sélectionner des images.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Nous pouvons enregistrer les photos prises dans votre photothèque.</string>
+	<!-- Facultatif mais recommandé si tu enregistres des vidéos avec son -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Nous utilisons le micro lors de l’enregistrement vidéo.</string>
+
+	<!-- Contacts (si utilisés par l’app) -->
+	<key>NSContactsUsageDescription</key>
+	<string>Accès au carnet d’adresses pour partager des informations.</string>
+
+	<!-- Réseaux / HTTP (ATS) -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+
+	<!-- Modes de fond (pour notifications, etc.) -->
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
+
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+
 	<key>UISupportedInterfaceOrientations</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>UISupportedInterfaceOrientations~ipad</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationPortraitUpsideDown</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>io.flutter.embeded_views_preview</key>
+
+	<!-- Correction d’orthographe de la clé Flutter (embedded, pas embeded) -->
+	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-	<key>NSPhotoLibraryUsageDescription</key>
-    <string>Uploader des images de profile</string>
-    <key>NSContactsUsageDescription</key>
-    <string>Access contact list to share info with</string>
-    <key>NSPrivacyAccessUsageDescription</key>
-    <string>Your app uses the Flutter SDK which requires access to device services.</string>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
-    <key>NSContactsUsageDescription</key>
-    <string>contacts</string>
+
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 </dict>
 </plist>

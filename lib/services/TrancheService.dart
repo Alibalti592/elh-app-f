@@ -45,8 +45,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TrancheService {
-  final String baseUrl = 'https://muslim-connect.fr/elh-api/tranche/tranche';
-  final String baseUrl1 = 'https://muslim-connect.fr/elh-api/tranche';
+  final String baseUrl = 'https://test.muslim-connect.fr/elh-api/tranche/tranche';
+  final String baseUrl1 = 'https://test.muslim-connect.fr/elh-api/tranche';
 
   // -----------------------------
   // Respond to a tranche
