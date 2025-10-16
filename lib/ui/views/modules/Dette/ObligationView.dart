@@ -555,7 +555,7 @@ class _ObligationViewState extends State<ObligationView> {
             buildLabeledField("Préteur",
                 "${obligation.preteurName} (${obligation.preteurNum})"),
             buildLabeledField("Emprunteur",
-                "${obligation.firstname} (${obligation.lastname} ${obligation.emprunteurNum})"),
+                "${obligation.firstname} ${obligation.lastname} ${obligation.emprunteurNum}"),
             buildLabeledField("Date", obligation.dateDisplay),
             buildLabeledField("Date remboursement au plus tard",
                 obligation.dateStartDisplay ?? ""),
