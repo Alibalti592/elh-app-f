@@ -235,7 +235,10 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
   }
 
   Future<void> _pickAndUploadFile(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
+    final pickedFile = await _picker.pickImage(
+        source: source,
+        maxWidth: 800, // scale down
+        imageQuality: 70);
     if (pickedFile == null) return;
 
     widget.controller.setFile(pickedFile.path);

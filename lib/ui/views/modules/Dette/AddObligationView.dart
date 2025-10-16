@@ -882,12 +882,13 @@ class AddObligationViewState extends State<AddObligationView> {
             validator: (value) {
               if (key == 'note') return null; // optionnel
               if (value == null || value.isEmpty) return 'Champ obligatoire';
+
               if (type == 'string') return ValidatorHelpers.validateName(value);
               if (type == 'number' &&
                   num.tryParse(value.replaceAll(',', '.')) == null) {
                 return 'Veuillez entrer un nombre valide';
               }
-              if (key == 'date' && (value == null || value.isEmpty)) {
+              if (label == 'En date du' && (value == null || value.isEmpty)) {
                 return 'La date de remboursement est obligatoire';
               }
               return null;
