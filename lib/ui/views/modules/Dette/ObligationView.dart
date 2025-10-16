@@ -484,6 +484,19 @@ class _ObligationViewState extends State<ObligationView> {
                                 child: Image.network(
                                   downloadUrl,
                                   fit: BoxFit.contain,
+                                  // 👇 Show loader while loading
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null)
+                                      return child; // fully loaded
+                                    return const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(16.0),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    );
+                                  },
+                                  // 👇 Show fallback if failed to load
                                   errorBuilder: (context, error, stackTrace) {
                                     return const Center(
                                       child: Padding(
@@ -618,6 +631,21 @@ class _ObligationViewState extends State<ObligationView> {
                                             child: Image.network(
                                               downloadUrl,
                                               fit: BoxFit.contain,
+                                              // 👇 Show loader while loading
+                                              loadingBuilder: (context, child,
+                                                  loadingProgress) {
+                                                if (loadingProgress == null)
+                                                  return child; // fully loaded
+                                                return const Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.all(16.0),
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
+                                                );
+                                              },
+                                              // 👇 Show fallback if failed to load
                                               errorBuilder:
                                                   (context, error, stackTrace) {
                                                 return const Center(

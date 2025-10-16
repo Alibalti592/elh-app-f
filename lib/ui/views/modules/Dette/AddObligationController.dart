@@ -80,8 +80,8 @@ class AddObligationController extends FutureViewModel<dynamic> {
     }
     this.obligation.type = type;
     this.title = "On me prête ";
-    if (type == 'onm') {
-      this.title = "Je prête ";
+    if (type == 'jed') {
+      this.title = "je prête";
     } else if (type == 'amana') {
       this.title = 'Accord Amana';
     }
@@ -148,18 +148,18 @@ class AddObligationController extends FutureViewModel<dynamic> {
   }
 
   getPersonneLabel() {
-    if (this.obligation.type == 'onm') {
+    if (this.obligation.type == 'jed') {
       return "Ajouter un emprunteur";
-    } else if (this.obligation.type == 'jed') {
+    } else if (this.obligation.type == 'onm') {
       return "Ajouter un prêteur";
     }
     return "Ajouter une personne";
   }
 
   getPersonTypeLabel() {
-    if (this.obligation.type == 'onm') {
+    if (this.obligation.type == 'jed') {
       return "Prête à";
-    } else if (this.obligation.type == 'jed') {
+    } else if (this.obligation.type == 'onm') {
       return "Emprunte à";
     }
     return "et";

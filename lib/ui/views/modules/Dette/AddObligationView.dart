@@ -887,6 +887,9 @@ class AddObligationViewState extends State<AddObligationView> {
                   num.tryParse(value.replaceAll(',', '.')) == null) {
                 return 'Veuillez entrer un nombre valide';
               }
+              if (key == 'date' && (value == null || value.isEmpty)) {
+                return 'La date de remboursement est obligatoire';
+              }
               return null;
             },
             onChanged: (text) {

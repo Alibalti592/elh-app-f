@@ -132,12 +132,12 @@ class TestamentWidget extends StatelessWidget {
         UIHelper.verticalSpace(15),
         Column(
           children: listObligations(
-              this.jeds, context, 'On me doit', "Aucune dette en cours"),
+              this.jeds, context, 'On me doit', "Aucun prêt en cours"),
         ),
         UIHelper.verticalSpace(15),
         Column(
           children: listObligations(
-              this.onms, context, 'je dois', "Aucun prêt en cours"),
+              this.onms, context, 'je dois', "Aucune dette en cours"),
         ),
         UIHelper.verticalSpace(15),
         Column(

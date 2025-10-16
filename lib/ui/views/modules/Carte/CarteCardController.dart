@@ -34,11 +34,12 @@ class CarteCardController extends FutureViewModel<dynamic> {
   Future loadDatas() async {
     this.isLoading = true;
     notifyListeners();
-    ApiResponse apiResponse = await _carteRepository.loadTextContent(this.carte.id);
+    ApiResponse apiResponse =
+        await _carteRepository.loadTextContent(this.carte.id);
     if (apiResponse.status == 200) {
       this.mainText = json.decode(apiResponse.data)['mainText'];
       notifyListeners();
-      if(this.shareDirect) {
+      if (this.shareDirect) {
         this.shareCarte();
       }
     } else {
@@ -47,7 +48,7 @@ class CarteCardController extends FutureViewModel<dynamic> {
   }
 
   String getTopArabique() {
-    if(this.carte.type == 'death') {
+    if (this.carte.type == 'death') {
       return "إن لله و إن إليه راجعون";
     } else {
       return "بارك الله فيك /  فيكم";
@@ -55,7 +56,7 @@ class CarteCardController extends FutureViewModel<dynamic> {
   }
 
   String getTitle() {
-    if(this.carte.type == 'death') {
+    if (this.carte.type == 'death') {
       return "Suite au décès de notre ${carte.afiliationLabel}";
     } else {
       return "Suite à la maladie de notre ${carte.afiliationLabel}";
@@ -63,7 +64,7 @@ class CarteCardController extends FutureViewModel<dynamic> {
   }
 
   String getDescription() {
-    if(this.carte.type == 'death') {
+    if (this.carte.type == 'death') {
       return "C’est avec une grande tristesse que nous vous annonçons le décès de notre ${carte.afiliationLabel}";
     } else {
       return "";
@@ -71,30 +72,33 @@ class CarteCardController extends FutureViewModel<dynamic> {
   }
 
   String getBottom() {
-    if(this.carte.type == 'death') {
+    if (this.carte.type == 'death') {
       return "C’est à Allah que nous appartenons et c’est à Lui que nous retournons";
     } else {
-      return "Qu'Allah vous accorde Jannat Al Fridaws";
+      return "Qu'Allah vous accorde Jannat Al Firdaws";
     }
   }
 
   String getMiddleRamhou() {
-    if(this.carte.sex == 'm') {
+    if (this.carte.sex == 'm') {
       return "Allah y rhamo";
     } else {
       return "Allah y rhamaha";
     }
   }
 
-
-
   shareCarte() async {
     try {
       this.isSharing.value = true;
-      Future.delayed(const Duration(milliseconds: 300)).then((val) async { //time to button disappear
-        RenderRepaintBoundary boundary = this.globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      Future.delayed(const Duration(milliseconds: 300)).then((val) async {
+        //time to button disappear
+        RenderRepaintBoundary boundary = this
+            .globalKey
+            .currentContext!
+            .findRenderObject() as RenderRepaintBoundary;
         ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-        ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        ByteData? byteData =
+            await image.toByteData(format: ui.ImageByteFormat.png);
         var pngBytes = byteData!.buffer.asUint8List();
 
         var bs64 = base64Encode(pngBytes);
@@ -107,14 +111,12 @@ class CarteCardController extends FutureViewModel<dynamic> {
         final result = await Share.shareXFiles([XFile(filePath)]);
         File(filePath).delete();
         this.isSharing.value = false;
-
       });
     } catch (e) {
       print(e);
       this.isSharing.value = false;
     }
   }
-
 
   // static Future<Uint8List?> createImageFromWidget(BuildContext context, Widget widget, { Duration? wait, Size? logicalSize, Size? imageSize }) async {
   //   final repaintBoundary = RenderRepaintBoundary();
@@ -169,6 +171,4 @@ class CarteCardController extends FutureViewModel<dynamic> {
   //
   //   return byteData?.buffer.asUint8List(); //pngBytes
   // }
-
-
 }
