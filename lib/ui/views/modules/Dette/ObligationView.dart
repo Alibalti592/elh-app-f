@@ -176,7 +176,7 @@ class _ObligationViewState extends State<ObligationView> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(😎,
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
               onPressed: () async {
@@ -336,7 +336,7 @@ class _ObligationViewState extends State<ObligationView> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(😎,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 onPressed: () async {
@@ -366,7 +366,7 @@ class _ObligationViewState extends State<ObligationView> {
                                   child: Image.network(
                                     downloadUrl,
                                     fit: BoxFit.contain,
-                                    errorBuilder: (context, , _) {
+                                    errorBuilder: (context, _, __) {
                                       return const Center(
                                         child: Padding(
                                           padding: EdgeInsets.all(16.0),
@@ -377,7 +377,7 @@ class _ObligationViewState extends State<ObligationView> {
                                     },
                                   ),
                                 ),
-                                const SizedBox(height: 😎,
+                                const SizedBox(height: 8),
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
                                   child: const Text("Fermer"),
@@ -436,7 +436,7 @@ class _ObligationViewState extends State<ObligationView> {
                   color: Color.fromRGBO(55, 65, 81, 1),
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
               if (_tranches.isEmpty)
                 const Text(
                   "Aucune tranche pour le moment.",
@@ -462,10 +462,9 @@ class _ObligationViewState extends State<ObligationView> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(😎,
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          
                           onPressed: () async {
                             if (tranche.fileUrl != null &&
                                 tranche.fileUrl!.isNotEmpty) {
@@ -510,7 +509,7 @@ class _ObligationViewState extends State<ObligationView> {
                                               },
                                             ),
                                           ),
-                                          const SizedBox(height: 😎,
+                                          const SizedBox(height: 8),
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(context),
@@ -536,7 +535,6 @@ class _ObligationViewState extends State<ObligationView> {
                               );
                             }
                           },
-                          ),
                           child: const Text(
                             "voir preuve",
                             style: TextStyle(
@@ -563,9 +561,8 @@ class _ObligationViewState extends State<ObligationView> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6,
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  ),
                   ),
                   child: const Text(
                     "Ajouter un versement",
