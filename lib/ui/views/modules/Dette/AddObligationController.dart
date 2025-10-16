@@ -108,6 +108,11 @@ class AddObligationController extends FutureViewModel<dynamic> {
     notifyListeners();
   }
 
+  void setFileTranche(RxnString file) {
+    fileUrl = file; // also store in your obligation map
+    notifyListeners();
+  }
+
   @override
   Future<dynamic> futureToRun() => loadDatas();
   Future<String?> getToken() async {

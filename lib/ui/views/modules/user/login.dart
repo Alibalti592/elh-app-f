@@ -548,37 +548,37 @@ class Login extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // Divider
-                    Row(
-                      children: const [
-                        Expanded(
-                          child: Divider(
-                            thickness: 2,
-                            color: Color.fromRGBO(143, 151, 121, 1),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Text(
-                            "Ou",
-                            style: TextStyle(
-                              fontFamily: 'inter',
-                              fontSize: 15,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            thickness: 2,
-                            color: Color.fromRGBO(143, 151, 121, 1),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
+                    // Row(
+                    //   children: const [
+                    //     Expanded(
+                    //       child: Divider(
+                    //         thickness: 2,
+                    //         color: Color.fromRGBO(143, 151, 121, 1),
+                    //       ),
+                    //     ),
+                    //     Padding(
+                    //       padding: EdgeInsets.symmetric(horizontal: 15),
+                    //       child: Text(
+                    //         "Ou",
+                    //         style: TextStyle(
+                    //           fontFamily: 'inter',
+                    //           fontSize: 15,
+                    //           color: Colors.black,
+                    //           fontWeight: FontWeight.w400,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       child: Divider(
+                    //         thickness: 2,
+                    //         color: Color.fromRGBO(143, 151, 121, 1),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 14),
 
-                    GoogleSignInButton(),
+                    // GoogleSignInButton(),
                     const SizedBox(height: 30),
 
                     // Bottom text
@@ -1289,40 +1289,40 @@ class Login extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 20),
 
-                                  // Divider "Ou"
-                                  Row(
-                                    children: const [
-                                      Expanded(
-                                        child: Divider(
-                                          thickness: 1,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        child: Text(
-                                          "Ou",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Divider(
-                                          thickness: 1,
-                                          color: primaryColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  // // Divider "Ou"
+                                  // Row(
+                                  //   children: const [
+                                  //     Expanded(
+                                  //       child: Divider(
+                                  //         thickness: 1,
+                                  //         color: Colors.grey,
+                                  //       ),
+                                  //     ),
+                                  //     Padding(
+                                  //       padding: EdgeInsets.symmetric(
+                                  //           horizontal: 12.0),
+                                  //       child: Text(
+                                  //         "Ou",
+                                  //         style: TextStyle(
+                                  //             fontSize: 15,
+                                  //             color: Colors.black),
+                                  //       ),
+                                  //     ),
+                                  //     Expanded(
+                                  //       child: Divider(
+                                  //         thickness: 1,
+                                  //         color: primaryColor,
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
                                   const SizedBox(height: 15),
 
                                   // Google Sign-in Button
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: GoogleSignInButton(),
-                                  ),
+                                  // SizedBox(
+                                  //   width: double.infinity,
+                                  //   child: GoogleSignInButton(),
+                                  // ),
                                   const SizedBox(height: 20),
 
                                   // Already have account

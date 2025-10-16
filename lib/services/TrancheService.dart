@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:elh/locator.dart';
+import 'package:elh/services/AuthenticationService.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,13 +11,18 @@ class TrancheService {
   final String baseUrl =
       'https://test.muslim-connect.fr/elh-api/tranche/tranche';
   final String baseUrl1 = 'https://test.muslim-connect.fr/elh-api/tranche';
+  final AuthenticationService _authenticationService =
+      locator<AuthenticationService>();
+  getUserToken() async {
+    String token = await _authenticationService.getUserToken();
+    return token;
+  }
 
   // -----------------------------
   // Respond to a tranche
   // -----------------------------
   Future<bool> respondToTranche(int trancheId, String action) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('jwt_token');
+    String token = await this.getUserToken();
     if (token == null) throw Exception('Utilisateur non authentifié');
 
     try {
@@ -43,8 +50,7 @@ class TrancheService {
   // Fetch tranches by obligationId
   // -----------------------------
   Future<List<Tranche>> getTranches(int obligationId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('jwt_token');
+    String token = await this.getUserToken();
     if (token == null) throw Exception("JWT token is null IN TRANCHE SERVICE");
 
     final response = await http.get(
@@ -69,17 +75,14 @@ class TrancheService {
   // Else -> JSON body (as before)
   // -----------------------------
   Future<Tranche?> createTranche(
-    int obligationId,
-    int emprunteurId,
+    int? obligationId,
+    int? emprunteurId,
     double amount,
     String paidAt, {
     String? filePath, // <- pass a path to send a file
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('jwt_token');
+    String token = await this.getUserToken();
     if (token == null) return null;
-
-    if (obligationId <= 0 || emprunteurId <= 0) return null;
 
     // Common payload (without fileUrl; server will upload and set it)
     final Map<String, dynamic> payload = {

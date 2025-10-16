@@ -242,6 +242,7 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
     if (pickedFile == null) return;
 
     widget.controller.setFile(pickedFile.path);
+    print(pickedFile.path);
 
     setState(() {
       _selectedFile = File(pickedFile.path);
@@ -251,23 +252,25 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
   void _showPickerOptions() {
     showModalBottomSheet(
       context: context,
-      builder: (_) => SafeArea(
+      builder: (sheetCtx) => SafeArea(
         child: Wrap(
           children: [
             ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text("Prendre une photo"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickAndUploadFile(ImageSource.camera);
-                }),
+              leading: const Icon(Icons.camera_alt),
+              title: const Text("Prendre une photo"),
+              onTap: () {
+                Navigator.pop(sheetCtx); // pop ONLY the bottom sheet
+                _pickAndUploadFile(ImageSource.camera);
+              },
+            ),
             ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text("Choisir depuis la galerie"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickAndUploadFile(ImageSource.gallery);
-                }),
+              leading: const Icon(Icons.photo_library),
+              title: const Text("Choisir depuis la galerie"),
+              onTap: () {
+                Navigator.pop(sheetCtx); // pop ONLY the bottom sheet
+                _pickAndUploadFile(ImageSource.gallery);
+              },
+            ),
           ],
         ),
       ),
@@ -277,6 +280,7 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
   void _deleteFile() {
     setState(() {
       _selectedFile = null;
+      _uploadedFileUrl = null;
     });
     widget.controller.setFile(null);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -315,8 +319,19 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
                 child: Image.file(
                   _selectedFile!,
                   height: 150,
-                  width: double.infinity,
+                  width: 250,
                   fit: BoxFit.cover,
+                  frameBuilder:
+                      (context, child, frame, wasSynchronouslyLoaded) {
+                    if (frame == null) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return child;
+                  },
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.broken_image,
+                      color: Colors.grey,
+                      size: 40),
                 ),
               ),
               Positioned(

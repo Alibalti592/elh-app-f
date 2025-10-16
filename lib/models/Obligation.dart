@@ -87,7 +87,7 @@ class Obligation {
     this.fileUrl,
   })  : this.date = date ?? DateTime.now(),
         this.dateDisplay = dateDisplay ?? DateTime.now().toString();
-  int? getEmprunteurId() => relatedUserId;
+  int? getEmprunteurId() => emprunteurId;
   String? getFile() => file;
   String? setFile(String? file) => this.file = file;
   factory Obligation.fromJson(Map<String, dynamic> json) => Obligation(
