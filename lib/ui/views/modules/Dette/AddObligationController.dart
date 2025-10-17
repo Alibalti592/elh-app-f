@@ -54,6 +54,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
   String currency = '€';
   ValueNotifier<bool> hasEmprunteur = ValueNotifier(false);
   final remboursement = TextEditingController();
+  bool showContact = true;
 
   final formKey = GlobalKey<FormState>();
   var fileUrl = RxnString();
@@ -62,33 +63,49 @@ class AddObligationController extends FutureViewModel<dynamic> {
   AddObligationController(type, obligation) {
     if (obligation != null) {
       this.obligation = obligation;
-      if (this.obligation.dateStartDisplay != null) {
-        this.dateStartController.text = this.obligation!.dateStartDisplay!;
-      }
-      this.tglePersonFormDetails();
       this.isEdit = true;
-      if (this.obligation.type == 'jed') {
-        currentUserfullname = this.obligation.emprunteurName;
-        otherPersonName = this.obligation.preteurName;
-        notifyListeners();
-      } else if (this.obligation.type == 'onm' ||
-          this.obligation.type == 'amana') {
-        currentUserfullname = this.obligation.preteurName;
-        otherPersonName = this.obligation.emprunteurName;
-        notifyListeners();
+      print("Editing obligation: ${obligation.toJson()}");
+
+      // ✅ Prefill form fields
+      firstnameTextController.text = obligation.firstname ?? '';
+      lastNameTextController.text = obligation.lastname ?? '';
+      phoneTextController.text = obligation.tel ?? '';
+      addressTextController.text = obligation.adress ?? '';
+      noteController.text = obligation.note ?? '';
+      dateStartController.text =
+          DateFormat('yyyy-MM-dd').format(obligation.date);
+      dateCreatedAtController.text = obligation.dateDisplay ?? '';
+      dateDueController.text = obligation.dateStartDisplay ?? '';
+
+      // ✅ Make sure form is visible
+      this.tglePersonFormDetails();
+
+      // ✅ Set names depending on type
+      if (obligation.type == 'jed') {
+        currentUserfullname = obligation.emprunteurName;
+        otherPersonName = obligation.preteurName;
+      } else if (obligation.type == 'onm' || obligation.type == 'amana') {
+        currentUserfullname = obligation.preteurName;
+        otherPersonName = obligation.emprunteurName;
       }
     }
+
+    // Always set type and title
     this.obligation.type = type;
-    this.title = "On me prête ";
+    this.title = "On me prête";
     if (type == 'jed') {
-      this.title = "je prête";
+      this.title = "Je prête";
     } else if (type == 'amana') {
       this.title = 'Accord Amana';
     }
-    var inputFormat = new DateFormat("EEEE dd MMMM yyyy", 'fr_FR');
+
+    // Default date
+    var inputFormat = DateFormat("EEEE dd MMMM yyyy", 'fr_FR');
     dateCreatedAtController.text = inputFormat.format(this.obligation.date);
+
     notifyListeners();
   }
+
   // Example: call this on every field change
   void validateForm() {
     isFormValid.value = formKey.currentState?.validate() ?? false;
@@ -200,6 +217,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
 
     try {
       Map<String, dynamic> payload = {
+        'id': obligation.id,
         'type': obligation.type,
         'amount': obligation.amount,
         'tel': obligation.tel,
@@ -211,7 +229,8 @@ class AddObligationController extends FutureViewModel<dynamic> {
         'date': obligation.date?.toIso8601String(),
         'dateStart': obligation.dateStart?.toIso8601String(),
       };
-      print("this is comming from controller : ${payload}");
+      print("this is comming from AddObligationcontroller : ${payload}");
+
       print("filePath: ${obligation.file}");
 
       ApiResponse apiResponse =
@@ -223,10 +242,18 @@ class AddObligationController extends FutureViewModel<dynamic> {
       } else {
         this.isSaving.value = false;
         _errorMessageService.errorOnAPICall();
+        // print the actual response data
+        print('API returned error: ${apiResponse.data}');
       }
-    } catch (t) {
-      print(t.toString());
+    } catch (t, stackTrace) {
       this.isSaving.value = false;
+      print('Error occurred: $t');
+      print('Stack trace: $stackTrace');
+
+      if (t is DioError) {
+        print('DioError details: ${t.response?.data}');
+        print('Status code: ${t.response?.statusCode}');
+      }
     }
   }
 
@@ -283,7 +310,9 @@ class AddObligationController extends FutureViewModel<dynamic> {
   searchContact() async {
     _navigationService
         .navigateWithTransition(
-      SelectContactView(),
+      SelectContactView(
+        showContact: true,
+      ),
       transitionStyle: Transition.downToUp,
       duration: Duration(milliseconds: 300),
     )
@@ -341,7 +370,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
 
   String moneyLabel() {
     String money = "Montant prêté";
-    if (obligation?.type == 'jed') {
+    if (obligation?.type == 'onm') {
       money = "Montant emprunté";
     } else if (obligation?.type == 'amana') {
       money = "Montant de la amana";

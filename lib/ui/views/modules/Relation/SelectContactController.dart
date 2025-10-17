@@ -134,12 +134,12 @@ class SelectContactController extends FutureViewModel<dynamic> {
   }
 
   getPersonneLabel() {
-    if (this.obligation.type == 'onm') {
+    if (this.obligation.type == 'jed') {
       return "Ajouter un emprunteur";
-    } else if (this.obligation.type == 'jed') {
-      return "Ajouter un préteur";
+    } else if (this.obligation.type == 'onm') {
+      return "Ajouter un prêteur";
     }
-    return "Ajouter un contact";
+    return "Ajouter une personne";
   }
 
   // Open phone contacts to select a contact
@@ -185,7 +185,7 @@ class SelectContactController extends FutureViewModel<dynamic> {
         obligation.tel = result.phone ?? '';
         obligation.adress = result.city ?? '';
         obligation.relatedUserId = result.id ?? null;
-
+        print("result : ${result}");
         // Update form controllers
         firstnameTextController.text = obligation.firstname;
         lastNameTextController.text = obligation.lastname;

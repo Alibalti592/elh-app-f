@@ -22,22 +22,26 @@ class ObligationCardController extends BaseViewModel {
 
   ObligationCardController(directShare, {required this.obligation}) {
     this.obligation = obligation;
-    if(obligation.type == 'onm') {
+    if (obligation.type == 'onm') {
       this.title = 'On me doit';
     }
-    if(directShare) {
+    if (directShare) {
       this.shareObligation();
     }
   }
 
-
   shareObligation() async {
     try {
       this.isSharing.value = true;
-      Future.delayed(const Duration(milliseconds: 250)).then((val) async { //time to button disappear
-        RenderRepaintBoundary boundary = this.globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      Future.delayed(const Duration(milliseconds: 250)).then((val) async {
+        //time to button disappear
+        RenderRepaintBoundary boundary = this
+            .globalKey
+            .currentContext!
+            .findRenderObject() as RenderRepaintBoundary;
         ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-        ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        ByteData? byteData =
+            await image.toByteData(format: ui.ImageByteFormat.png);
         var pngBytes = byteData!.buffer.asUint8List();
         var bs64 = base64Encode(pngBytes);
         String fullname1 = "${obligation.firstname} ${obligation.lastname}";
@@ -69,7 +73,17 @@ class ObligationCardController extends BaseViewModel {
   }
 
   raisonText(obligation) {
-    return 'Raison de la dette';
+    return 'note: ${obligation.note ?? ""}';
   }
 
+  montantText() {
+    if (obligation.type == 'jed') {
+      return "Montant prêté";
+    }
+    if (obligation.type == 'onm') {
+      return "Montant emprunté";
+    }
+
+    return "Montant de l'amana";
+  }
 }

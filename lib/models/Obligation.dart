@@ -129,7 +129,6 @@ class Obligation {
         isRelatedToUser: json["isRelatedToUser"] ?? false,
         emprunteurId: json['relatedUserId'], // keep for backward compatibility
         remainingAmount: json['remainingAmount'] ?? 0,
-
         fileUrl: json['fileUrl'], // <-- map fileUrl from API
       );
   String get contactDisplay {
@@ -170,6 +169,7 @@ class Obligation {
         "isRelatedToUser": isRelatedToUser,
         "emprunteur_id": emprunteurId,
         "remainingAmount": remainingAmount,
+        "fileUrl": fileUrl,
       };
 
   dynamic set(String propertyName, value) {

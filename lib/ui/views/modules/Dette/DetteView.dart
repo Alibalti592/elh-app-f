@@ -392,8 +392,16 @@ class DetteViewState extends State<DetteView> {
                       if (obligation.type != 'amana' && obligation.amount != 0)
                         Text(
                             "Montant : ${obligation.amount} ${obligation.currency}",
-                            style:
-                                TextStyle(color: fontGreyDark, fontSize: 13)),
+                            style: TextStyle(
+                              color: fontGreyDark,
+                              fontSize: 13,
+                            )),
+                      Text(
+                          "Montant restant: ${obligation.remainingAmount} ${obligation.currency}",
+                          style: TextStyle(
+                            color: fontGreyDark,
+                            fontSize: 13,
+                          )),
                       UIHelper.verticalSpace(4),
                       if (obligation.type != 'amana')
                         Row(

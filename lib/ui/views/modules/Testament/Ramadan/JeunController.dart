@@ -13,7 +13,7 @@ class JeunController extends FutureViewModel<dynamic> {
   TestamentRepository _testamentRepository = locator<TestamentRepository>();
   ErrorMessageService _errorMessageService = locator<ErrorMessageService>();
   NavigationService _navigationService = locator<NavigationService>();
-  String title = "Jours de jeûn à rattraper";
+  String title = "Jours de jeûne à rattraper";
   bool isLoading = true;
   bool isAlreadyRegistred = false;
   int selectedYear = 2025;
@@ -48,8 +48,7 @@ class JeunController extends FutureViewModel<dynamic> {
         this.selectedYear = decodeData['selectedYear'];
         this.iniYearIndex = this.yearList.indexOf(this.selectedYear);
         this.jeunNbDaysR = decodeData['jeunNbDaysR'];
-      } catch(e) {
-      }
+      } catch (e) {}
     } else {
       _errorMessageService.errorOnAPICall();
     }
@@ -58,14 +57,16 @@ class JeunController extends FutureViewModel<dynamic> {
   }
 
   saveJeun() async {
-    if(!this.formKey.currentState!.validate()) {
+    if (!this.formKey.currentState!.validate()) {
       return;
     }
     this.isSaving.value = true;
-    ApiResponse apiResponse = await _testamentRepository.saveJeun(this.jeunText, this.jeunNbDays, this.jeunNbDaysR, this.selectedYear);
+    ApiResponse apiResponse = await _testamentRepository.saveJeun(
+        this.jeunText, this.jeunNbDays, this.jeunNbDaysR, this.selectedYear);
     if (apiResponse.status == 200) {
       this.isSaving.value = false;
-      _errorMessageService.showToaster('success', "Jours de jeûn à rattraper mis à jour");
+      _errorMessageService.showToaster(
+          'success', "Jours de jeûn à rattraper mis à jour");
     } else {
       _errorMessageService.errorOnAPICall();
       this.isSaving.value = false;
@@ -76,5 +77,4 @@ class JeunController extends FutureViewModel<dynamic> {
     int currentYear = DateTime.now().year;
     return "Nombre de jours de jeun manqués ou à rattraper Ramadan ${currentYear}";
   }
-
 }

@@ -123,12 +123,19 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
 class SelectContactView extends StatefulWidget {
+  final bool showContact;
+
+  const SelectContactView({
+    Key? key,
+    this.showContact = false,
+  }) : super(key: key);
   @override
   SelectContactViewState createState() => SelectContactViewState();
 }
 
 class SelectContactViewState extends State<SelectContactView> {
   String searchQuery = ""; // Define and initialize _searchQuery
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<SelectContactController>.reactive(
@@ -136,7 +143,12 @@ class SelectContactViewState extends State<SelectContactView> {
       builder: (context, controller, child) => Scaffold(
         backgroundColor: bgLightV2,
         appBar: AppBar(
-          title: Text(controller.getPersonneLabel(), style: headerTextWhite),
+          title: Text(
+            widget.showContact != true
+                ? "Partage avec un membre mc"
+                : "Ajouter un contact",
+            style: headerTextWhite,
+          ),
           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: Colors.transparent,
           flexibleSpace: Container(
@@ -161,22 +173,20 @@ class SelectContactViewState extends State<SelectContactView> {
                     padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                     children: [
                       // Top rows
-                      if (controller.canOpenPhoneContacts)
-                        _topRow(
+                      if (widget.showContact) ...[
+                        if (controller.canOpenPhoneContacts)
+                          _topRow(
                             icon: Icons.search,
                             text: "Rechercher un contact du répertoire",
                             onTap: () async {
-                              // Open the phone contacts view
                               final value = await NavigationService()
                                   .navigateWithTransition(
                                 ListPhoneContactView(),
                                 transitionStyle: Transition.downToUp,
-                                duration: Duration(milliseconds: 300),
+                                duration: const Duration(milliseconds: 300),
                               );
 
-                              // Return the selected contact to AddObligationView
                               if (value != null) {
-                                // Convert Contact to UserInfos if needed
                                 UserInfos user;
                                 if (value is Contact) {
                                   user = UserInfos(
@@ -189,25 +199,26 @@ class SelectContactViewState extends State<SelectContactView> {
                                     fullname: '',
                                     phonePrefix: '',
                                     city: '',
-                                    photo:
-                                        '', // phone contacts don’t have relatedUserId
+                                    photo: '',
                                   );
                                 } else {
-                                  user = value; // Already a UserInfos
+                                  user = value;
                                 }
 
                                 Navigator.of(context).pop(user);
                               }
-                            }),
-                      SizedBox(height: 10),
-                      _topRow(
-                        icon: Icons.add,
-                        text: "Créer un contact",
-                        onTap: () {
-                          Navigator.of(context)
-                              .pop('showForm'); // go back to AddObligationView
-                        },
-                      ),
+                            },
+                          ),
+                        const SizedBox(height: 10),
+                        _topRow(
+                          icon: Icons.add,
+                          text: "Créer un contact",
+                          onTap: () {
+                            Navigator.of(context).pop('showForm');
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                      ],
 
                       // Person form (if visible)
                       if (controller.isPersonFormVisible)

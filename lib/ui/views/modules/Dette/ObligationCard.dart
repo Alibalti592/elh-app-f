@@ -266,6 +266,7 @@ import 'package:elh/models/Obligation.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/common/popupCard/CustomRectTween.dart';
 import 'package:elh/ui/views/modules/Dette/ObligationCardController.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
 
@@ -345,12 +346,20 @@ class ObligationCardState extends State<ObligationCard> {
                                     obligation.amount != 0 ? 7 : 0),
                                 if (obligation.amount != 0)
                                   _item(MdiIcons.cashCheck,
-                                      "${obligation.amount} €",
-                                      title: 'Montant'),
+                                      "${obligation.amount} ${obligation.currency}",
+                                      title: controller.montantText()),
                                 UIHelper.verticalSpace(7),
-                                _item(MdiIcons.noteOutline, obligation.delay,
-                                    title: controller.raisonText(obligation)),
+                                _item(MdiIcons.cashCheck,
+                                    "${obligation.remainingAmount} ${obligation.currency}",
+                                    title: "Montant restant"),
                                 UIHelper.verticalSpace(7),
+                                if (obligation.note != null &&
+                                    obligation.note!.isNotEmpty)
+                                  _item(
+                                    MdiIcons.noteOutline,
+                                    obligation.note,
+                                    title: controller.raisonText(obligation),
+                                  ),
                                 if (obligation.dateStartDisplay != null)
                                   _item(Icons.calendar_month_outlined,
                                       obligation.dateStartDisplay,
@@ -420,22 +429,22 @@ class ObligationCardState extends State<ObligationCard> {
                         },
                       ),
                       // Add Tranche button (only for debts)
-                      if (obligation.type != 'amana')
-                        Positioned(
-                          bottom: 10,
-                          left: 10,
-                          child: ElevatedButton(
-                            onPressed: _showAddTrancheDialog,
-                            child: Text('Ajouter une tranche'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                            ),
-                          ),
-                        ),
+                      // if (obligation.type != 'amana')
+                      //   Positioned(
+                      //     bottom: 10,
+                      //     left: 10,
+                      //     child: ElevatedButton(
+                      //       onPressed: _showAddTrancheDialog,
+                      //       child: Text('Ajouter une tranche'),
+                      //       style: ElevatedButton.styleFrom(
+                      //         backgroundColor: Colors.green,
+                      //         padding: const EdgeInsets.symmetric(
+                      //             horizontal: 16, vertical: 12),
+                      //         shape: RoundedRectangleBorder(
+                      //             borderRadius: BorderRadius.circular(8)),
+                      //       ),
+                      //     ),
+                      //   ),
                     ],
                   ),
                 ),
@@ -536,7 +545,7 @@ class ObligationCardState extends State<ObligationCard> {
                 Row(
                   children: [
                     if (obligation.type != 'amana')
-                      Text("Préteur : ",
+                      Text("Emprunteur : ",
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 12,
@@ -574,7 +583,7 @@ class ObligationCardState extends State<ObligationCard> {
                   children: [
                     if (obligation.type != 'amana')
                       Text(
-                        "Emprunteur : ",
+                        "Prêteur: ",
                         style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 12,

@@ -297,7 +297,7 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
           onPressed: _showPickerOptions,
           icon: const Icon(Icons.attach_file, color: Colors.white),
           label: Text(
-            _uploadedFileUrl != null
+            _selectedFile != null
                 ? "Changer le fichier"
                 : "Attacher une preuve",
             style: const TextStyle(

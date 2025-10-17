@@ -482,7 +482,9 @@
 //   }
 // }
 import 'package:elh/ui/shared/text_styles.dart';
+import 'package:elh/ui/views/common/BBottombar/nav_custom_painter.dart';
 import 'package:elh/ui/views/modules/Relation/SelectContactView.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
@@ -699,7 +701,89 @@ class AddObligationViewState extends State<AddObligationView> {
                             const SizedBox(height: 20),
 
                             // Upload File Widget (optional)
-                            UploadFileWidget(controller: controller),
+                            if (obligation?.fileUrl == null)
+                              UploadFileWidget(controller: controller)
+                            else
+                              FutureBuilder<String>(
+                                future: FirebaseStorage.instance
+                                    .refFromURL(obligation!.fileUrl!)
+                                    .getDownloadURL(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return const Text(
+                                        'Erreur lors du chargement du fichier.');
+                                  } else if (snapshot.hasData) {
+                                    final downloadUrl = snapshot.data!;
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 10.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Fichier actuel:',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Stack(
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                child: Image.network(
+                                                  downloadUrl,
+                                                  height: 200,
+                                                  width: double.infinity,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (context, error,
+                                                          stackTrace) =>
+                                                      Container(
+                                                    height: 100,
+                                                    color: Colors.grey[300],
+                                                    child: const Center(
+                                                        child: Icon(Icons
+                                                            .broken_image)),
+                                                  ),
+                                                ),
+                                              ),
+                                              Positioned(
+                                                top: 8,
+                                                right: 8,
+                                                child: InkWell(
+                                                  onTap: _deleteFile,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black54,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.all(6),
+                                                    child: const Icon(
+                                                        Icons.delete,
+                                                        color: Colors.white,
+                                                        size: 20),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                },
+                              ),
+
                             const SizedBox(height: 20),
 
                             // Save Button
@@ -796,7 +880,10 @@ class AddObligationViewState extends State<AddObligationView> {
   void openSelectContact(AddObligationController controller) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => SelectContactView()),
+      MaterialPageRoute(
+          builder: (_) => SelectContactView(
+                showContact: true,
+              )),
     );
 
     if (result == 'showForm') {
@@ -989,5 +1076,11 @@ class AddObligationViewState extends State<AddObligationView> {
         const SizedBox(height: 10),
       ],
     );
+  }
+
+  void _deleteFile() {
+    setState(() {
+      obligation!.fileUrl = null;
+    });
   }
 }

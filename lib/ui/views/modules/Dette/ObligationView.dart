@@ -397,8 +397,8 @@ class _ObligationViewState extends State<ObligationView> {
         Text(
           label,
           style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
             color: Color.fromRGBO(55, 65, 81, 1),
           ),
         ),
@@ -450,12 +450,7 @@ class _ObligationViewState extends State<ObligationView> {
             ),
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-            onPressed: () {},
-          )
-        ],
+        actions: [],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -540,7 +535,7 @@ class _ObligationViewState extends State<ObligationView> {
                 }
               },
               child: const Text(
-                "Preuve(s) attaché(es)",
+                "Preuve attachée",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14,
@@ -552,10 +547,10 @@ class _ObligationViewState extends State<ObligationView> {
             const SizedBox(height: 16),
 
             // Champs avec labels au-dessus
-            buildLabeledField("Préteur",
-                "${obligation.preteurName} (${obligation.preteurNum})"),
             buildLabeledField("Emprunteur",
-                "${obligation.firstname} ${obligation.lastname} ${obligation.emprunteurNum}"),
+                "${obligation.preteurName} ${obligation.preteurNum}"),
+            buildLabeledField("Prêteur",
+                "${obligation.emprunteurName} ${obligation.emprunteurNum}"),
             buildLabeledField("Date", obligation.dateDisplay),
             buildLabeledField("Date remboursement au plus tard",
                 obligation.dateStartDisplay ?? ""),
@@ -614,14 +609,17 @@ class _ObligationViewState extends State<ObligationView> {
                                 final ref = FirebaseStorage.instance
                                     .refFromURL(tranche.fileUrl!);
                                 final downloadUrl = await ref.getDownloadURL();
-
                                 showDialog(
                                   context: context,
+                                  barrierDismissible:
+                                      true, // user can tap outside to close if desired
                                   builder: (context) => Dialog(
+                                    insetPadding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 24),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: Container(
+                                    child: ConstrainedBox(
                                       constraints: BoxConstraints(
                                         maxHeight:
                                             MediaQuery.of(context).size.height *
@@ -629,44 +627,52 @@ class _ObligationViewState extends State<ObligationView> {
                                         maxWidth:
                                             MediaQuery.of(context).size.width *
                                                 0.9,
+                                        minHeight:
+                                            300, // ✅ gives fixed minimum size so dialog doesn’t jump
+                                        minWidth: 300,
                                       ),
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Flexible(
-                                            child: Image.network(
-                                              downloadUrl,
-                                              fit: BoxFit.contain,
-                                              loadingBuilder: (context, child,
-                                                  loadingProgress) {
-                                                if (loadingProgress == null)
-                                                  return child; // ✅ Image fully loaded
-                                                return const Center(
-                                                  child:
-                                                      CircularProgressIndicator(), // ✅ Loader while loading
-                                                );
-                                              },
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return const Center(
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.all(16.0),
-                                                    child: Text(
-                                                        "Impossible de charger l'image"),
-                                                  ),
-                                                );
-                                              },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Expanded(
+                                              // ✅ Ensures fixed area for the image, preventing dialog resize
+                                              child: Center(
+                                                child: Image.network(
+                                                  downloadUrl,
+                                                  fit: BoxFit.contain,
+                                                  loadingBuilder: (context,
+                                                      child, loadingProgress) {
+                                                    if (loadingProgress == null)
+                                                      return child;
+                                                    return const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    );
+                                                  },
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return const Center(
+                                                      child: Padding(
+                                                        padding: EdgeInsets.all(
+                                                            16.0),
+                                                        child: Text(
+                                                            "Impossible de charger l'image"),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: const Text("Fermer"),
-                                          ),
-                                        ],
+                                            const SizedBox(height: 8),
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text("Fermer"),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),

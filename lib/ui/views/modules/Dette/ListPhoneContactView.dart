@@ -13,6 +13,7 @@ import 'package:stacked/stacked.dart';
 
 class ListPhoneContactView extends StatefulWidget {
   ListPhoneContactView();
+
   @override
   ListPhoneContactViewState createState() => ListPhoneContactViewState();
 }
