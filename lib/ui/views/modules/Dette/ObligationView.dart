@@ -479,45 +479,43 @@ class _ObligationViewState extends State<ObligationView> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Container(
-                          constraints: BoxConstraints(
-                            maxHeight: MediaQuery.of(context).size.height * 0.6,
-                            maxWidth: MediaQuery.of(context).size.width * 0.9,
-                          ),
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                child: Image.network(
-                                  downloadUrl,
-                                  fit: BoxFit.contain,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress == null)
-                                      return child; // ✅ Image fully loaded
-                                    return const Center(
-                                      child:
-                                          CircularProgressIndicator(), // ✅ Loader while loading
-                                    );
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(16.0),
-                                        child: Text(
-                                            "Impossible de charger l'image"),
-                                      ),
-                                    );
-                                  },
+                        child: SizedBox(
+                          width: 300, // fixed width
+                          height: 400, // fixed height
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Image.network(
+                                    downloadUrl,
+                                    fit: BoxFit.contain,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Text(
+                                              "Impossible de charger l'image"),
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("Fermer"),
-                              ),
-                            ],
+                                const SizedBox(height: 8),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text("Fermer"),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -611,58 +609,43 @@ class _ObligationViewState extends State<ObligationView> {
                                 final downloadUrl = await ref.getDownloadURL();
                                 showDialog(
                                   context: context,
-                                  barrierDismissible:
-                                      true, // user can tap outside to close if desired
                                   builder: (context) => Dialog(
-                                    insetPadding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 24),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        maxHeight:
-                                            MediaQuery.of(context).size.height *
-                                                0.6,
-                                        maxWidth:
-                                            MediaQuery.of(context).size.width *
-                                                0.9,
-                                        minHeight:
-                                            300, // ✅ gives fixed minimum size so dialog doesn’t jump
-                                        minWidth: 300,
-                                      ),
+                                    child: SizedBox(
+                                      width: 300, // fixed width
+                                      height: 400, // fixed height
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Column(
-                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Expanded(
-                                              // ✅ Ensures fixed area for the image, preventing dialog resize
-                                              child: Center(
-                                                child: Image.network(
-                                                  downloadUrl,
-                                                  fit: BoxFit.contain,
-                                                  loadingBuilder: (context,
-                                                      child, loadingProgress) {
-                                                    if (loadingProgress == null)
-                                                      return child;
-                                                    return const Center(
-                                                      child:
-                                                          CircularProgressIndicator(),
-                                                    );
-                                                  },
-                                                  errorBuilder: (context, error,
-                                                      stackTrace) {
-                                                    return const Center(
-                                                      child: Padding(
-                                                        padding: EdgeInsets.all(
-                                                            16.0),
-                                                        child: Text(
-                                                            "Impossible de charger l'image"),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
+                                              child: Image.network(
+                                                downloadUrl,
+                                                fit: BoxFit.contain,
+                                                loadingBuilder: (context, child,
+                                                    loadingProgress) {
+                                                  if (loadingProgress == null)
+                                                    return child;
+                                                  return const Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  );
+                                                },
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return const Center(
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(16.0),
+                                                      child: Text(
+                                                          "Impossible de charger l'image"),
+                                                    ),
+                                                  );
+                                                },
                                               ),
                                             ),
                                             const SizedBox(height: 8),

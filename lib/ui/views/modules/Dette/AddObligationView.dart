@@ -998,12 +998,11 @@ class AddObligationViewState extends State<AddObligationView> {
                   controller.obligation.amount =
                       num.tryParse(text.replaceAll(',', '.')) ?? 0;
                   break;
+
                 default:
                   controller.obligation.set(key, text);
                   break;
               }
-
-              controller.validateForm();
             },
             decoration: InputDecoration(
               border:

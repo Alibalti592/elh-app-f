@@ -89,6 +89,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
         otherPersonName = obligation.emprunteurName;
       }
     }
+    isFormValid.value = true;
 
     // Always set type and title
     this.obligation.type = type;
@@ -203,6 +204,44 @@ class AddObligationController extends FutureViewModel<dynamic> {
   saveObligation() async {
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState!.save();
+    }
+    if (obligation.amount <= 0 || obligation.amount == null) {
+      _errorMessageService.showToaster(
+        'error',
+        "Merci de saisir un montant",
+      );
+    }
+    if (obligation.date == null) {
+      _errorMessageService.showToaster(
+        'error',
+        "Merci de saisir En date du",
+      );
+    }
+    if (obligation.dateStartDisplay == null) {
+      _errorMessageService.showToaster(
+        'error',
+        "Merci de saisir une date limite de remboursement",
+      );
+    }
+    if (obligation.firstname == null ||
+        obligation.lastname == null ||
+        obligation.tel == null) {
+      _errorMessageService.showToaster(
+        'error',
+        "Merci de saisir un contact ",
+      );
+    }
+    if (obligation.firstname.length < 2) {
+      _errorMessageService.showToaster(
+        'error',
+        "Le prénom doit contenir au moins 2 caractères",
+      );
+    }
+    if (obligation.lastname.length < 2) {
+      _errorMessageService.showToaster(
+        'error',
+        "Le nom doit contenir au moins 2 caractères",
+      );
     }
 
     if (this.obligation.dateStart == null && this.obligation.type != 'amana') {
