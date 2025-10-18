@@ -61,21 +61,17 @@ class DashboardViewState extends State<DashboardView>
                       const SizedBox(height: 10),
 
                       // Mes comptes
-                      _buildSectionHeader("Mes Comptes", () {
-                        controller.goTo("onm");
-                      }),
+                      _buildSectionHeader("Mes Comptes", () {}),
                       const SizedBox(height: 10),
-                      // Instead of GridView.count
-                      // First row: Card 1 and Card 2
 
                       LayoutBuilder(
                         builder: (context, constraints) {
-                          // Total horizontal spacing between 2 cards
-                          double spacing = 12;
+                          const spacing = 12.0;
 
-                          // Calculate card width for 2 cards per row
-                          double cardWidth =
-                              (constraints.maxWidth - spacing) / 2;
+                          // Make width strictly less than maxWidth to avoid wrap line-breaks
+                          final cardWidth =
+                              (((constraints.maxWidth - spacing) / 2)
+                                  .floorToDouble());
 
                           return Wrap(
                             spacing: spacing,
@@ -90,19 +86,21 @@ class DashboardViewState extends State<DashboardView>
                                     'assets/images/Group-7.png',
                                     width: 40,
                                     height: 40,
-                                    color: Color.fromRGBO(220, 198, 169, 1),
+                                    color:
+                                        const Color.fromRGBO(220, 198, 169, 1),
                                   ),
                                   0,
                                   controller,
                                   'onm',
-                                  actionColor: Color.fromRGBO(220, 198, 169, 1),
+                                  actionColor:
+                                      const Color.fromRGBO(220, 198, 169, 1),
                                 ),
                               ),
                               SizedBox(
                                 width: cardWidth,
                                 child: _buildCard(
                                   'On me doit',
-                                  "Note et suis l'argent qu'on te dois ",
+                                  "Note et suis l'argent qu'on te dois ",
                                   Image.asset(
                                     'assets/images/Group-7.png',
                                     width: 34,
@@ -213,47 +211,62 @@ class DashboardViewState extends State<DashboardView>
                       // Mes épreuves
                       _buildSectionHeader(
                         "Épreuves",
-                        () {
-                          controller.goToDeuil();
-                        },
+                        () {},
                       ),
 
                       const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildCard(
-                                'JANAZA',
-                                "Etre informé par des Salat Janaza partagées par votre communauté.",
-                                Image.asset(
-                                  color: Color.fromRGBO(220, 198, 169, 1),
-                                  'assets/images/pray.png', // replace with your logo
-                                  width: 18,
-                                  height: 18,
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          const spacing = 12.0;
+
+                          // Make sure 2 * cardWidth + spacing < maxWidth on all DPRs
+                          final cardWidth =
+                              ((constraints.maxWidth - spacing) / 2)
+                                  .floorToDouble();
+
+                          return Wrap(
+                            spacing: spacing,
+                            runSpacing: spacing,
+                            children: [
+                              SizedBox(
+                                width: cardWidth,
+                                child: _buildCard(
+                                  'JANAZA',
+                                  "Être informé par des Salat Janaza partagées par votre communauté.",
+                                  Image.asset(
+                                    'assets/images/pray.png',
+                                    width: 18,
+                                    height: 18,
+                                    color:
+                                        const Color.fromRGBO(220, 198, 169, 1),
+                                  ),
+                                  0,
+                                  controller,
+                                  'salat',
+                                  actionColor:
+                                      const Color.fromRGBO(220, 198, 169, 1),
                                 ),
-                                0,
-                                controller,
-                                'salat',
-                                actionColor: Color.fromRGBO(220, 198, 169, 1)),
-                          ),
-                          const SizedBox(width: 12), // space between cards
-                          Expanded(
-                            child: _buildCard(
-                              'Cartes Virtuelles de circonstance',
-                              'Gérez vos cartes virtuelles de circonstance.',
-                              Image.asset(
-                                'assets/images/card-multiple.png', // replace with your logo
-                                width: 18,
-                                height: 18,
                               ),
-                              0,
-                              controller,
-                              'cartes',
-                              actionColor:
-                                  const Color.fromRGBO(143, 151, 121, 1),
-                            ),
-                          ),
-                        ],
+                              SizedBox(
+                                width: cardWidth,
+                                child: _buildCard(
+                                  'Cartes Virtuelles de circonstance',
+                                  'Gérez vos cartes virtuelles de circonstance.',
+                                  Image.asset(
+                                    'assets/images/card-multiple.png',
+                                    width: 18,
+                                    height: 18,
+                                  ),
+                                  0,
+                                  controller,
+                                  'cartes',
+                                  actionColor:
+                                      const Color.fromRGBO(143, 151, 121, 1),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       SizedBox(height: 20),
                       // Découvrez Muslim Connect
@@ -480,17 +493,6 @@ class DashboardViewState extends State<DashboardView>
                   ),
                 ),
               ),
-            GestureDetector(
-              onTap: onTap,
-              child: Text(
-                'Voir Tout',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
           ],
         ),
       ],

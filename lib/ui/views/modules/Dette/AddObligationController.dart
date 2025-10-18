@@ -10,6 +10,7 @@ import 'package:elh/repository/DetteRepository.dart';
 import 'package:elh/services/BaseApi/ApiResponse.dart';
 import 'package:elh/services/ErrorMessageService.dart';
 import 'package:elh/locator.dart';
+import 'package:elh/services/TrancheService.dart';
 import 'package:elh/services/UserInfosReactiveService.dart';
 import 'package:elh/ui/views/modules/Dette/ListPhoneContactView.dart';
 import 'package:elh/ui/views/modules/Relation/SelectContactView.dart';
@@ -38,6 +39,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
   TextEditingController addressTextController = TextEditingController();
   TextEditingController dateCreatedAtController = TextEditingController();
   TextEditingController dateStartController = TextEditingController();
+  TextEditingController remainingAmount = TextEditingController();
   ValueNotifier<bool> isSaving = ValueNotifier<bool>(false);
   UserInfos? userInfos;
   String currentUserfullname = "";
@@ -50,6 +52,8 @@ class AddObligationController extends FutureViewModel<dynamic> {
   bool toConfirm = false;
   TextEditingController noteController = TextEditingController();
   TextEditingController dateDueController = TextEditingController();
+  final TrancheService _trancheService = TrancheService();
+
   // Make sure obligation has currency field
   String currency = '€';
   ValueNotifier<bool> hasEmprunteur = ValueNotifier(false);
@@ -76,6 +80,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
           DateFormat('yyyy-MM-dd').format(obligation.date);
       dateCreatedAtController.text = obligation.dateDisplay ?? '';
       dateDueController.text = obligation.dateStartDisplay ?? '';
+      remainingAmount.text = obligation.remainingAmount.toString() ?? '';
 
       // ✅ Make sure form is visible
       this.tglePersonFormDetails();
@@ -202,6 +207,10 @@ class AddObligationController extends FutureViewModel<dynamic> {
   }
 
   saveObligation() async {
+    print("firstname ${obligation.firstname}");
+    print("note ${obligation.note}");
+    print("raison ${obligation.raison}");
+
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState!.save();
     }
@@ -210,38 +219,44 @@ class AddObligationController extends FutureViewModel<dynamic> {
         'error',
         "Merci de saisir un montant",
       );
+      return;
     }
     if (obligation.date == null) {
       _errorMessageService.showToaster(
         'error',
         "Merci de saisir En date du",
       );
+      return;
     }
     if (obligation.dateStartDisplay == null) {
       _errorMessageService.showToaster(
         'error',
         "Merci de saisir une date limite de remboursement",
       );
+      return;
     }
-    if (obligation.firstname == null ||
-        obligation.lastname == null ||
-        obligation.tel == null) {
+    if (obligation.firstname.length == 0 &&
+        obligation.lastname.length == 0 &&
+        obligation.tel.length == 0) {
       _errorMessageService.showToaster(
         'error',
         "Merci de saisir un contact ",
       );
+      return;
     }
     if (obligation.firstname.length < 2) {
       _errorMessageService.showToaster(
         'error',
         "Le prénom doit contenir au moins 2 caractères",
       );
+      return;
     }
     if (obligation.lastname.length < 2) {
       _errorMessageService.showToaster(
         'error',
         "Le nom doit contenir au moins 2 caractères",
       );
+      return;
     }
 
     if (this.obligation.dateStart == null && this.obligation.type != 'amana') {
@@ -262,7 +277,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
         'tel': obligation.tel,
         'firstname': obligation.firstname,
         'lastname': obligation.lastname,
-        'note': obligation.note,
+        'raison': obligation.note,
         'relatedUserId': obligation.relatedUserId,
         'fileUrl': obligation.fileUrl,
         'date': obligation.date?.toIso8601String(),

@@ -17,9 +17,7 @@ class _TrancheNotificationHandlerState
   void initState() {
     super.initState();
 
-    FirebaseMessaging.instance.getToken().then((token) {
-      print("🔥 FCM Token: $token");
-    });
+    FirebaseMessaging.instance.getToken().then((token) {});
     // 🔔 Écoute des notifications FCM en foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.data['view'] == 'tranche') {

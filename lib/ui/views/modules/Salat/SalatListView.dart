@@ -4,8 +4,11 @@ import 'package:elh/ui/shared/BBLoader.dart';
 import 'package:elh/ui/shared/text_styles.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/common/popupCard/HeroDialogRoute.dart';
+import 'package:elh/ui/views/modules/Mosque/MosqueView.dart';
 import 'package:elh/ui/views/modules/Salat/SalatCard.dart';
 import 'package:elh/ui/views/modules/Salat/SalatListController.dart';
+import 'package:elh/ui/views/modules/home/PageNavigationView.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
@@ -83,10 +86,40 @@ class SalatListViewState extends State<SalatListView> {
       widgets.add(Padding(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
         child: Center(
-            child: Text(
-          "Aucune Salât Al-Janaza annoncée. Pour recevoir les alertes de Salât al-Janaza d'une mosquée, ajoutez la mosquée en favoris",
-          textAlign: TextAlign.center,
-        )),
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 16,
+              ),
+              children: [
+                const TextSpan(
+                  text:
+                      "Aucune Salât Al-Janaza annoncée. Pour recevoir les alertes de Salât al-Janaza d'une mosquée, ",
+                ),
+                TextSpan(
+                  text: "ajoutez la mosquée en favoris",
+                  style: const TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      // Navigation or action when clicked
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MosqueView(),
+                        ),
+                      );
+                    },
+                ),
+              ],
+            ),
+          ),
+        ),
       ));
     } else {
       controller.salatsOfMosque.forEach((salat) {

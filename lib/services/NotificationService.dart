@@ -1,15 +1,22 @@
 import 'dart:convert';
 
+import 'package:elh/locator.dart';
 import 'package:elh/models/AppNotification.dart';
+import 'package:elh/services/AuthenticationService.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationService {
   final String baseUrl = 'https://test.muslim-connect.fr/elh-api';
+  final AuthenticationService _authenticationService =
+      locator<AuthenticationService>();
+  getUserToken() async {
+    String token = await _authenticationService.getUserToken();
+    return token;
+  }
 
   Future<List<AppNotification>> fetchNotifications() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('jwt_token');
+    String token = await this.getUserToken();
 
     final res = await http.get(
       Uri.parse('$baseUrl/notifs'),
@@ -21,6 +28,7 @@ class NotificationService {
 
     if (res.statusCode == 200) {
       final List data = jsonDecode(res.body);
+      print(data);
       // Cast each element to AppNotification
       return data.map((e) => AppNotification.fromJson(e)).toList();
     } else {
@@ -29,8 +37,7 @@ class NotificationService {
   }
 
   Future<bool> respondNotif(int notifId, String action) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('jwt_token');
+    String token = await this.getUserToken();
 
     final res = await http.post(
       Uri.parse('$baseUrl/notif/$notifId/respond'),

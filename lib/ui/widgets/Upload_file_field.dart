@@ -316,23 +316,39 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.file(
-                  _selectedFile!,
-                  height: 150,
-                  width: 250,
-                  fit: BoxFit.cover,
-                  frameBuilder:
-                      (context, child, frame, wasSynchronouslyLoaded) {
-                    if (frame == null) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return child;
-                  },
-                  errorBuilder: (context, error, stackTrace) => const Icon(
-                      Icons.broken_image,
-                      color: Colors.grey,
-                      size: 40),
-                ),
+                child: _selectedFile != null
+                    ? Container(
+                        width: double.infinity, // adapt width
+                        constraints: const BoxConstraints(
+                          maxHeight: 300, // limit height to avoid white screen
+                        ),
+                        child: Image.file(
+                          _selectedFile!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                            color: Colors.grey[300],
+                            child: const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                color: Colors.grey,
+                                size: 40,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        height: 200,
+                        color: Colors.grey[300],
+                        child: const Center(
+                          child: Icon(
+                            Icons.image,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                        ),
+                      ),
               ),
               Positioned(
                 top: 8,

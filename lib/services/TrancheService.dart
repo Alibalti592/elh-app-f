@@ -3,7 +3,6 @@ import 'package:elh/locator.dart';
 import 'package:elh/services/AuthenticationService.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:elh/models/Tranche.dart';
 
 class TrancheService {
@@ -82,6 +81,7 @@ class TrancheService {
     String? filePath, // <- pass a path to send a file
   }) async {
     String token = await this.getUserToken();
+    print(token);
     if (token == null) return null;
 
     // Common payload (without fileUrl; server will upload and set it)
@@ -91,6 +91,7 @@ class TrancheService {
       'amount': amount,
       'paidAt': paidAt,
     };
+    print(payload);
 
     // ---- Multipart path (with file) ----
     if (filePath != null) {
@@ -138,9 +139,10 @@ class TrancheService {
             body: jsonEncode(payload),
           )
           .timeout(const Duration(seconds: 10));
-
+      print(res.statusCode);
       if (res.statusCode == 200 || res.statusCode == 201) {
         final data = jsonDecode(res.body);
+        print("la data : ${data}");
         return Tranche.fromJson({
           'id': data['trancheId'],
           'amount': data['amount'] ?? amount,
@@ -150,7 +152,7 @@ class TrancheService {
         });
       }
     } catch (e) {
-      // print("Erreur réseau: $e");
+      print("Erreur réseau: $e");
     }
     return null;
   }

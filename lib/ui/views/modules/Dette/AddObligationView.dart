@@ -481,6 +481,8 @@
 //     );
 //   }
 // }
+import 'package:elh/models/Tranche.dart';
+import 'package:elh/services/TrancheService.dart';
 import 'package:elh/ui/shared/text_styles.dart';
 import 'package:elh/ui/views/common/BBottombar/nav_custom_painter.dart';
 import 'package:elh/ui/views/modules/Relation/SelectContactView.dart';
@@ -489,6 +491,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
     as picker;
+import 'package:image_picker/image_picker.dart';
 import 'package:stacked/stacked.dart';
 import 'package:elh/ui/shared/BBLoader.dart';
 import 'package:elh/ui/shared/Validators.dart';
@@ -512,8 +515,24 @@ class AddObligationView extends StatefulWidget {
 class AddObligationViewState extends State<AddObligationView> {
   final String type;
   final Obligation? obligation;
+  final TrancheService _trancheService = TrancheService();
 
   AddObligationViewState(this.type, {this.obligation});
+  List<Tranche> _tranches = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (obligation != null) {
+      _loadTranches();
+    }
+  }
+
+  Future<void> _loadTranches() async {
+    final tranches = await _trancheService.getTranches(obligation!.id!);
+    print(tranches[0].id);
+    setState(() => _tranches = tranches);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -656,6 +675,11 @@ class AddObligationViewState extends State<AddObligationView> {
                                 type: 'number'),
 
                             const SizedBox(height: 10),
+                            if (obligation?.remainingAmount != null)
+                              inputForm(controller, 'amount', "Montant restant",
+                                  type: 'number'),
+
+                            const SizedBox(height: 10),
 
                             // Currency Dropdown
                             DropdownButtonFormField<String>(
@@ -699,90 +723,328 @@ class AddObligationViewState extends State<AddObligationView> {
                                 textController: controller.noteController),
 
                             const SizedBox(height: 20),
+                            // Liste des tranches
 
-                            // Upload File Widget (optional)
-                            if (obligation?.fileUrl == null)
-                              UploadFileWidget(controller: controller)
-                            else
-                              FutureBuilder<String>(
-                                future: FirebaseStorage.instance
-                                    .refFromURL(obligation!.fileUrl!)
-                                    .getDownloadURL(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  } else if (snapshot.hasError) {
-                                    return const Text(
-                                        'Erreur lors du chargement du fichier.');
-                                  } else if (snapshot.hasData) {
-                                    final downloadUrl = snapshot.data!;
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 10.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Fichier actuel:',
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (obligation != null) ...[
+                                  const Text(
+                                    "Déjà rendu :",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                      color: Color.fromRGBO(55, 65, 81, 1),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  if (_tranches.isEmpty)
+                                    const Text(
+                                      "Aucune tranche pour le moment.",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 14,
+                                        color: Color.fromRGBO(55, 65, 81, 1),
+                                      ),
+                                    )
+                                  else
+                                    Column(
+                                      children: _tranches
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        final i = entry.key + 1;
+                                        final tranche = entry.value;
+                                        return Card(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
+                                          child: ListTile(
+                                            title: Text("Tranche $i"),
+                                            subtitle: Text(
+                                              "${tranche.amount} ${obligation?.currency} le ${tranche.paidAt.toString()}",
+                                            ),
+                                            trailing: tranche.fileUrl != null
+                                                ? ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          primaryColor,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                    ),
+                                                    onPressed: () async {
+                                                      if (tranche.fileUrl !=
+                                                              null &&
+                                                          tranche.fileUrl!
+                                                              .isNotEmpty) {
+                                                        try {
+                                                          final ref =
+                                                              FirebaseStorage
+                                                                  .instance
+                                                                  .refFromURL(
+                                                                      tranche
+                                                                          .fileUrl!);
+                                                          final downloadUrl =
+                                                              await ref
+                                                                  .getDownloadURL();
+
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (context) =>
+                                                                    Dialog(
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              12)),
+                                                              child: SizedBox(
+                                                                width: 300,
+                                                                height: 420,
+                                                                child: Column(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child: Image
+                                                                          .network(
+                                                                        downloadUrl,
+                                                                        fit: BoxFit
+                                                                            .contain,
+                                                                        loadingBuilder: (context, child, loadingProgress) => loadingProgress ==
+                                                                                null
+                                                                            ? child
+                                                                            : const Center(child: CircularProgressIndicator()),
+                                                                        errorBuilder: (context,
+                                                                                error,
+                                                                                stackTrace) =>
+                                                                            const Center(child: Text("Impossible de charger l'image")),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            12),
+                                                                    Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      children: [
+                                                                        // Modifier button
+                                                                        TextButton
+                                                                            .icon(
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.pop(context); // Close current dialog
+                                                                            _onModifyProof(context,
+                                                                                tranche); // Handle modification
+                                                                          },
+                                                                          label:
+                                                                              const Text(
+                                                                            "Modifier",
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: Colors.black87,
+                                                                              fontWeight: FontWeight.w600,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Fermer button
+                                                                        TextButton(
+                                                                          onPressed: () =>
+                                                                              Navigator.pop(context),
+                                                                          child:
+                                                                              const Text(
+                                                                            "Fermer",
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: Colors.black87,
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Delete icon
+                                                                        Positioned(
+                                                                            top:
+                                                                                0,
+                                                                            right:
+                                                                                0,
+                                                                            child: TextButton(
+                                                                                child: Text("Supprimer"),
+                                                                                onPressed: () {
+                                                                                  Navigator.pop(context); // close current modify dialog
+                                                                                  // show confirmation
+                                                                                  showDialog(
+                                                                                    context: context,
+                                                                                    builder: (ctx) => AlertDialog(
+                                                                                      title: const Text("Supprimer la preuve"),
+                                                                                      content: const Text("Voulez-vous vraiment supprimer cette preuve ?"),
+                                                                                      actions: [
+                                                                                        TextButton(
+                                                                                          onPressed: () => Navigator.pop(ctx),
+                                                                                          child: const Text("Annuler"),
+                                                                                        ),
+                                                                                        TextButton(
+                                                                                          onPressed: () async {
+                                                                                            Navigator.pop(ctx); // close confirmation dialog
+                                                                                            // Call your delete method
+                                                                                            // await widget.controller.deleteTrancheProof(tranche.id);
+                                                                                            ScaffoldMessenger.of(context).showSnackBar(
+                                                                                              const SnackBar(content: Text("Preuve supprimée.")),
+                                                                                            );
+                                                                                          },
+                                                                                          child: const Text("Supprimer", style: TextStyle(color: Colors.red)),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  );
+                                                                                })),
+                                                                      ],
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        } catch (e) {
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            const SnackBar(
+                                                              content: Text(
+                                                                  "Impossible de charger l'image"),
+                                                            ),
+                                                          );
+                                                        }
+                                                      } else {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          const SnackBar(
+                                                            content: Text(
+                                                                "Pas de preuve disponible"),
+                                                          ),
+                                                        );
+                                                      }
+                                                    },
+                                                    child: const Text(
+                                                      "Voir preuve",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                        fontFamily: 'inter',
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : const SizedBox.shrink(),
                                           ),
-                                          const SizedBox(height: 5),
-                                          Stack(
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                child: Image.network(
-                                                  downloadUrl,
-                                                  height: 200,
-                                                  width: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder: (context, error,
-                                                          stackTrace) =>
-                                                      Container(
-                                                    height: 100,
-                                                    color: Colors.grey[300],
-                                                    child: const Center(
-                                                        child: Icon(Icons
-                                                            .broken_image)),
-                                                  ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  const SizedBox(height: 20),
+
+                                  // Upload / Display proof image
+                                  if (obligation?.fileUrl == null)
+                                    UploadFileWidget(controller: controller)
+                                  else
+                                    FutureBuilder<String>(
+                                      future: FirebaseStorage.instance
+                                          .refFromURL(obligation!.fileUrl!)
+                                          .getDownloadURL(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        } else if (snapshot.hasError) {
+                                          return const Text(
+                                              'Erreur lors du chargement du fichier.');
+                                        } else if (snapshot.hasData) {
+                                          final downloadUrl = snapshot.data!;
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Fichier actuel:',
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.grey),
                                                 ),
-                                              ),
-                                              Positioned(
-                                                top: 8,
-                                                right: 8,
-                                                child: InkWell(
-                                                  onTap: _deleteFile,
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.black54,
+                                                const SizedBox(height: 5),
+                                                Stack(
+                                                  children: [
+                                                    ClipRRect(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              20),
+                                                              6),
+                                                      child: Image.network(
+                                                        downloadUrl,
+                                                        height: 200,
+                                                        width: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder: (context,
+                                                                error,
+                                                                stackTrace) =>
+                                                            Container(
+                                                          height: 100,
+                                                          color:
+                                                              Colors.grey[300],
+                                                          child: const Center(
+                                                              child: Icon(Icons
+                                                                  .broken_image)),
+                                                        ),
+                                                      ),
                                                     ),
-                                                    padding:
-                                                        const EdgeInsets.all(6),
-                                                    child: const Icon(
-                                                        Icons.delete,
-                                                        color: Colors.white,
-                                                        size: 20),
-                                                  ),
+                                                    Positioned(
+                                                      top: 8,
+                                                      right: 8,
+                                                      child: InkWell(
+                                                        onTap: _deleteFile,
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color:
+                                                                Colors.black54,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                          ),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(6),
+                                                          child: const Icon(
+                                                            Icons.delete,
+                                                            color: Colors.white,
+                                                            size: 20,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  } else {
-                                    return const SizedBox.shrink();
-                                  }
-                                },
-                              ),
+                                              ],
+                                            ),
+                                          );
+                                        } else {
+                                          return const SizedBox.shrink();
+                                        }
+                                      },
+                                    ),
+                                ],
+                              ],
+                            ),
 
                             const SizedBox(height: 20),
 
@@ -967,7 +1229,6 @@ class AddObligationViewState extends State<AddObligationView> {
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             validator: (value) {
-              if (key == 'note') return null; // optionnel
               if (value == null || value.isEmpty) return 'Champ obligatoire';
 
               if (type == 'string') return ValidatorHelpers.validateName(value);
@@ -1081,5 +1342,59 @@ class AddObligationViewState extends State<AddObligationView> {
     setState(() {
       obligation!.fileUrl = null;
     });
+  }
+
+  void _onModifyProof(BuildContext context, Tranche tranche) async {
+    final ImagePicker picker = ImagePicker();
+
+    Future<void> _pickAndUploadFile(ImageSource source) async {
+      final pickedFile = await picker.pickImage(
+        source: source,
+        maxWidth: 800,
+        imageQuality: 70,
+      );
+
+      if (pickedFile == null) return;
+
+      // Save or send new file path
+      print("New file path: ${pickedFile.path}");
+
+      // Call your upload API or update your controller
+      // await widget.controller.updateTrancheProof(tranche.id, pickedFile.path);
+
+      // Close the dialog after success
+      Navigator.pop(context);
+
+      // Optional: show feedback
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Preuve modifiée avec succès.")),
+      );
+    }
+
+    showModalBottomSheet(
+      context: context,
+      builder: (sheetCtx) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text("Prendre une photo"),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _pickAndUploadFile(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text("Choisir depuis la galerie"),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _pickAndUploadFile(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -558,7 +558,7 @@ class _ObligationViewState extends State<ObligationView> {
             ),
             buildLabeledField("Montant restant",
                 "${obligation.remainingAmount}${obligation.currency}"),
-            buildLabeledField("Note", obligation.raison),
+            buildLabeledField("Note", obligation.note),
 
             const SizedBox(height: 16),
 

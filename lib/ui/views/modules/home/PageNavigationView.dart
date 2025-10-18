@@ -95,356 +95,399 @@ class PageNavigationViewState extends State<PageNavigationView>
                     ),
 
                   if (pageKey == 'pray')
-                    LayoutBuilder(builder: (context, constraints) {
-                      double screenWidth = constraints.maxWidth;
-                      double spacing = 12;
-                      double cardWidth =
-                          (screenWidth - spacing) / 2; // 2 per row
-                      return Wrap(
-                        spacing: 12, // horizontal spacing
-                        runSpacing: 12, // vertical spacing
-                        children: [
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        const spacing = 12.0;
+
+                        // Ensure 2 * cardWidth + spacing < maxWidth to avoid Wrap line breaks
+                        final cardWidth = ((constraints.maxWidth - spacing) / 2)
+                            .floorToDouble();
+
+                        return Wrap(
+                          spacing: spacing, // horizontal spacing
+                          runSpacing: spacing, // vertical spacing
+                          children: [
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
                                 'Qiblah',
                                 Icon(
                                   Icons.explore_outlined,
                                   size: 18,
-                                  color: Color.fromRGBO(220, 198, 169, 1),
+                                  color: const Color.fromRGBO(220, 198, 169, 1),
                                 ),
                                 0,
                                 controller,
                                 'qibla',
-                                actionColor: Color.fromRGBO(220, 198, 169, 1)),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Horaires de prière',
-                              Icon(
-                                ElhIcons.pray,
-                                size: 18,
-                                color: const Color.fromRGBO(143, 151, 121, 1),
+                                actionColor:
+                                    const Color.fromRGBO(220, 198, 169, 1),
                               ),
-                              0,
-                              controller,
-                              'pray',
-                              actionColor:
-                                  const Color.fromRGBO(143, 151, 121, 1),
                             ),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Mosquées',
-                              Icon(
-                                Icons.mosque_outlined,
-                                size: 18,
-                                color: Color.fromRGBO(220, 198, 169, 1),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Horaires de prière',
+                                Icon(
+                                  ElhIcons.pray,
+                                  size: 18,
+                                  color: const Color.fromRGBO(143, 151, 121, 1),
+                                ),
+                                0,
+                                controller,
+                                'pray',
+                                actionColor:
+                                    const Color.fromRGBO(143, 151, 121, 1),
                               ),
-                              0,
-                              controller,
-                              'mosque',
-                              actionColor: Color.fromRGBO(220, 198, 169, 1),
                             ),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Apprendre la prière',
-                              SvgPicture.asset(
-                                'assets/icon/muslim-read.svg',
-                                width: 18,
-                                height: 18,
-                                color: const Color.fromRGBO(143, 151, 121, 1),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Mosquées',
+                                Icon(
+                                  Icons.mosque_outlined,
+                                  size: 18,
+                                  color: const Color.fromRGBO(220, 198, 169, 1),
+                                ),
+                                0,
+                                controller,
+                                'mosque',
+                                actionColor:
+                                    const Color.fromRGBO(220, 198, 169, 1),
                               ),
-                              0,
-                              controller,
-                              'learn_pray',
-                              actionColor:
-                                  const Color.fromRGBO(143, 151, 121, 1),
                             ),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Apprendre la prière',
+                                SvgPicture.asset(
+                                  'assets/icon/muslim-read.svg',
+                                  width: 18,
+                                  height: 18,
+                                  color: const Color.fromRGBO(143, 151, 121, 1),
+                                ),
+                                0,
+                                controller,
+                                'learn_pray',
+                                actionColor:
+                                    const Color.fromRGBO(143, 151, 121, 1),
+                              ),
+                            ),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
                                 'Apprendre la Salât Al-Janaza',
                                 SvgPicture.asset(
                                   'assets/icon/man-hands.svg',
                                   width: 18,
                                   height: 18,
-                                  color: Color.fromRGBO(220, 198, 169, 1),
+                                  color: const Color.fromRGBO(220, 198, 169, 1),
                                 ),
                                 0,
                                 controller,
                                 'learn_salat',
-                                actionColor: Color.fromRGBO(220, 198, 169, 1)),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Sourate facile à apprendre',
-                              Image.asset(
-                                'assets/images/clock.png',
-                                width: 18,
-                                height: 18,
+                                actionColor:
+                                    const Color.fromRGBO(220, 198, 169, 1),
                               ),
-                              0,
-                              controller,
-                              'learn_sourat',
-                              actionColor:
-                                  const Color.fromRGBO(143, 151, 121, 1),
                             ),
-                          ),
-                        ],
-                      );
-                    }),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Sourate facile à apprendre',
+                                Image.asset(
+                                  'assets/images/clock.png',
+                                  width: 18,
+                                  height: 18,
+                                ),
+                                0,
+                                controller,
+                                'learn_sourat',
+                                actionColor:
+                                    const Color.fromRGBO(143, 151, 121, 1),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
 
                   if (pageKey == 'don')
-                    LayoutBuilder(builder: (context, constraints) {
-                      double screenWidth = constraints.maxWidth;
-                      double spacing = 12;
-                      double cardWidth =
-                          (screenWidth - spacing) / 2; // 2 per row
-                      return Wrap(
-                        spacing: 12, // horizontal spacing
-                        runSpacing: 12, // vertical spacing
-                        children: [
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        const spacing = 12.0;
+                        const cardOuterHMargin =
+                            0.0; // set if your _buildCard adds external horizontal margin
+
+                        // Ensure 2 * cardWidth + spacing (+ margins) < maxWidth across all DPRs
+                        final cardWidth = ((constraints.maxWidth -
+                                    spacing -
+                                    2 * cardOuterHMargin) /
+                                2)
+                            .floorToDouble();
+
+                        return Wrap(
+                          spacing: spacing,
+                          runSpacing: spacing,
+                          children: [
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
                                 'Parrainer un orphelin',
                                 Icon(
                                   ElhIcons.don3,
                                   size: 18,
-                                  color: Color.fromRGBO(220, 198, 169, 1),
+                                  color: const Color.fromRGBO(220, 198, 169, 1),
                                 ),
                                 0,
                                 controller,
                                 'parrain',
-                                actionColor: Color.fromRGBO(220, 198, 169, 1)),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Construire un puits ',
-                              Icon(
-                                ElhIcons.don3,
-                                size: 18,
-                                color: Color.fromRGBO(143, 151, 121, 1),
+                                actionColor:
+                                    const Color.fromRGBO(220, 198, 169, 1),
                               ),
-                              0,
-                              controller,
-                              'puit',
-                              actionColor:
-                                  const Color.fromRGBO(143, 151, 121, 1),
                             ),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                                'Offrir un Coran',
-                                Icon(ElhIcons.don3,
-                                    size: 18,
-                                    color: Color.fromRGBO(220, 198, 169, 1)),
-                                0,
-                                controller,
-                                'offerCoran',
-                                actionColor: Color.fromRGBO(220, 198, 169, 1)),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Participer à la construction d’une mosquée ',
-                              Icon(
-                                ElhIcons.don3,
-                                size: 18,
-                                color: Color.fromRGBO(143, 151, 121, 1),
-                              ),
-                              0,
-                              controller,
-                              'buildMosque',
-                              actionColor:
-                                  const Color.fromRGBO(143, 151, 121, 1),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                                ' Omra / Hajj par procuration',
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Construire un puits ',
                                 Icon(
                                   ElhIcons.don3,
                                   size: 18,
-                                  color: Color.fromRGBO(220, 198, 169, 1),
+                                  color: const Color.fromRGBO(143, 151, 121, 1),
+                                ),
+                                0,
+                                controller,
+                                'puit',
+                                actionColor:
+                                    const Color.fromRGBO(143, 151, 121, 1),
+                              ),
+                            ),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Offrir un Coran',
+                                Icon(
+                                  ElhIcons.don3,
+                                  size: 18,
+                                  color: const Color.fromRGBO(220, 198, 169, 1),
+                                ),
+                                0,
+                                controller,
+                                'offerCoran',
+                                actionColor:
+                                    const Color.fromRGBO(220, 198, 169, 1),
+                              ),
+                            ),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Participer à la construction d’une mosquée ',
+                                Icon(
+                                  ElhIcons.don3,
+                                  size: 18,
+                                  color: const Color.fromRGBO(143, 151, 121, 1),
+                                ),
+                                0,
+                                controller,
+                                'buildMosque',
+                                actionColor:
+                                    const Color.fromRGBO(143, 151, 121, 1),
+                              ),
+                            ),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Omra / Hajj par procuration',
+                                Icon(
+                                  ElhIcons.don3,
+                                  size: 18,
+                                  color: const Color.fromRGBO(220, 198, 169, 1),
                                 ),
                                 0,
                                 controller,
                                 'hajiProcur',
-                                actionColor: Color.fromRGBO(220, 198, 169, 1)),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Espace d’entraide',
-                              Icon(
-                                ElhIcons.don3,
-                                size: 18,
-                                color: Color.fromRGBO(143, 151, 121, 1),
+                                actionColor:
+                                    const Color.fromRGBO(220, 198, 169, 1),
                               ),
-                              0,
-                              controller,
-                              'entraide',
-                              actionColor:
-                                  const Color.fromRGBO(143, 151, 121, 1),
                             ),
-                          ),
-                        ],
-                      );
-                    }),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Espace d’entraide',
+                                Icon(
+                                  ElhIcons.don3,
+                                  size: 18,
+                                  color: const Color.fromRGBO(143, 151, 121, 1),
+                                ),
+                                0,
+                                controller,
+                                'entraide',
+                                actionColor:
+                                    const Color.fromRGBO(143, 151, 121, 1),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
 
                   if (pageKey == 'dette')
-                    LayoutBuilder(builder: (context, constraints) {
-                      double screenWidth = constraints.maxWidth;
-                      double spacing = 12;
-                      double cardWidth =
-                          (screenWidth - spacing) / 2; // 2 per row
-                      return Wrap(
-                        spacing: 12, // horizontal spacing
-                        runSpacing: 12, // vertical spacing
-                        children: [
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        const spacing = 12.0;
+
+                        // If _buildCard adds external horizontal margin (e.g., Container(margin: EdgeInsets.symmetric(horizontal: 8))),
+                        // set this to that value (e.g., 😎. Otherwise leave 0.
+                        const cardOuterHMargin = 0.0;
+
+                        // Ensure 2 * cardWidth + spacing + external margins < maxWidth on all DPRs
+                        final cardWidth = ((constraints.maxWidth -
+                                    spacing -
+                                    2 * cardOuterHMargin) /
+                                2)
+                            .floorToDouble();
+
+                        return Wrap(
+                          spacing: spacing,
+                          runSpacing: spacing,
+                          children: [
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
                                 'Je dois',
                                 Image.asset(
                                   'assets/images/Group-7.png',
                                   width: 40,
                                   height: 40,
-                                  color: Color.fromRGBO(220, 198, 169, 1),
+                                  color: const Color.fromRGBO(220, 198, 169, 1),
                                 ),
                                 0,
                                 controller,
                                 'onm',
-                                actionColor: Color.fromRGBO(220, 198, 169, 1)),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'On me doit',
-                              Image.asset(
-                                'assets/images/Group-7.png',
-                                width: 34,
-                                height: 34,
-                                color: const Color.fromRGBO(143, 151, 121, 1),
+                                actionColor:
+                                    const Color.fromRGBO(220, 198, 169, 1),
                               ),
-                              0,
-                              controller,
-                              'jed',
-                              actionColor:
-                                  const Color.fromRGBO(143, 151, 121, 1),
                             ),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Mes Amanas',
-                              Image.asset(
-                                'assets/images/Group-7.png',
-                                width: 34,
-                                height: 34,
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'On me doit',
+                                Image.asset(
+                                  'assets/images/Group-7.png',
+                                  width: 34,
+                                  height: 34,
+                                  color: const Color.fromRGBO(143, 151, 121, 1),
+                                ),
+                                0,
+                                controller,
+                                'jed',
+                                actionColor:
+                                    const Color.fromRGBO(143, 151, 121, 1),
                               ),
-                              0,
-                              controller,
-                              'amana',
                             ),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Mon Testament',
-                              Image.asset(
-                                'assets/images/document-text.png',
-                                width: 34,
-                                height: 34,
-                                color: const Color.fromRGBO(143, 151, 121, 1),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Mes Amanas',
+                                Image.asset(
+                                  'assets/images/Group-7.png',
+                                  width: 34,
+                                  height: 34,
+                                ),
+                                0,
+                                controller,
+                                'amana',
                               ),
-                              0,
-                              controller,
-                              'testament',
-                              actionColor:
-                                  const Color.fromRGBO(143, 151, 121, 1),
                             ),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Testaments partagés avec moi',
-                              Image.asset(
-                                'assets/images/document-attach.png',
-                                width: 18,
-                                height: 18,
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Mon Testament',
+                                Image.asset(
+                                  'assets/images/document-text.png',
+                                  width: 34,
+                                  height: 34,
+                                  color: const Color.fromRGBO(143, 151, 121, 1),
+                                ),
+                                0,
+                                controller,
+                                'testament',
+                                actionColor:
+                                    const Color.fromRGBO(143, 151, 121, 1),
                               ),
-                              0,
-                              controller,
-                              'sharedTestamentWithMe',
                             ),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            child: _buildCard(
-                              'Mes jours de jeûne à rattraper',
-                              Image.asset(
-                                'assets/images/clock.png',
-                                width: 18,
-                                height: 18,
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Testaments partagés avec moi',
+                                Image.asset(
+                                  'assets/images/document-attach.png',
+                                  width: 18,
+                                  height: 18,
+                                ),
+                                0,
+                                controller,
+                                'sharedTestamentWithMe',
                               ),
-                              0,
-                              controller,
-                              'jeunRamadan',
-                              actionColor:
-                                  const Color.fromRGBO(143, 151, 121, 1),
                             ),
-                          ),
-                        ],
-                      );
-                    }),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                'Mes jours de jeûne à rattraper',
+                                Image.asset(
+                                  'assets/images/clock.png',
+                                  width: 18,
+                                  height: 18,
+                                ),
+                                0,
+                                controller,
+                                'jeunRamadan',
+                                actionColor:
+                                    const Color.fromRGBO(143, 151, 121, 1),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
 
                   if (pageKey == 'deuil')
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        double screenWidth = constraints.maxWidth;
-                        double spacing = 12;
-                        double cardWidth =
-                            (screenWidth - spacing) / 2; // 2 per row
+                        const spacing = 12.0;
+                        // Ensure 2 * cardWidth + spacing < maxWidth across all DPRs
+                        final cardWidth = ((constraints.maxWidth - spacing) / 2)
+                            .floorToDouble();
+
                         return Wrap(
-                          spacing: 12, // horizontal spacing
-                          runSpacing: 12, // vertical spacing
+                          spacing: spacing, // horizontal spacing
+                          runSpacing: spacing, // vertical spacing
                           children: [
                             SizedBox(
-                              width: 160,
+                              width: cardWidth,
                               child: _buildCard(
-                                  'Créer des cartes virtuelles de circonstance',
-                                  Icon(
-                                    Icons.app_registration_outlined,
-                                    color: Color.fromRGBO(220, 198, 169, 1),
-                                  ),
-                                  0,
-                                  controller,
-                                  'cartes',
-                                  actionColor:
-                                      Color.fromRGBO(220, 198, 169, 1)),
+                                'Créer des cartes virtuelles de circonstance',
+                                const Icon(
+                                  Icons.app_registration_outlined,
+                                  size: 18,
+                                  color: Color.fromRGBO(220, 198, 169, 1),
+                                ),
+                                0,
+                                controller,
+                                'cartes',
+                                actionColor:
+                                    const Color.fromRGBO(220, 198, 169, 1),
+                              ),
                             ),
                             SizedBox(
-                              width: 160,
+                              width: cardWidth,
                               child: _buildCard(
                                 'Publications des Salât Al-Janaza',
-                                Image(
-                                    image: AssetImage(
-                                        "assets/icon/salat-icon.png"),
-                                    color: Color.fromRGBO(143, 151, 121, 1),
-                                    height: 18,
-                                    width: 18),
+                                const Image(
+                                  image:
+                                      AssetImage("assets/icon/salat-icon.png"),
+                                  color: Color.fromRGBO(143, 151, 121, 1),
+                                  height: 18,
+                                  width: 18,
+                                ),
                                 0,
                                 controller,
                                 'salat',
@@ -453,50 +496,55 @@ class PageNavigationViewState extends State<PageNavigationView>
                               ),
                             ),
                             SizedBox(
-                              width: 160,
+                              width: cardWidth,
                               child: _buildCard(
-                                  'Formalités administratives',
-                                  Icon(Icons.text_snippet_outlined,
-                                      size: 18,
-                                      color: Color.fromRGBO(220, 198, 169, 1)),
-                                  0,
-                                  controller,
-                                  'todo',
-                                  actionColor:
-                                      Color.fromRGBO(220, 198, 169, 1)),
+                                'Formalités administratives',
+                                const Icon(
+                                  Icons.text_snippet_outlined,
+                                  size: 18,
+                                  color: Color.fromRGBO(220, 198, 169, 1),
+                                ),
+                                0,
+                                controller,
+                                'todo',
+                                actionColor:
+                                    const Color.fromRGBO(220, 198, 169, 1),
+                              ),
                             ),
                             SizedBox(
-                              width: 160,
+                              width: cardWidth,
                               child: _buildCard(
                                 'Calcul de la période de deuil',
-                                Icon(Icons.event_repeat_outlined,
-                                    size: 18,
-                                    color: Color.fromRGBO(143, 151, 121, 1)),
+                                const Icon(
+                                  Icons.event_repeat_outlined,
+                                  size: 18,
+                                  color: Color.fromRGBO(143, 151, 121, 1),
+                                ),
                                 0,
                                 controller,
                                 'periode',
                                 actionColor:
-                                    const Color.fromRGBO(143, 151, 121, 1),
+                                    const Color.fromRGBO(143, 151, 1, 1),
                               ),
                             ),
                             SizedBox(
-                              width: 160,
-                              child: _buildCard(
-                                  'Bid’ah / Sunnah',
-                                  Icon(MdiIcons.checkDecagramOutline,
-                                      size: 18,
-                                      color: Color.fromRGBO(220, 198, 169, 1)),
-                                  0,
-                                  controller,
-                                  'bidha',
-                                  actionColor:
-                                      Color.fromRGBO(220, 198, 169, 1)),
-                            ),
+                                width: cardWidth,
+                                child: _buildCard(
+                                    'Bid’ah / Sunnah',
+                                    Icon(MdiIcons.checkDecagramOutline,
+                                        size: 18,
+                                        color:
+                                            Color.fromRGBO(220, 198, 169, 1)),
+                                    0,
+                                    controller,
+                                    'bidha',
+                                    actionColor:
+                                        Color.fromRGBO(220, 198, 169, 1))),
                             SizedBox(
-                              width: 160,
+                              width: cardWidth,
                               child: _buildCard(
                                 'Invocations Doua',
-                                Image(
+                                const Image(
                                   image:
                                       AssetImage("assets/icon/pray-hands.png"),
                                   height: 18,
