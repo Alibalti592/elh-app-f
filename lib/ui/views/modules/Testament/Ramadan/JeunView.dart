@@ -1,5 +1,3 @@
-import 'package:elh/models/Testament.dart';
-import 'package:elh/models/userInfos.dart';
 import 'package:elh/ui/shared/BBLoader.dart';
 import 'package:elh/ui/shared/text_styles.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
@@ -153,7 +151,7 @@ class JeunViewState extends State<JeunView> {
 
     TextInputType keyboardType = TextInputType.multiline;
     List<TextInputFormatter>? inputFormatters = [];
-    dynamic? validator;
+    dynamic validator;
 
     if (type == "string") {
       // validator = ValidatorHelpers.validateName;
@@ -229,7 +227,7 @@ class JeunViewState extends State<JeunView> {
     }
     TextInputType keyboardType = TextInputType.multiline;
     List<TextInputFormatter>? inputFormatters = [];
-    dynamic? validator;
+    dynamic validator;
 
     if (type == "string") {
       // validator = ValidatorHelpers.validateName;

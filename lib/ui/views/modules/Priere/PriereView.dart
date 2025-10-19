@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
-import 'package:elh/ui/views/modules/Qiblah/QiblahView.dart';
 
 class PriereView extends StatefulWidget {
   @override

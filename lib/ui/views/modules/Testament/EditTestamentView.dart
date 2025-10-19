@@ -1,14 +1,12 @@
 import 'package:elh/models/Testament.dart';
 import 'package:elh/models/userInfos.dart';
 import 'package:elh/ui/shared/BBLoader.dart';
-import 'package:elh/ui/shared/Validators.dart';
 import 'package:elh/ui/shared/text_styles.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/modules/Testament/EditTestamentController.dart';
 import 'package:flutter/material.dart';
 import 'package:elh/common/theme.dart';
 import 'package:flutter/services.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
 
 class EditTestamentView extends StatefulWidget {
@@ -149,20 +147,19 @@ class EditTestamentViewState extends State<EditTestamentView> {
       return Container();
     }
     return Center(
-      child: UIHelper.h1(
-          "Testament de : ${userInfos.firstname} ${userInfos.lastname}"),
+      child: UIHelper.h1("Moi, ${userInfos.firstname} ${userInfos.lastname}"),
     );
   }
 
   Widget inputForm(EditTestamentController controller, key, label,
       {maxLines = 1, maxLength = 25, type = 'string'}) {
-    String initValue = controller.testament!.get(key).toString();
+    String initValue = controller.testament.get(key).toString();
     if (initValue == "null") {
       initValue = "";
     }
     TextInputType keyboardType = TextInputType.multiline;
     List<TextInputFormatter>? inputFormatters = [];
-    dynamic? validator;
+    dynamic validator;
 
     if (type == "string") {
       // validator = ValidatorHelpers.validateName;
@@ -199,7 +196,7 @@ class EditTestamentViewState extends State<EditTestamentView> {
             inputFormatters: inputFormatters,
             decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelStyle: TextStyle(fontSize: 14, color: fontGreyLight),
+                labelStyle: TextStyle(fontSize: 17, color: fontGreyLight),
                 floatingLabelStyle: TextStyle(color: fontGreyDark),
                 filled: true,
                 fillColor: white,

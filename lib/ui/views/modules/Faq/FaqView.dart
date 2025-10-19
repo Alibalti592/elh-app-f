@@ -1,6 +1,5 @@
 import 'package:elh/models/Faq.dart';
 import 'package:elh/ui/shared/BBLoader.dart';
-import 'package:elh/ui/shared/text_styles.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/modules/Faq/FaqController.dart';
 import 'package:flutter/material.dart';

@@ -1,9 +1,6 @@
 import 'package:elh/locator.dart';
 import 'package:elh/models/BBLocation.dart';
 import 'package:elh/services/ErrorMessageService.dart';
-import 'package:elh/services/UserInfosReactiveService.dart';
-import 'package:elh/services/dateService.dart';
-import 'package:observable_ish/observable_ish.dart';
 import 'package:stacked/stacked.dart';
 
 class LocationStore with ListenableServiceMixin {
@@ -17,5 +14,4 @@ class LocationStore with ListenableServiceMixin {
   setLocation(location) {
     selectedLocation = location;
   }
-
 }

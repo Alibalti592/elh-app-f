@@ -1,14 +1,10 @@
 import 'package:elh/ui/views/modules/Faq/QsnView.dart';
-import 'package:elh/ui/views/modules/Pompe/AddPompeView.dart';
-import 'package:elh/ui/views/modules/Pompe/MyPompeView.dart';
-import 'package:elh/ui/views/modules/Pompe/PompeView.dart';
 import 'package:elh/ui/views/modules/Relation/RelationView.dart';
 import 'package:flutter/material.dart';
 import 'package:elh/common/theme.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/layout/drawerModel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -134,8 +130,8 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                     style: TextStyle(color: primaryColor, fontSize: 12)),
               ),
               onTap: () {
-                Uri _url =
-                    Uri.parse('https://test.muslim-connect.fr/mentions-legales');
+                Uri _url = Uri.parse(
+                    'https://test.muslim-connect.fr/mentions-legales');
                 launchUrl(_url);
               },
             ),

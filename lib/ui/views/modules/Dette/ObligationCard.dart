@@ -266,7 +266,6 @@ import 'package:elh/models/Obligation.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/common/popupCard/CustomRectTween.dart';
 import 'package:elh/ui/views/modules/Dette/ObligationCardController.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
 
@@ -353,8 +352,7 @@ class ObligationCardState extends State<ObligationCard> {
                                     "${obligation.remainingAmount} ${obligation.currency}",
                                     title: "Montant restant"),
                                 UIHelper.verticalSpace(7),
-                                if (obligation.note != null &&
-                                    obligation.note!.isNotEmpty)
+                                if (obligation.note.isNotEmpty)
                                   _item(
                                     MdiIcons.noteOutline,
                                     obligation.note,

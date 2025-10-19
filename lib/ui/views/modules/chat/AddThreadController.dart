@@ -34,7 +34,7 @@ class AddThreadController extends FutureViewModel<dynamic> {
   bool hasSearch = false;
 
   AddThreadController(thread) {
-    if(thread != null) {
+    if (thread != null) {
       this.thread = thread;
       this.threadType = thread.type;
       this.title = 'Ajouter des participants';
@@ -50,11 +50,11 @@ class AddThreadController extends FutureViewModel<dynamic> {
   Future<dynamic> futureToRun() => loadOptions();
 
   Future loadOptions() async {
-    this.isLoading  = true;
+    this.isLoading = true;
     this.hasSearch = false;
     notifyListeners();
     ApiResponse apiResponse = await _chatRepository.getAddThreadOptions();
-    if(apiResponse.status == 200) {
+    if (apiResponse.status == 200) {
       var decodeData = json.decode(apiResponse.data);
       this.threadTypeChoices = decodeData['threadTypeChoices'];
       this.infoSelection = decodeData['infoSelection'];
@@ -66,15 +66,16 @@ class AddThreadController extends FutureViewModel<dynamic> {
   }
 
   loadUsers() async {
-    if(this.page == 1 ) {
-      this.userListLoading  = true;
+    if (this.page == 1) {
+      this.userListLoading = true;
     }
     this.hasSearch = false;
     notifyListeners();
-    ApiResponse apiResponse = await _chatRepository.loadUsersToAddOnThread(30, this.page, this.thread, this.searchTerm);
-    if(apiResponse.status == 200) {
+    ApiResponse apiResponse = await _chatRepository.loadUsersToAddOnThread(
+        30, this.page, this.thread, this.searchTerm);
+    if (apiResponse.status == 200) {
       var decodeData = json.decode(apiResponse.data);
-      if(this.page > 1 ) {
+      if (this.page > 1) {
         this.users.addAll(decodeData['users']);
       } else {
         this.users = decodeData['users'];
@@ -82,10 +83,9 @@ class AddThreadController extends FutureViewModel<dynamic> {
       this.hasMoreResults = decodeData['hasMoreResults'];
       this.userListLoading = false;
       this.loadingMoreUser = false;
-      if(this.searchTerm != null && this.searchTerm.length != 0) {
+      if (this.searchTerm.length != 0) {
         this.hasSearch = true;
       }
-
     } else {
       _errorMessageService.errorOnAPICall();
     }
@@ -96,7 +96,6 @@ class AddThreadController extends FutureViewModel<dynamic> {
     _navigationService.navigateToView(RelationView());
   }
 
-
   loadMore() {
     this.page = this.page + 1;
     this.loadingMoreUser = true;
@@ -104,7 +103,7 @@ class AddThreadController extends FutureViewModel<dynamic> {
   }
 
   int getCurrentIndex() {
-    if(threadType == null) {
+    if (threadType == null) {
       return 0;
     } else {
       return 1;
@@ -124,7 +123,7 @@ class AddThreadController extends FutureViewModel<dynamic> {
 
   searchUser() async {
     this.page = 1;
-    if(this.searchTerm.length <= 3) {
+    if (this.searchTerm.length <= 3) {
       this.showErrorText = true;
       notifyListeners();
       await Future.delayed(Duration(seconds: 5));
@@ -148,7 +147,7 @@ class AddThreadController extends FutureViewModel<dynamic> {
   }
 
   addParticipant(userId) {
-    if(this.threadType == 'simple') {
+    if (this.threadType == 'simple') {
       this.userToAddIds.add(userId);
       this.saveThread();
     } else {
@@ -162,12 +161,12 @@ class AddThreadController extends FutureViewModel<dynamic> {
     notifyListeners();
   }
 
-
   saveThread() async {
     this.isSaving = true;
     notifyListeners();
-    ApiResponse apiResponse = await _chatRepository.saveThread(this.userToAddIds, this.threadType, this.thread) ;
-    if(apiResponse.status == 200) {
+    ApiResponse apiResponse = await _chatRepository.saveThread(
+        this.userToAddIds, this.threadType, this.thread);
+    if (apiResponse.status == 200) {
       this.thread = Thread.fromJson(json.decode(apiResponse.data)['threadUI']);
       _navigationService.replaceWithTransition(ChatView(thread: thread!));
     } else {

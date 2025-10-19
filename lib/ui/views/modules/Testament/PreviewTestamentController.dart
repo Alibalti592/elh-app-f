@@ -9,7 +9,6 @@ import 'package:stacked/stacked.dart';
 import 'package:elh/models/Obligation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 class PreviewTestamentController extends FutureViewModel<dynamic> {
   ErrorMessageService _errorMessageService = locator<ErrorMessageService>();
   TestamentRepository _testamentRepository = locator<TestamentRepository>();
@@ -28,7 +27,8 @@ class PreviewTestamentController extends FutureViewModel<dynamic> {
   Future loadDatas() async {
     this.isLoading = true;
     notifyListeners();
-    ApiResponse apiResponse = await _testamentRepository.loadJeuntext(this.testament);
+    ApiResponse apiResponse =
+        await _testamentRepository.loadJeuntext(this.testament);
     if (apiResponse.status == 200) {
       var data = json.decode(apiResponse.data);
       this.joursJeun = data['jeunText'];
@@ -40,7 +40,6 @@ class PreviewTestamentController extends FutureViewModel<dynamic> {
     }
   }
 
-
   Future<void> refreshDatas() async {
     this.isLoading = true;
     notifyListeners();
@@ -50,14 +49,14 @@ class PreviewTestamentController extends FutureViewModel<dynamic> {
   exportAsPdf() async {
     this.pdfLoading = true;
     notifyListeners();
-    ApiResponse apiResponse = await _testamentRepository.getPdfLink(
-        this.testament!);
+    ApiResponse apiResponse =
+        await _testamentRepository.getPdfLink(this.testament);
     if (apiResponse.status == 200) {
       var data = json.decode(apiResponse.data);
       String s3PdfUrl = data['url'];
       if (await canLaunchUrl(Uri.parse(s3PdfUrl))) {
-        await launchUrl(
-            Uri.parse(s3PdfUrl), mode: LaunchMode.externalApplication);
+        await launchUrl(Uri.parse(s3PdfUrl),
+            mode: LaunchMode.externalApplication);
         this.pdfLoading = false;
         notifyListeners();
       } else {

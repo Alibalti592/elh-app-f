@@ -19,7 +19,13 @@ class EditThreadDataView extends StatelessWidget {
             appBar: AppBar(
               title: Row(
                 children: [
-                  userThumbIconEmpty(thread.image, 35.0, thread.type == 'simple' ? Icons.person_outline_outlined :  Icons.group_outlined , 16.0),
+                  userThumbIconEmpty(
+                      thread.image,
+                      35.0,
+                      thread.type == 'simple'
+                          ? Icons.person_outline_outlined
+                          : Icons.group_outlined,
+                      16.0),
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: Text(thread.name),
@@ -28,73 +34,75 @@ class EditThreadDataView extends StatelessWidget {
               ),
               backgroundColor: Colors.white,
               actions: [
-                controller.isSaving ? BBloader() : GestureDetector(
-                  child: Center(child:
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Icon(Icons.save_outlined, color:primaryColor),
-                  )),
-                  onTap: () {
-                    controller.saveThread();
-                  },
-                ),
+                controller.isSaving
+                    ? BBloader()
+                    : GestureDetector(
+                        child: Center(
+                            child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Icon(Icons.save_outlined, color: primaryColor),
+                        )),
+                        onTap: () {
+                          controller.saveThread();
+                        },
+                      ),
               ],
             ),
             body: SafeArea(
                 child: SingleChildScrollView(
-                  child: Form(
-                      key: controller.formKey,
-                      child: Column (
-                          children: [
-                            UIHelper.verticalSpaceMedium(),
-                            Text("Photo du groupe", style: TextStyle(color: fontGrey)),
-                            UIHelper.verticalSpaceSmall(),
-                            GestureDetector(
-                              onTap: () {
-                                controller.openSingleImagePicker();
+                    child: Form(
+                        key: controller.formKey,
+                        child: Column(children: [
+                          UIHelper.verticalSpaceMedium(),
+                          Text("Photo du groupe",
+                              style: TextStyle(color: fontGrey)),
+                          UIHelper.verticalSpaceSmall(),
+                          GestureDetector(
+                            onTap: () {
+                              controller.openSingleImagePicker();
+                            },
+                            child: Container(
+                                height: 54,
+                                width: 54,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(200),
+                                  color: bgLight,
+                                ),
+                                child: Center(
+                                    child: controller.imageFile != null
+                                        ? Container(
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: FileImage(
+                                                    controller.imageFile!,
+                                                  ),
+                                                )),
+                                          )
+                                        : userThumbDirect(
+                                            thread.image, "", 80.0))),
+                          ),
+                          UIHelper.verticalSpaceMedium(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 15),
+                            child: TextFormField(
+                              maxLines: 1,
+                              maxLength: 60,
+                              initialValue: controller.thread.groupName,
+                              validator: ValidatorHelpers.validateName,
+                              onChanged: (text) {
+                                controller.thread.groupName = text;
                               },
-                              child: Container(
-                                  height: 54,
-                                  width: 54,
-                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(200),  color: bgLight,),
-                                  child: Center(
-                                      child: controller.imageFile != null ? Container(
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: FileImage(
-                                                controller.imageFile!,
-                                              ),
-                                            )
-                                        ),
-                                      ) : userThumbDirect(thread.image, "",  80.0)
-                                  )
-                              ),
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: white,
+                                  labelText: "Nom du groupe"),
                             ),
-                            UIHelper.verticalSpaceMedium(),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                              child: TextFormField(
-                                maxLines: 1,
-                                maxLength: 60,
-                                initialValue: controller.thread.groupName == null ? '' : controller.thread.groupName,
-                                validator: ValidatorHelpers.validateName,
-                                onChanged: (text) {
-                                  controller.thread.groupName = text;
-                                },
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    filled: true,
-                                    fillColor: white,
-                                    labelText: "Nom du groupe"),
-                              ),
-                            ),
-                          ]
-                      )
-                  )
-                )
-            )),
+                          ),
+                        ]))))),
         viewModelBuilder: () => EditThreadDataController(thread));
   }
 }

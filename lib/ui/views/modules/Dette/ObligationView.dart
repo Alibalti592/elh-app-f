@@ -82,7 +82,7 @@ class _ObligationViewState extends State<ObligationView> {
                       CrossAxisAlignment.start, // Align children to the left
                   children: [
                     Text(
-                      "Montant de la tranche",
+                      "Montant du versement",
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -119,7 +119,7 @@ class _ObligationViewState extends State<ObligationView> {
                       CrossAxisAlignment.start, // Align children to the left
                   children: [
                     Text(
-                      "Date",
+                      "Date du versement",
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -208,6 +208,31 @@ class _ObligationViewState extends State<ObligationView> {
                     ..showSnackBar(
                       const SnackBar(
                           content: Text("Veuillez remplir tous les champs")),
+                    );
+                  return;
+                }
+
+                // Parse the selected date string to DateTime
+                final selectedDate = DateTime.tryParse(dateText);
+                if (selectedDate == null) {
+                  ScaffoldMessenger.of(scaffoldContext)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      const SnackBar(content: Text("Date invalide")),
+                    );
+                  return;
+                }
+
+                // Parse obligation date as DateTime if needed, then compare
+                final obligationDate = widget.obligation.date;
+
+                if (selectedDate.isBefore(obligationDate)) {
+                  ScaffoldMessenger.of(scaffoldContext)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              "La date du versement ne peut pas être antérieure à la date de l'obligation")),
                     );
                   return;
                 }
@@ -574,7 +599,7 @@ class _ObligationViewState extends State<ObligationView> {
             const SizedBox(height: 8),
             if (_tranches.isEmpty)
               const Text(
-                "Aucune tranche pour le moment.",
+                "Aucun versement pour le moment.",
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 14,
@@ -589,7 +614,7 @@ class _ObligationViewState extends State<ObligationView> {
                   return Card(
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       child: ListTile(
-                        title: Text("Tranche $i"),
+                        title: Text("Versement $i"),
                         subtitle: Text(
                             "${tranche.amount} ${obligation.currency} le ${tranche.paidAt.toString()}"),
                         trailing: ElevatedButton(

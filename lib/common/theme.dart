@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:elh/common/elh_icons.dart';
-import 'package:elh/services/Extension/ColorExtension.dart';
 import 'package:elh/ui/widgets/GradientSliderThemeData.dart';
 
 // const Color primaryColor = Color(0xFFB49D7E);
@@ -156,20 +154,20 @@ final appTheme = ThemeData(
     elevation: 3,
   ),
   switchTheme: SwitchThemeData(
-    thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
+    thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
         return Colors.lightGreen[100];
       }
-      if (states.contains(MaterialState.disabled)) {
+      if (states.contains(WidgetState.disabled)) {
         return Colors.grey[100];
       }
       return Colors.red[100];
     }),
-    trackColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
+    trackColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
         return Colors.lightGreen[400];
       }
-      if (states.contains(MaterialState.disabled)) {
+      if (states.contains(WidgetState.disabled)) {
         return Colors.grey;
       }
       return Colors.red[400];
@@ -190,7 +188,7 @@ final appTheme = ThemeData(
   ),
   iconTheme: const IconThemeData(color: Colors.black),
   navigationDrawerTheme: NavigationDrawerThemeData(
-    iconTheme: MaterialStateProperty.all(
+    iconTheme: WidgetStateProperty.all(
       const IconThemeData(color: Colors.black),
     ),
   ),

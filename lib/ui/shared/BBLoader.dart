@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:elh/common/theme.dart';
 
 class BBloader extends StatefulWidget {
   final int numberOfDots;
@@ -8,9 +7,8 @@ class BBloader extends StatefulWidget {
   _BBloaderState createState() => _BBloaderState();
 }
 
-class _BBloaderState extends State<BBloader>
-    with TickerProviderStateMixin {
-  List<AnimationController>? _animationControllers ;
+class _BBloaderState extends State<BBloader> with TickerProviderStateMixin {
+  List<AnimationController>? _animationControllers;
   List<Animation<double>> _animations = [];
   int animationDuration = 200;
 
@@ -33,7 +31,7 @@ class _BBloaderState extends State<BBloader>
     ///each _animationController will have same animation duration
     _animationControllers = List.generate(
       widget.numberOfDots,
-          (index) {
+      (index) {
         return AnimationController(
             vsync: this, duration: Duration(milliseconds: animationDuration));
       },
@@ -102,7 +100,6 @@ class _BBloaderState extends State<BBloader>
       ),
     );
   }
-
 }
 
 class DotWidget extends StatelessWidget {
@@ -113,8 +110,8 @@ class DotWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          shape: BoxShape.circle, color: Color(0xFFBE9456)),
+      decoration:
+          BoxDecoration(shape: BoxShape.circle, color: Color(0xFFBE9456)),
       height: 12,
       width: 12,
     );

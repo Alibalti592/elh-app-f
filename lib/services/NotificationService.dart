@@ -4,7 +4,6 @@ import 'package:elh/locator.dart';
 import 'package:elh/models/AppNotification.dart';
 import 'package:elh/services/AuthenticationService.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationService {
   final String baseUrl = 'https://test.muslim-connect.fr/elh-api';

@@ -1,12 +1,9 @@
 import 'package:elh/common/elh_icons.dart';
 import 'package:elh/models/Obligation.dart';
 import 'package:elh/models/salat.dart';
-import 'package:elh/services/TrancheNotificationHandler.dart';
-import 'package:elh/ui/shared/text_styles.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/common/popupCard/HeroDialogRoute.dart';
 import 'package:elh/ui/views/modules/Salat/SalatCard.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:elh/common/theme.dart';
 import 'package:elh/ui/views/modules/home/DashboardController.dart';
@@ -231,8 +228,8 @@ class DashboardViewState extends State<DashboardView>
                               SizedBox(
                                 width: cardWidth,
                                 child: _buildCard(
-                                  'JANAZA',
-                                  "Être informé par des Salat Janaza partagées par votre communauté.",
+                                  'AL-JANAZA',
+                                  "Être informé par des Salât Al-Janaza partagées par votre communauté.",
                                   Image.asset(
                                     'assets/images/pray.png',
                                     width: 18,
@@ -524,7 +521,7 @@ class DashboardViewState extends State<DashboardView>
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          if (controller != null && viewName.isNotEmpty) {
+          if (viewName.isNotEmpty) {
             controller.goTo(viewName); // navigation
           }
         },

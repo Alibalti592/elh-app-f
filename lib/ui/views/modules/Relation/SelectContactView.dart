@@ -436,7 +436,7 @@ class SelectContactViewState extends State<SelectContactView> {
                   ),
                   child: ClipOval(
                     child: userThumbDirect(
-                        user.photo, "${user.firstname!.substring(0, 2)}", 20.0),
+                        user.photo, "${user.firstname.substring(0, 2)}", 20.0),
                   ),
                 ),
                 UIHelper.horizontalSpace(20),

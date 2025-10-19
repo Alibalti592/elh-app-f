@@ -26,19 +26,22 @@ class LocationErrorWidget extends StatelessWidget {
           Text(
             error!,
             style:
-            const TextStyle(color: errorColor, fontWeight: FontWeight.bold),
+                const TextStyle(color: errorColor, fontWeight: FontWeight.bold),
           ),
           box,
           ElevatedButton(
             style: ButtonStyle(
               visualDensity: VisualDensity.compact,
-              foregroundColor: MaterialStateProperty.all<Color>(primaryColor),
-              backgroundColor:  MaterialStateProperty.all<Color>(primaryColor),
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+              foregroundColor: WidgetStateProperty.all<Color>(primaryColor),
+              backgroundColor: WidgetStateProperty.all<Color>(primaryColor),
+              shape: WidgetStateProperty.all(RoundedRectangleBorder(
                 borderRadius: new BorderRadius.circular(30.0),
               )),
             ),
-            child: const Text("Relancer", style: TextStyle(color: Colors.white, fontSize: 18),),
+            child: const Text(
+              "Relancer",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
             onPressed: () {
               if (callback != null) callback!();
             },

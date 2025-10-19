@@ -4,13 +4,11 @@ import 'package:elh/common/theme.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/modules/home/PageNavigationController.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:elh/common/elh_icons.dart';
 
 class PageNavigationView extends StatefulWidget {
   final String pageKey;
@@ -734,7 +732,7 @@ class PageNavigationViewState extends State<PageNavigationView>
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          if (controller != null && viewName != null) {
+          if (viewName != null) {
             controller.gotToView(viewName);
           }
         },

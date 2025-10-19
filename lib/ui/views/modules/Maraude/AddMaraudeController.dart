@@ -21,7 +21,15 @@ class AddMaraudeController extends FutureViewModel<dynamic> {
   String title = "Ajouter une maraude";
   bool isLoading = false;
   bool isAlreadyRegistred = false;
-  Maraude maraude = new Maraude(date: new DateTime.now(), description: "", online: false, validated: false, dateDisplay: "", isExpanded: false, distance: 0, timeDisplay: "");
+  Maraude maraude = new Maraude(
+      date: new DateTime.now(),
+      description: "",
+      online: false,
+      validated: false,
+      dateDisplay: "",
+      isExpanded: false,
+      distance: 0,
+      timeDisplay: "");
   TextEditingController addressTextController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   ValueNotifier<bool> isSaving = ValueNotifier<bool>(false);
@@ -32,23 +40,25 @@ class AddMaraudeController extends FutureViewModel<dynamic> {
   Future<dynamic> futureToRun() => loadDatas();
 
   Future loadDatas() async {
-    if(this.maraude.id == null) {
+    if (this.maraude.id == null) {
       DateTime date = new DateTime.now();
-      this.maraude.dateDisplay  = DateFormat(this.dateFormat, 'fr_FR').format(date);
+      this.maraude.dateDisplay =
+          DateFormat(this.dateFormat, 'fr_FR').format(date);
       dateController.text = this.maraude.dateDisplay!;
     }
   }
 
   saveMaraude() async {
-    if(!this.formKey.currentState!.validate()) {
+    if (!this.formKey.currentState!.validate()) {
       return;
     }
-    if(this.maraude!.location!.lat == 0 || this.maraude!.location!.city == null) {
+    if (this.maraude.location!.lat == 0) {
       _errorMessageService.errorShoMessage("Merci de sélectonner la ville ");
       return;
     }
     this.isSaving.value = true;
-    ApiResponse apiResponse = await _maraudeRepository.saveMaraude(this.maraude!);
+    ApiResponse apiResponse =
+        await _maraudeRepository.saveMaraude(this.maraude);
     if (apiResponse.status == 200) {
       this.isSaving.value = false;
       this._navigationService.popRepeated(1);
@@ -58,12 +68,16 @@ class AddMaraudeController extends FutureViewModel<dynamic> {
   }
 
   openSearchLocation(context) {
-    _navigationService.navigateWithTransition(BBLocationView(fullAdress: false), transitionStyle: Transition.downToUp, duration:Duration(milliseconds: 300))?.then((value) {
-      if(value == "setLocation") {
+    _navigationService
+        .navigateWithTransition(BBLocationView(fullAdress: false),
+            transitionStyle: Transition.downToUp,
+            duration: Duration(milliseconds: 300))
+        ?.then((value) {
+      if (value == "setLocation") {
         Bblocation? newLocation = _locationStore.selectedLocation;
-        if(newLocation != null) {
-          this.maraude!.location = newLocation;
-          addressTextController.text = newLocation!.label;
+        if (newLocation != null) {
+          this.maraude.location = newLocation;
+          addressTextController.text = newLocation.label;
         }
       }
     });
@@ -71,9 +85,9 @@ class AddMaraudeController extends FutureViewModel<dynamic> {
   }
 
   updateDate(DateTime date) {
-    this.maraude.dateDisplay  = DateFormat(this.dateFormat, 'fr_FR').format(date);
+    this.maraude.dateDisplay =
+        DateFormat(this.dateFormat, 'fr_FR').format(date);
     this.maraude.date = date;
     dateController.text = this.maraude.dateDisplay!;
   }
-
 }

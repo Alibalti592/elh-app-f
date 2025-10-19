@@ -8,7 +8,6 @@ import 'package:elh/services/BaseApi/ApiResponse.dart';
 import 'package:elh/services/ErrorMessageService.dart';
 import 'package:elh/locator.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
 class SharetoController extends FutureViewModel<dynamic> {
   RelationRepository _relationRepository = locator<RelationRepository>();
@@ -23,12 +22,12 @@ class SharetoController extends FutureViewModel<dynamic> {
 
   SharetoController(this.salat);
 
-
   @override
   Future<dynamic> futureToRun() => loadDatas();
 
   Future loadDatas() async {
-    ApiResponse apiResponse = await _salatRepository.loadContactsShareSalat(this.salat.id.toString());
+    ApiResponse apiResponse =
+        await _salatRepository.loadContactsShareSalat(this.salat.id.toString());
     if (apiResponse.status == 200) {
       var decodeData = json.decode(apiResponse.data);
       this.relations = relationFromJson(decodeData['relations']);
@@ -46,9 +45,8 @@ class SharetoController extends FutureViewModel<dynamic> {
     this.loadDatas();
   }
 
-
   String nbRelationsLabel() {
-    if(this.nbRelations == null) {
+    if (this.nbRelations == null) {
       return "";
     } else {
       return "(${this.nbRelations.toString()})";
@@ -58,7 +56,8 @@ class SharetoController extends FutureViewModel<dynamic> {
   shareSalatToContact(Relation relation) async {
     this.currentRelationLoading = relation.id;
     notifyListeners();
-    ApiResponse apiResponse = await _salatRepository.shareSalatToContact(this.salat, relation.user.id);
+    ApiResponse apiResponse = await _salatRepository.shareSalatToContact(
+        this.salat, relation.user.id);
     if (apiResponse.status == 200) {
       relation.active = !relation.active;
     } else {

@@ -1,9 +1,7 @@
-import 'dart:convert';
-import 'package:elh/models/BBLocation.dart';
 import 'package:elh/models/dece.dart';
-import 'package:elh/models/pompe.dart';
 
-List<DeceMosque> deceMosquesFromJson(jsonData) => List<DeceMosque>.from(jsonData.map((x) => DeceMosque.fromJson(x)));
+List<DeceMosque> deceMosquesFromJson(jsonData) =>
+    List<DeceMosque>.from(jsonData.map((x) => DeceMosque.fromJson(x)));
 
 class DeceMosque {
   int? id;
@@ -19,14 +17,13 @@ class DeceMosque {
   });
 
   factory DeceMosque.fromJson(Map<String, dynamic> json) => DeceMosque(
-    id: json["id"],
-    dateString: json["date"] == null ? "" : json["date"],
-    showOnPage: json["showOnPage"] == null ? false : json["showOnPage"],
-    dece: Dece.fromJson(json["dece"]),
-
-  );
+        id: json["id"],
+        dateString: json["date"] == null ? "" : json["date"],
+        showOnPage: json["showOnPage"] == null ? false : json["showOnPage"],
+        dece: Dece.fromJson(json["dece"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-  };
+        "id": id,
+      };
 }

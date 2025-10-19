@@ -29,106 +29,90 @@ class TestamentWidget extends StatelessWidget {
                 color: Color.fromRGBO(55, 65, 81, 1),
                 fontWeight: FontWeight.bold)),
         UIHelper.verticalSpace(20),
-        testament != null
-            ? Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: UIHelper.h1("Testament de : ${testament!.from}"),
-                    ),
-                    UIHelper.verticalSpace(10),
-                    Text(
-                        'Je souhaite être enterré(e) selon les rites musulmans dans le pays et  ou ville suivante :',
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: fontGrey,
-                            fontWeight: FontWeight.bold)),
-                    UIHelper.verticalSpace(3),
-                    testament!.location != null
-                        ? Text(testament!.location!,
-                            style: TextStyle(fontSize: 14))
-                        : Text("Vous n'avez rien renseigné",
-                            style: textDescription),
-                    UIHelper.verticalSpace(10),
-                    Text(
-                        'Je souhaite que ma toilette mortuaire soit faite par :',
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: fontGrey,
-                            fontWeight: FontWeight.bold)),
-                    testament!.toilette != null
-                        ? Text(testament!.toilette!,
-                            style: TextStyle(fontSize: 14))
-                        : Text("Vous n'avez rien renseigné",
-                            style: textDescription),
-                    UIHelper.verticalSpace(8),
-                    Text(
-                        'Je souhaite que mon enterrement se fasse sans aucune innovation et dans les conditions suivantes :',
-                        style: TextStyle(
-                            fontSize: 13.0,
-                            color: fontGrey,
-                            fontWeight: FontWeight.bold)),
-                    testament!.family != null
-                        ? Text(testament!.family!,
-                            style: TextStyle(fontSize: 14))
-                        : Text("Vous n'avez rien renseigné",
-                            style: textDescription),
-                    UIHelper.verticalSpace(8),
-                    Text(
-                        'Je souhaite que l’on rembourse mes dettes de la manière suivante :',
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: fontGrey,
-                            fontWeight: FontWeight.bold)),
-                    testament!.fixe != null
-                        ? Text(testament!.fixe!, style: TextStyle(fontSize: 14))
-                        : Text("Vous n'avez rien renseigné",
-                            style: textDescription),
-                    UIHelper.verticalSpace(8),
-                    Text(
-                        'Je souhaite que l’argent prêté et qui vous sera rendu soit utilisé de la manière suivante :',
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: fontGrey,
-                            fontWeight: FontWeight.bold)),
-                    testament!.goods != null
-                        ? Text(testament!.goods!,
-                            style: TextStyle(fontSize: 14))
-                        : Text("Vous n'avez rien renseigné",
-                            style: textDescription),
-                    UIHelper.verticalSpace(8),
-                    Text('Je souhaite laisser les recommandations suivantes :',
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: fontGrey,
-                            fontWeight: FontWeight.bold)),
-                    testament!.lastwill != null
-                        ? Text(testament!.lastwill!,
-                            style: TextStyle(fontSize: 14))
-                        : Text("Vous n'avez rien renseigné",
-                            style: textDescription),
-                    UIHelper.verticalSpace(8),
-                    Text('Jours de jeûn à rattraper :',
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: fontGrey,
-                            fontWeight: FontWeight.bold)),
-                    Text(joursJeun, style: TextStyle(fontSize: 14)),
-                    Center(
-                      child: Image(
-                          image: AssetImage("assets/images/logo-no-bg.png"),
-                          height: 70),
-                    ),
-                  ],
-                ),
-              )
-            : Container(),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(15)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: UIHelper.h1("Testament de : ${testament.from}"),
+              ),
+              UIHelper.verticalSpace(10),
+              Text(
+                  'Je souhaite être enterré(e) selon les rites musulmans dans le pays et  ou ville suivante :',
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      color: fontGrey,
+                      fontWeight: FontWeight.bold)),
+              UIHelper.verticalSpace(3),
+              testament.location != null
+                  ? Text(testament.location!, style: TextStyle(fontSize: 14))
+                  : Text("Vous n'avez rien renseigné", style: textDescription),
+              UIHelper.verticalSpace(10),
+              Text('Je souhaite que ma toilette mortuaire soit faite par :',
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      color: fontGrey,
+                      fontWeight: FontWeight.bold)),
+              testament.toilette != null
+                  ? Text(testament.toilette!, style: TextStyle(fontSize: 14))
+                  : Text("Vous n'avez rien renseigné", style: textDescription),
+              UIHelper.verticalSpace(8),
+              Text(
+                  'Je souhaite que mon enterrement se fasse sans aucune innovation et dans les conditions suivantes :',
+                  style: TextStyle(
+                      fontSize: 13.0,
+                      color: fontGrey,
+                      fontWeight: FontWeight.bold)),
+              testament.family != null
+                  ? Text(testament.family!, style: TextStyle(fontSize: 14))
+                  : Text("Vous n'avez rien renseigné", style: textDescription),
+              UIHelper.verticalSpace(8),
+              Text(
+                  'Je souhaite que l’on rembourse mes dettes de la manière suivante :',
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      color: fontGrey,
+                      fontWeight: FontWeight.bold)),
+              testament.fixe != null
+                  ? Text(testament.fixe!, style: TextStyle(fontSize: 14))
+                  : Text("Vous n'avez rien renseigné", style: textDescription),
+              UIHelper.verticalSpace(8),
+              Text(
+                  'Je souhaite que l’argent prêté et qui vous sera rendu soit utilisé de la manière suivante :',
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      color: fontGrey,
+                      fontWeight: FontWeight.bold)),
+              testament.goods != null
+                  ? Text(testament.goods!, style: TextStyle(fontSize: 14))
+                  : Text("Vous n'avez rien renseigné", style: textDescription),
+              UIHelper.verticalSpace(8),
+              Text('Je souhaite laisser les recommandations suivantes :',
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      color: fontGrey,
+                      fontWeight: FontWeight.bold)),
+              testament.lastwill != null
+                  ? Text(testament.lastwill!, style: TextStyle(fontSize: 14))
+                  : Text("Vous n'avez rien renseigné", style: textDescription),
+              UIHelper.verticalSpace(8),
+              Text('Jours de jeûn à rattraper :',
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      color: fontGrey,
+                      fontWeight: FontWeight.bold)),
+              Text(joursJeun, style: TextStyle(fontSize: 14)),
+              Center(
+                child: Image(
+                    image: AssetImage("assets/images/logo-no-bg.png"),
+                    height: 70),
+              ),
+            ],
+          ),
+        ),
         UIHelper.verticalSpace(15),
         Column(
           children: listObligations(
@@ -304,13 +288,11 @@ class TestamentWidget extends StatelessWidget {
                       ),
                       // other widgets in your Column can go herer
                       UIHelper.verticalSpace(2),
-                      obligation.tel != null
-                          ? Text("Tel : ${obligation.cardOtherTel} ",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontFamily: 'Karla'))
-                          : Container(),
+                      Text("Tel : ${obligation.cardOtherTel} ",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontFamily: 'Karla')),
                       UIHelper.verticalSpace(2),
                       obligation.type != 'amana'
                           ? Text("Montant Initial :  ${obligation.amount} €",

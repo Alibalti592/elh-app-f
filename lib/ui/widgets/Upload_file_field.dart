@@ -206,7 +206,6 @@ import 'package:elh/common/theme.dart';
 import 'package:elh/ui/views/modules/Dette/AddObligationController.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadFileWidget extends StatefulWidget {
@@ -301,7 +300,9 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
                 ? "Changer le fichier"
                 : "Attacher une preuve",
             style: const TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 255, 191, 0)),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,

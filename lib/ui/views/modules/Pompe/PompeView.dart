@@ -201,7 +201,7 @@ class PompeViewState extends State<PompeView> {
                     height: 1.4)),
             RichText(
               text: TextSpan(
-                  text: pompe.location!.label,
+                  text: pompe.location.label,
                   style: TextStyle(color: fontGreyDark, fontSize: 15),
                   children: [
                     TextSpan(

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:elh/locator.dart';
 import 'package:elh/models/pardon.dart';
 import 'package:elh/repository/PardonRepository.dart';
@@ -15,13 +14,13 @@ class AddPardonController extends FutureViewModel<dynamic> {
   NavigationService _navigationService = locator<NavigationService>();
   DialogService _dialogService = locator<DialogService>();
   bool isLoading = false;
-  Pardon newPardon = new Pardon( firstname: '', lastname: '', content: '');
+  Pardon newPardon = new Pardon(firstname: '', lastname: '', content: '');
   final _formKey = GlobalKey<FormState>();
   get formKey => _formKey;
   ValueNotifier<bool> isSaving = ValueNotifier<bool>(false);
 
   AddPardonController(pardon) {
-    if(pardon != null) {
+    if (pardon != null) {
       this.newPardon = pardon;
     }
   }
@@ -29,9 +28,7 @@ class AddPardonController extends FutureViewModel<dynamic> {
   @override
   Future<dynamic> futureToRun() => ini();
 
-  ini() {
-
-  }
+  ini() {}
 
   Future loadDatas() async {
     this.isLoading = true;
@@ -45,16 +42,17 @@ class AddPardonController extends FutureViewModel<dynamic> {
     }
   }
 
-
   save() async {
-    if(!this.formKey.currentState!.validate()) {
+    if (!this.formKey.currentState!.validate()) {
       return;
     }
-    DialogResponse? response =
-        await _dialogService.showDialog(title: 'Envoyer', description: "Valider et envoyer la demande de pardon à mes contacts");
-    if(response != null && response.confirmed) {
+    DialogResponse? response = await _dialogService.showDialog(
+        title: 'Envoyer',
+        description: "Valider et envoyer la demande de pardon à mes contacts");
+    if (response != null && response.confirmed) {
       this.isSaving.value = true;
-      ApiResponse apiResponse = await _pardonRepository.savePardon(this.newPardon);
+      ApiResponse apiResponse =
+          await _pardonRepository.savePardon(this.newPardon);
       if (apiResponse.status == 200) {
         this.isSaving.value = false;
         this._navigationService.back(result: 'updateListe');
@@ -63,7 +61,5 @@ class AddPardonController extends FutureViewModel<dynamic> {
         this.isSaving.value = false;
       }
     }
-
   }
-
 }

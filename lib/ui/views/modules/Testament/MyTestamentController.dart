@@ -28,7 +28,8 @@ class MyTestamentController extends FutureViewModel<dynamic> {
   NavigationService _navigationService = locator<NavigationService>();
   ErrorMessageService _errorMessageService = locator<ErrorMessageService>();
   TestamentRepository _testamentRepository = locator<TestamentRepository>();
-  UserInfoReactiveService _userInfoReactiveService = locator<UserInfoReactiveService>();
+  UserInfoReactiveService _userInfoReactiveService =
+      locator<UserInfoReactiveService>();
   TestamentService _testamentService = locator<TestamentService>();
   bool isLoading = false;
   bool pdfLoading = false;
@@ -57,7 +58,8 @@ class MyTestamentController extends FutureViewModel<dynamic> {
   }
 
   Future loadJeunText() async {
-    ApiResponse apiResponse = await _testamentRepository.loadJeuntext(this.testament);
+    ApiResponse apiResponse =
+        await _testamentRepository.loadJeuntext(this.testament);
     if (apiResponse.status == 200) {
       var data = json.decode(apiResponse.data);
       this.joursJeun = data['jeunText'];
@@ -88,7 +90,6 @@ class MyTestamentController extends FutureViewModel<dynamic> {
     this.amanas = dettes['amanas'];
   }
 
-
   Future<void> refreshDatas() async {
     this.isLoading = true;
     notifyListeners();
@@ -96,7 +97,9 @@ class MyTestamentController extends FutureViewModel<dynamic> {
   }
 
   editTestament() {
-    _navigationService.navigateWithTransition(EditTestamentView(this.testament))?.then((value) {
+    _navigationService
+        .navigateWithTransition(EditTestamentView(this.testament))
+        ?.then((value) {
       this.loadDatas();
     });
   }
@@ -107,13 +110,17 @@ class MyTestamentController extends FutureViewModel<dynamic> {
     });
   }
 
-
   downloadTestament() {
     try {
-      Future.delayed(const Duration(milliseconds: 50)).then((val) async { //time to button disappear
-        RenderRepaintBoundary boundary = this.globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      Future.delayed(const Duration(milliseconds: 50)).then((val) async {
+        //time to button disappear
+        RenderRepaintBoundary boundary = this
+            .globalKey
+            .currentContext!
+            .findRenderObject() as RenderRepaintBoundary;
         ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-        ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        ByteData? byteData =
+            await image.toByteData(format: ui.ImageByteFormat.png);
         var pngBytes = byteData!.buffer.asUint8List();
 
         // var bs64 = base64Encode(pngBytes);
@@ -123,19 +130,18 @@ class MyTestamentController extends FutureViewModel<dynamic> {
         File imgFile = await File(filePath).writeAsBytes(pngBytes);
         XFile imageToShare = XFile.fromData(pngBytes);
         // Share.shareXFiles([imageToShare], text: "Salât al-janaza, ${carte.firstname} ${carte.lastname}");
-        final result = await Share.shareXFiles([XFile(filePath)], text: "Testament de ${this.userInfos!.fullname}");
+        final result = await Share.shareXFiles([XFile(filePath)],
+            text: "Testament de ${this.userInfos!.fullname}");
         File(filePath).delete();
       });
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
-
 
   exportAsPdf() async {
     this.pdfLoading = true;
     notifyListeners();
-    ApiResponse apiResponse = await _testamentRepository.getPdfLink(this.testament!);
+    ApiResponse apiResponse =
+        await _testamentRepository.getPdfLink(this.testament!);
     if (apiResponse.status == 200) {
       var data = json.decode(apiResponse.data);
       String s3PdfUrl = data['url'];
@@ -147,21 +153,23 @@ class MyTestamentController extends FutureViewModel<dynamic> {
           directory = await getApplicationDocumentsDirectory();
         }
         if (directory == null) {
-          _errorMessageService.errorShoMessage("Impossible d'accéder aux dossier de votre téléphone pour télécharger le fichier");
+          _errorMessageService.errorShoMessage(
+              "Impossible d'accéder aux dossier de votre téléphone pour télécharger le fichier");
         } else {
-          String from = this.testament!.from == null ? "nd" : this.testament!.from!;
+          String from =
+              this.testament!.from == null ? "nd" : this.testament!.from!;
           String filename = generateSlug(from);
-          String filePath = '${directory!.path}/$filename';
+          String filePath = '${directory.path}/$filename';
           Dio dio = Dio();
           await dio.download(s3PdfUrl, filePath);
           OpenFile.open(filePath);
         }
-      } catch(e) {
-        _errorMessageService.errorShoMessage("Erreur lors de l'ouverture du document, merci de regarder vos documents téléchargés");
+      } catch (e) {
+        _errorMessageService.errorShoMessage(
+            "Erreur lors de l'ouverture du document, merci de regarder vos documents téléchargés");
       }
       this.pdfLoading = false;
       notifyListeners();
-
     }
   }
 
@@ -171,6 +179,4 @@ class MyTestamentController extends FutureViewModel<dynamic> {
     slug = slug.replaceAll(RegExp(r'[^a-z0-9 ]'), '').replaceAll(' ', '_');
     return "testament_$slug.pdf"; // Ex: document_nicolas_beudos.pdf
   }
-
-
 }

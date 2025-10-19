@@ -7,7 +7,6 @@ import 'package:elh/ui/views/common/userThumb.dart';
 import 'package:elh/ui/views/modules/Relation/RelationController.dart';
 import 'package:flutter/material.dart';
 import 'package:elh/common/theme.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
 
@@ -160,7 +159,7 @@ class RelationViewState extends State<RelationView> {
             Row(
               children: [
                 userThumbDirect(
-                    user.photo, "${user.firstname!.substring(0, 2)}", 20.0),
+                    user.photo, "${user.firstname.substring(0, 2)}", 20.0),
                 UIHelper.horizontalSpace(10),
                 Expanded(
                     child: Row(

@@ -1,9 +1,6 @@
 import 'package:elh/models/AppNotification.dart';
-import 'package:elh/models/ChatThread.dart';
 import 'package:elh/services/NotificationService.dart';
-import 'package:elh/ui/views/modules/chat/ChatView.dart';
 import 'package:elh/ui/views/modules/chat/ThreadsView.dart';
-import 'package:elh/ui/views/modules/chat/TopBarChat.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:badges/badges.dart' as badges;

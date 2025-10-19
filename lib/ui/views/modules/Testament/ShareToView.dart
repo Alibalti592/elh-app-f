@@ -100,7 +100,7 @@ class ShareToViewState extends State<ShareToView> {
             Row(
               children: [
                 userThumbDirect(
-                    user.photo, "${user.firstname!.substring(0, 2)}", 20.0),
+                    user.photo, "${user.firstname.substring(0, 2)}", 20.0),
                 UIHelper.horizontalSpace(10),
                 Expanded(
                     child: Column(

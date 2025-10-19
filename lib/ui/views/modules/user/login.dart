@@ -1,6 +1,4 @@
 import 'package:elh/ui/shared/Validators.dart';
-import 'package:elh/ui/shared/app_colors.dart';
-import 'package:elh/ui/shared/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:elh/common/theme.dart';
 import 'package:elh/ui/shared/BBLoader.dart';
@@ -10,9 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:stacked/stacked.dart';
-import 'package:elh/ui/widgets/google_sign_in_button.dart';
 import 'package:elh/ui/views/modules/user/WelcomeDesign.dart';
-import 'package:elh/ui/views/modules/user/LogoAndName.dart';
 
 class Login extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
@@ -73,11 +69,11 @@ class Login extends StatelessWidget {
                           style: ButtonStyle(
                             visualDensity: VisualDensity.compact,
                             foregroundColor:
-                                MaterialStateProperty.all<Color>(primaryColor),
+                                WidgetStateProperty.all<Color>(primaryColor),
                             backgroundColor:
-                                MaterialStateProperty.all<Color>(primaryColor),
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
+                                WidgetStateProperty.all<Color>(primaryColor),
+                            shape:
+                                WidgetStateProperty.all(RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(30.0),
                             )),
                           ),
@@ -1435,9 +1431,9 @@ class Login extends StatelessWidget {
           ),
           style: ButtonStyle(
             visualDensity: VisualDensity.compact,
-            foregroundColor: MaterialStateProperty.all<Color>(primaryColor),
-            backgroundColor: MaterialStateProperty.all<Color>(primaryColor),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            foregroundColor: WidgetStateProperty.all<Color>(primaryColor),
+            backgroundColor: WidgetStateProperty.all<Color>(primaryColor),
+            shape: WidgetStateProperty.all(RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(30.0),
             )),
           ),

@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'dart:convert';
-import 'dart:io';
 import 'package:elh/models/Obligation.dart';
 import 'package:elh/models/Relation.dart';
 import 'package:elh/models/userInfos.dart';
@@ -214,17 +212,10 @@ class AddObligationController extends FutureViewModel<dynamic> {
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState!.save();
     }
-    if (obligation.amount <= 0 || obligation.amount == null) {
+    if (obligation.amount <= 0) {
       _errorMessageService.showToaster(
         'error',
         "Merci de saisir un montant",
-      );
-      return;
-    }
-    if (obligation.date == null) {
-      _errorMessageService.showToaster(
-        'error',
-        "Merci de saisir En date du",
       );
       return;
     }
@@ -280,7 +271,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
         'raison': obligation.note,
         'relatedUserId': obligation.relatedUserId,
         'fileUrl': obligation.fileUrl,
-        'date': obligation.date?.toIso8601String(),
+        'date': obligation.date.toIso8601String(),
         'dateStart': obligation.dateStart?.toIso8601String(),
       };
       print("this is comming from AddObligationcontroller : ${payload}");
@@ -304,7 +295,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
       print('Error occurred: $t');
       print('Stack trace: $stackTrace');
 
-      if (t is DioError) {
+      if (t is DioException) {
         print('DioError details: ${t.response?.data}');
         print('Status code: ${t.response?.statusCode}');
       }
@@ -315,7 +306,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
     obligation.dateDisplay =
         DateFormat("EEEE dd MMMM yyyy", 'fr_FR').format(date);
     obligation.date = date;
-    dateCreatedAtController.text = obligation.dateDisplay!;
+    dateCreatedAtController.text = obligation.dateDisplay;
   }
 
   void updateDate(DateTime date) {
@@ -414,9 +405,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
   }
 
   raisonText() {
-    if (this.obligation == null) {
-      return 'Raison';
-    } else if (this.obligation.type == 'jed') {
+    if (this.obligation.type == 'jed') {
       return "Raison de l'emprunt";
     }
     return "Raison du prêt";
@@ -424,9 +413,9 @@ class AddObligationController extends FutureViewModel<dynamic> {
 
   String moneyLabel() {
     String money = "Montant prêté";
-    if (obligation?.type == 'onm') {
+    if (obligation.type == 'onm') {
       money = "Montant emprunté";
-    } else if (obligation?.type == 'amana') {
+    } else if (obligation.type == 'amana') {
       money = "Montant de la amana";
     }
     return money;

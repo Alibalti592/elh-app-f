@@ -122,10 +122,8 @@ class ChatView extends StatelessWidget {
                                         List<ChatMessage> chatMessages,
                                         Widget? child) {
                                       return Flexible(
-                                          child: controller.chatMessages == null
-                                              ? Container()
-                                              : bubbleItemList(
-                                                  context, controller));
+                                          child: bubbleItemList(
+                                              context, controller));
                                     },
                                     valueListenable: controller.chatMessages,
                                   ),
@@ -393,7 +391,7 @@ class ChatView extends StatelessWidget {
     return ListView.builder(
         controller: controller.scrollController,
         reverse: true,
-        itemCount: chatMessages == null ? 0 : chatMessages.length,
+        itemCount: chatMessages.length,
         itemBuilder: (BuildContext ctxt, int index) {
           //prebuild
           String currentUserID = chatMessages[index].author;
@@ -641,7 +639,7 @@ class ChatView extends StatelessWidget {
                           ? Container(
                               width: Responsive.width(80, context),
                               height: 150,
-                              child: Image.file(file!))
+                              child: Image.file(file))
                           : Container(
                               width: Responsive.width(80, context),
                               child: Padding(

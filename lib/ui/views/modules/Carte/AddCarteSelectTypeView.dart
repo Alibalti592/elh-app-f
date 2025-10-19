@@ -1,6 +1,5 @@
 import 'package:elh/common/theme.dart';
 import 'package:elh/ui/shared/text_styles.dart';
-import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/modules/Carte/AddCarteSelectTypeController.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';

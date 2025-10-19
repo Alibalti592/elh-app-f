@@ -11,13 +11,12 @@ import 'package:elh/ui/views/modules/Testament/PreviewTestamentView.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:elh/models/Obligation.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ListSharedTestamentController extends FutureViewModel<dynamic> {
   NavigationService _navigationService = locator<NavigationService>();
   ErrorMessageService _errorMessageService = locator<ErrorMessageService>();
   TestamentRepository _testamentRepository = locator<TestamentRepository>();
-  TestamentService _testamentService= locator<TestamentService>();
+  TestamentService _testamentService = locator<TestamentService>();
   DetteRepository _detteRepository = locator<DetteRepository>();
   bool isLoading = false;
   List<Testament> othersTestaments = [];
@@ -37,7 +36,7 @@ class ListSharedTestamentController extends FutureViewModel<dynamic> {
         data['othersTestaments'].forEach((testament) {
           this.othersTestaments.add(testamentFromJson(testament));
         });
-      } catch(e) {}
+      } catch (e) {}
       this.isLoading = false;
       notifyListeners();
     } else {
@@ -54,8 +53,7 @@ class ListSharedTestamentController extends FutureViewModel<dynamic> {
       var data = json.decode(apiResponse.data);
       try {
         this.obligations = obligationFromJson(data['obligations']);
-      } catch(e) {
-      }
+      } catch (e) {}
       this.isLoading = false;
       notifyListeners();
     } else {
@@ -68,16 +66,17 @@ class ListSharedTestamentController extends FutureViewModel<dynamic> {
     this.loadOtherTestament();
   }
 
-
   gotToOtherTestament(testament) async {
     this.isLoading = true;
     notifyListeners();
     //load obligations and put in View !!
     var dettes = await _testamentService.loadDettes(testament);
-    _navigationService.navigateWithTransition(PreviewTestamentView(testament, dettes['jeds'], dettes['onms'], dettes['amanas']))?.then((value) {
+    _navigationService
+        .navigateWithTransition(PreviewTestamentView(
+            testament, dettes['jeds'], dettes['onms'], dettes['amanas']))
+        ?.then((value) {
       this.isLoading = false;
       notifyListeners();
     });
   }
-
 }

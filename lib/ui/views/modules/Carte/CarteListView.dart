@@ -7,7 +7,6 @@ import 'package:elh/ui/views/common/popupCard/HeroDialogRoute.dart';
 import 'package:elh/ui/views/modules/Carte/CarteCard.dart';
 import 'package:elh/ui/views/modules/Carte/CarteListController.dart';
 import 'package:elh/ui/views/modules/Salat/SalatCard.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';

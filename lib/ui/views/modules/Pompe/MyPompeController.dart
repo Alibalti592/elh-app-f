@@ -7,7 +7,6 @@ import 'package:elh/services/BaseApi/ApiResponse.dart';
 import 'package:elh/services/ErrorMessageService.dart';
 import 'package:elh/locator.dart';
 import 'package:elh/store/LocationStore.dart';
-import 'package:elh/ui/views/common/BBLocation/BBLocationView.dart';
 import 'package:elh/ui/views/modules/Pompe/AddPompeView.dart';
 import 'package:elh/ui/views/modules/Pompe/DemandPompeView.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,17 +25,16 @@ class MyPompeController extends FutureViewModel<dynamic> {
   TextEditingController cityTextController = TextEditingController();
   Bblocation? searchLocation;
   int distance = 10;
-  List<int> distances = <int> [5, 10, 20, 50, 100];
+  List<int> distances = <int>[5, 10, 20, 50, 100];
   bool isPompeOwner = false;
 
   @override
   Future<dynamic> futureToRun() => loadMyPompes();
 
-
   Future<void> refreshData() async {
     this.loadMyPompes();
   }
-  
+
   Future loadMyPompes() async {
     this.isLoading = true;
     notifyListeners();
@@ -54,7 +52,7 @@ class MyPompeController extends FutureViewModel<dynamic> {
   }
 
   String getStatusLabel(Pompe pompe) {
-    if(pompe.online && pompe.validated) {
+    if (pompe.online && pompe.validated) {
       return "Approuvé par Muslim Connect";
     }
     return "En cours d'approbation par Muslim Connect";
@@ -81,13 +79,16 @@ class MyPompeController extends FutureViewModel<dynamic> {
   }
 
   managePompe(Pompe pompe) {
-    _navigationService.navigateWithTransition(AddPompeView(pompe: pompe))?.then((value) {
+    _navigationService
+        .navigateWithTransition(AddPompeView(pompe: pompe))
+        ?.then((value) {
       this.loadMyPompes();
     });
   }
 
   viewDemands() {
-    _navigationService.navigateWithTransition(DemandPompeView())?.then((value) {});
+    _navigationService
+        .navigateWithTransition(DemandPompeView())
+        ?.then((value) {});
   }
-
 }

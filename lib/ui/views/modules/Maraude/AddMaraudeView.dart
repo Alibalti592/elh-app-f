@@ -134,7 +134,7 @@ class AddMaraudeViewState extends State<AddMaraudeView> {
     String label = "";
     int maxLines = 1;
     if (key == 'description') {
-      initValue = controller.maraude!.description;
+      initValue = controller.maraude.description;
       label = 'Description';
       maxLines = 6;
     }
@@ -147,7 +147,7 @@ class AddMaraudeViewState extends State<AddMaraudeView> {
         validator: ValidatorHelpers.validateName,
         onChanged: (text) {
           if (key == 'description') {
-            controller.maraude!.description = text;
+            controller.maraude.description = text;
           }
         },
         decoration: InputDecoration(

@@ -5,7 +5,6 @@ import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/modules/Mosque/MosqueController.dart';
 import 'package:flutter/material.dart';
 import 'package:elh/common/theme.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
 

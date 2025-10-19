@@ -107,7 +107,7 @@ class MyTestamentViewState extends State<MyTestamentView> {
                 controller.editTestament();
               },
               label: const Text(
-                'Modifier mon testament',
+                'Rédiger mon testament',
                 style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 14,

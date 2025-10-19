@@ -133,9 +133,9 @@ class Obligation {
       );
   String get contactDisplay {
     // If the user manually entered a contact
-    if ((firstname?.isNotEmpty ?? false) ||
-        (lastname?.isNotEmpty ?? false) ||
-        (tel?.isNotEmpty ?? false)) {
+    if ((firstname.isNotEmpty ?? false) ||
+        (lastname.isNotEmpty ?? false) ||
+        (tel.isNotEmpty ?? false)) {
       return "${firstname ?? ''} ${lastname ?? 'aaa'} (${tel ?? ''})";
     }
 

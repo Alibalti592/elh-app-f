@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:elh/common/theme.dart';
-import 'package:elh/ui/widgets/google_sign_in_button.dart';
-import 'package:stacked/stacked.dart';
 import 'package:elh/ui/views/modules/user/loginModel.dart';
 
 class WelcomeDesign extends StatelessWidget {

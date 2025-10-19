@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:elh/common/theme.dart';
 import 'package:elh/locator.dart';
@@ -11,16 +10,18 @@ class ErrorMessageService {
   DialogService _dialogService = locator<DialogService>();
   bool dialogIsOpened = false; //prevent mutliple popup
 
-  Future<DialogResponse?> errorOnAPICall({ message}) async {
-    if(message == null) {
-      message = "Une erreur s'est produite à la récupération des données, merci de réessayer ultérieurement !";
+  Future<DialogResponse?> errorOnAPICall({message}) async {
+    if (message == null) {
+      message =
+          "Une erreur s'est produite à la récupération des données, merci de réessayer ultérieurement !";
     }
     DialogResponse? response;
-    if(!dialogIsOpened) {
+    if (!dialogIsOpened) {
       this.dialogIsOpened = true;
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        response = await _dialogService.showDialog(title: 'Oups une erreur', description: message);
-        if(response != null && response!.confirmed) {
+        response = await _dialogService.showDialog(
+            title: 'Oups une erreur', description: message);
+        if (response != null && response!.confirmed) {
           this.dialogIsOpened = false;
         }
       });
@@ -30,11 +31,14 @@ class ErrorMessageService {
 
   void errorDefault() async {
     this.dialogIsOpened = false;
-    if(!dialogIsOpened) {
+    if (!dialogIsOpened) {
       this.dialogIsOpened = true;
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        DialogResponse? response = await _dialogService.showDialog(title: 'Oups une erreur', description: "Une erreur s'est produite merci de nous contacter si le problème persiste !");
-        if(response != null && response.confirmed) {
+        DialogResponse? response = await _dialogService.showDialog(
+            title: 'Oups une erreur',
+            description:
+                "Une erreur s'est produite merci de nous contacter si le problème persiste !");
+        if (response != null && response.confirmed) {
           this.dialogIsOpened = false;
         }
       });
@@ -42,21 +46,22 @@ class ErrorMessageService {
   }
 
   void errorShoMessage(message, {title = 'Oups une erreur'}) async {
-    if(message != null) {
+    if (message != null) {
       try {
         var data = json.decode(message);
-        if(data.containsKey('message')) {
+        if (data.containsKey('message')) {
           message = data['message'];
         }
       } on FormatException {
         //no valid json
       }
     }
-    if(!dialogIsOpened) {
+    if (!dialogIsOpened) {
       this.dialogIsOpened = true;
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        DialogResponse? response = await _dialogService.showDialog(title: title, description: message);
-        if(response != null && response.confirmed) {
+        DialogResponse? response =
+            await _dialogService.showDialog(title: title, description: message);
+        if (response != null && response.confirmed) {
           this.dialogIsOpened = false;
         }
       });
@@ -64,27 +69,28 @@ class ErrorMessageService {
   }
 
   void noConnexion() async {
-    if(!dialogIsOpened) {
+    if (!dialogIsOpened) {
       this.dialogIsOpened = true;
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        DialogResponse? response = await _dialogService.showDialog(title: 'Aucune connexion', description: "Veuillez vérifier votre connexion internet !");
-        if(response != null && response.confirmed) {
+        DialogResponse? response = await _dialogService.showDialog(
+            title: 'Aucune connexion',
+            description: "Veuillez vérifier votre connexion internet !");
+        if (response != null && response.confirmed) {
           this.dialogIsOpened = false;
         }
       });
-
     }
   }
 
   showToaster(status, message) {
     Color bgColor = bgLight;
     Color fontColor = fontDark;
-    if(status == 'success') {
+    if (status == 'success') {
       const Color successColor = Color(0xFF66bb6a);
       bgColor = successColor;
       fontColor = Colors.white;
       print(bgColor);
-    } else if(status == 'error') {
+    } else if (status == 'error') {
       bgColor = errorColor;
       fontColor = white;
     }
@@ -99,5 +105,4 @@ class ErrorMessageService {
       gravity: ToastGravity.TOP,
     );
   }
-
 }

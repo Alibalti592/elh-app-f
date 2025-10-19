@@ -22,7 +22,6 @@ class TrancheService {
   // -----------------------------
   Future<bool> respondToTranche(int trancheId, String action) async {
     String token = await this.getUserToken();
-    if (token == null) throw Exception('Utilisateur non authentifié');
 
     try {
       final res = await http.post(
@@ -50,7 +49,6 @@ class TrancheService {
   // -----------------------------
   Future<List<Tranche>> getTranches(int obligationId) async {
     String token = await this.getUserToken();
-    if (token == null) throw Exception("JWT token is null IN TRANCHE SERVICE");
 
     final response = await http.get(
       Uri.parse('$baseUrl?obligationId=$obligationId'),
@@ -82,7 +80,6 @@ class TrancheService {
   }) async {
     String token = await this.getUserToken();
     print(token);
-    if (token == null) return null;
 
     // Common payload (without fileUrl; server will upload and set it)
     final Map<String, dynamic> payload = {

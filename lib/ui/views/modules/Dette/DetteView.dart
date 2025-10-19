@@ -1,7 +1,6 @@
 import 'package:elh/common/theme.dart';
 import 'package:elh/models/Obligation.dart';
 import 'package:elh/ui/shared/BBLoader.dart';
-import 'package:elh/ui/shared/text_styles.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/common/popupCard/HeroDialogRoute.dart';
 import 'package:elh/ui/views/modules/Dette/DetteController.dart';

@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:elh/models/BBLocation.dart';
 
-List<Pompe> pompeFromJson(String str) => List<Pompe>.from(json.decode(str).map((x) => Pompe.fromJson(x)));
-String pompeToJson(List<Pompe> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+List<Pompe> pompeFromJson(String str) =>
+    List<Pompe>.from(json.decode(str).map((x) => Pompe.fromJson(x)));
+String pompeToJson(List<Pompe> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Pompe {
   int? id;
@@ -38,33 +40,32 @@ class Pompe {
   });
 
   factory Pompe.fromJson(Map<String, dynamic> json) => Pompe(
-    id: json["id"],
-    name: json["name"] == null ? "" : json["name"],
-    description: json["description"] == null ? "" : json["description"],
-    phone: json["phone"],
-    phonePrefix: json["phonePrefix"],
-    phoneUrgence: json["phoneUrgence"],
-    phoneUrgencePrefix: json["phoneUrgencePrefix"],
-    online: json["online"],
-    validated: json["validated"],
-    namePro: json["namePro"]  == null ? "" : json["namePro"],
-    emailPro: json["emailPro"]  == null ? "" : json["emailPro"],
-    location: Bblocation.fromJson(json["location"]),
-    isExpanded: false, //UI
-    distance: json["distance"].toInt()
-  );
+      id: json["id"],
+      name: json["name"] == null ? "" : json["name"],
+      description: json["description"] == null ? "" : json["description"],
+      phone: json["phone"],
+      phonePrefix: json["phonePrefix"],
+      phoneUrgence: json["phoneUrgence"],
+      phoneUrgencePrefix: json["phoneUrgencePrefix"],
+      online: json["online"],
+      validated: json["validated"],
+      namePro: json["namePro"] == null ? "" : json["namePro"],
+      emailPro: json["emailPro"] == null ? "" : json["emailPro"],
+      location: Bblocation.fromJson(json["location"]),
+      isExpanded: false, //UI
+      distance: json["distance"].toInt());
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "description": description,
-    "online": online,
-    "location": location?.toJson(),
-    "phone": phone,
-    "phonePrefix": phonePrefix,
-    "phoneUrgence": phoneUrgence,
-    "phoneUrgencePrefix": phoneUrgencePrefix,
-    "emailPro": emailPro,
-    "namePro": namePro,
-  };
+        "id": id,
+        "name": name,
+        "description": description,
+        "online": online,
+        "location": location.toJson(),
+        "phone": phone,
+        "phonePrefix": phonePrefix,
+        "phoneUrgence": phoneUrgence,
+        "phoneUrgencePrefix": phoneUrgencePrefix,
+        "emailPro": emailPro,
+        "namePro": namePro,
+      };
 }

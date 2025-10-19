@@ -132,7 +132,7 @@ class AddCarteViewState extends State<AddCarteView> {
                                   style: labelSmallStyle),
                               UIHelper.verticalSpace(5),
                               DropdownButtonFormField<String>(
-                                value: controller.newCarte.onmyname,
+                                initialValue: controller.newCarte.onmyname,
                                 icon: Icon(MdiIcons.chevronDown),
                                 isExpanded: true,
                                 borderRadius: BorderRadius.circular(20),
@@ -162,7 +162,7 @@ class AddCarteViewState extends State<AddCarteView> {
                               UIHelper.verticalSpace(5),
                               if (controller.listAfiliations.isNotEmpty)
                                 DropdownButtonFormField<String>(
-                                  value: controller.newCarte.afiliation,
+                                  initialValue: controller.newCarte.afiliation,
                                   icon: Icon(MdiIcons.chevronDown),
                                   isExpanded: true,
                                   borderRadius: BorderRadius.circular(20),

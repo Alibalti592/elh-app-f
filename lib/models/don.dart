@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'package:elh/models/BBLocation.dart';
 
-List<Don> donsFromJson(jsondata) => List<Don>.from(jsondata.map((x) => Don.fromJson(x)));
-String donsToJson(List<Don> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+List<Don> donsFromJson(jsondata) =>
+    List<Don>.from(jsondata.map((x) => Don.fromJson(x)));
+String donsToJson(List<Don> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Don {
   int id;
@@ -24,18 +25,17 @@ class Don {
   });
 
   factory Don.fromJson(Map<String, dynamic> json) => Don(
-    id: json["id"],
-    name: json["name"],
-    description: json["description"],
-    link: json["link"],
-    logo: json["logo"],
-    isExpanded: false, //UI
-    isInApp: json["isInApp"] == null ? false : json["isInApp"]
-  );
+      id: json["id"],
+      name: json["name"],
+      description: json["description"],
+      link: json["link"],
+      logo: json["logo"],
+      isExpanded: false, //UI
+      isInApp: json["isInApp"] == null ? false : json["isInApp"]);
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "description": description,
-  };
+        "id": id,
+        "name": name,
+        "description": description,
+      };
 }

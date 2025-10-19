@@ -7,7 +7,6 @@ import 'package:elh/repository/CarteRepository.dart';
 import 'package:elh/services/BaseApi/ApiResponse.dart';
 import 'package:elh/services/ErrorMessageService.dart';
 import 'package:elh/store/LocationStore.dart';
-import 'package:elh/ui/views/modules/Carte/CarteListView.dart';
 import 'package:elh/ui/views/modules/Mosque/MosqueView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';

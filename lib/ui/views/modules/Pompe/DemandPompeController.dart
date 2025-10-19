@@ -44,13 +44,14 @@ class DemandPompeController extends FutureViewModel<dynamic> {
     ApiResponse apiResponse = await _pompeRepository.pompeAcceptDemand(demand);
     try {
       if (apiResponse.status == 200) {
-        Thread thread = Thread.fromJson(json.decode(apiResponse.data)['thread']);
-        _navigationService.clearTillFirstAndShowView(ChatView(thread: thread!));
+        Thread thread =
+            Thread.fromJson(json.decode(apiResponse.data)['thread']);
+        _navigationService.clearTillFirstAndShowView(ChatView(thread: thread));
       } else {
         var decodeData = json.decode(apiResponse.data);
         _errorMessageService.errorShoMessage(decodeData['message']);
       }
-    } catch(e) {
+    } catch (e) {
       _errorMessageService.errorOnAPICall();
     }
     this.isSendingId.value = -1;
@@ -58,19 +59,20 @@ class DemandPompeController extends FutureViewModel<dynamic> {
 
   goChat(PompeDemand demand) async {
     this.isSendingId.value = demand.id!;
-    ApiResponse apiResponse = await _pompeRepository.pompeDemandLoadChat(demand);
+    ApiResponse apiResponse =
+        await _pompeRepository.pompeDemandLoadChat(demand);
     try {
       if (apiResponse.status == 200) {
-        Thread thread = Thread.fromJson(json.decode(apiResponse.data)['thread']);
-        _navigationService.navigateToView(ChatView(thread: thread!));
+        Thread thread =
+            Thread.fromJson(json.decode(apiResponse.data)['thread']);
+        _navigationService.navigateToView(ChatView(thread: thread));
       } else {
         var decodeData = json.decode(apiResponse.data);
         _errorMessageService.errorShoMessage(decodeData['message']);
       }
-    } catch(e) {
+    } catch (e) {
       _errorMessageService.errorOnAPICall();
     }
     this.isSendingId.value = -1;
   }
-
 }

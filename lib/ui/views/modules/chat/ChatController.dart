@@ -27,7 +27,8 @@ class ChatContoller extends FutureViewModel<dynamic> {
   ChatRepository _chatRepository = locator<ChatRepository>();
   ErrorMessageService _errorMessageService = locator<ErrorMessageService>();
   DialogService _dialogService = locator<DialogService>();
-  final ChatReactiveService _chatReactiveService = locator<ChatReactiveService>();
+  final ChatReactiveService _chatReactiveService =
+      locator<ChatReactiveService>();
   NavigationService _navigationService = locator<NavigationService>();
   ScrollController scrollController = new ScrollController();
   int pageStackIndex = 0;
@@ -41,7 +42,8 @@ class ChatContoller extends FutureViewModel<dynamic> {
   bool loadParticipants = true;
   bool hasMoreMessages = true;
   List<Participant> participants = [];
-  ValueNotifier<List<ChatMessage>> chatMessages = ValueNotifier<List<ChatMessage>>([]);
+  ValueNotifier<List<ChatMessage>> chatMessages =
+      ValueNotifier<List<ChatMessage>>([]);
   bool userIsAdmin = false;
   ValueNotifier<String> showTypingIndicator = ValueNotifier<String>('');
   Participant? typingParticipant;
@@ -63,32 +65,37 @@ class ChatContoller extends FutureViewModel<dynamic> {
   //constructor
   ChatContoller(Thread thread) {
     this.thread = thread;
-    textEditingController.selection = TextSelection.fromPosition(TextPosition(offset: addMEssage.length));
+    textEditingController.selection =
+        TextSelection.fromPosition(TextPosition(offset: addMEssage.length));
     this.scrollController.addListener(_scrollListener);
-    timergetLastMessage = Timer.periodic(Duration(seconds: 10), (Timer t) => this.loadLastMessages());
+    timergetLastMessage = Timer.periodic(
+        Duration(seconds: 10), (Timer t) => this.loadLastMessages());
   }
 
   @override
   Future<dynamic> futureToRun() => loadThreadData(true, false);
 
   cleanTimer() {
-    if(this.timergetLastMessage != null) {
+    if (this.timergetLastMessage != null) {
       this.timergetLastMessage!.cancel();
     }
   }
 
   loadLastMessages() async {
-    if(this.lastMessageId != null) {
-      ApiResponse apiResponse = await _chatRepository.loadLastMessages(this.thread.id.toString(), this.lastMessageId);
-      if(apiResponse.status == 200) {
+    if (this.lastMessageId != null) {
+      ApiResponse apiResponse = await _chatRepository.loadLastMessages(
+          this.thread.id.toString(), this.lastMessageId);
+      if (apiResponse.status == 200) {
         var decodeData = json.decode(apiResponse.data);
-        List<ChatMessage> newMessages = chatMessagesFromJson(decodeData['messages']);
+        List<ChatMessage> newMessages =
+            chatMessagesFromJson(decodeData['messages']);
         this.addUniqueMessages(newMessages);
         // this.chatMessages.value = List.from(chatMessages.value)..addAll(chatMessagesFromJson(decodeData['messages']));
         notifyListeners();
       }
     }
   }
+
   void addUniqueMessages(List<ChatMessage> newMessages) {
     for (var message in newMessages) {
       // Check if the message ID already exists in chatMessages
@@ -101,33 +108,36 @@ class ChatContoller extends FutureViewModel<dynamic> {
   }
 
   Future loadThreadData(showMessageLoading, addToMessages) async {
-    if(showMessageLoading) {
+    if (showMessageLoading) {
       this.isLoading = true;
       notifyListeners();
     }
-    ApiResponse apiResponse = await _chatRepository.loadMessages(this.thread.id.toString(), page.toString(), loadParticipants.toString());
-    if(apiResponse.status == 200) {
+    ApiResponse apiResponse = await _chatRepository.loadMessages(
+        this.thread.id.toString(),
+        page.toString(),
+        loadParticipants.toString());
+    if (apiResponse.status == 200) {
       var decodeData = json.decode(apiResponse.data);
       this.participants = participantFromJson(decodeData['participants']);
-      if(addToMessages) {
-        this.chatMessages.value = List.from(chatMessages.value)..addAll(chatMessagesFromJson(decodeData['messages']));
+      if (addToMessages) {
+        this.chatMessages.value = List.from(chatMessages.value)
+          ..addAll(chatMessagesFromJson(decodeData['messages']));
       } else {
         this.chatMessages.value = [];
-        this.chatMessages.value = List.from(chatMessages.value)..addAll(chatMessagesFromJson(decodeData['messages']));
+        this.chatMessages.value = List.from(chatMessages.value)
+          ..addAll(chatMessagesFromJson(decodeData['messages']));
       }
       try {
-        if(this.page == 1 && this.chatMessages.value.length > 0) {
-          if(this.chatMessages.value.last != null) {
-            this.lastMessageId = this.chatMessages.value.last!.id;
-          }
+        if (this.page == 1 && this.chatMessages.value.length > 0) {
+          this.lastMessageId = this.chatMessages.value.last.id;
         }
-      } catch(e) {}
+      } catch (e) {}
 
       this.userId = decodeData['userId'];
       this.hasMoreMessages = decodeData['hasMoreMessages'];
       this.isLoading = false;
       notifyListeners();
-      if(this.firstLoading) {
+      if (this.firstLoading) {
         // initialiseHub(decodeData['hubUrl']);
         _chatReactiveService.chekIfMessage();
       }
@@ -139,7 +149,9 @@ class ChatContoller extends FutureViewModel<dynamic> {
   }
 
   _scrollListener() {
-    if(scrollController.offset >= scrollController.position.maxScrollExtent && !scrollController.position.outOfRange && this.hasMoreMessages) {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+        !scrollController.position.outOfRange &&
+        this.hasMoreMessages) {
       this.page++;
       this.loadThreadData(false, true);
     }
@@ -150,37 +162,51 @@ class ChatContoller extends FutureViewModel<dynamic> {
     notifyListeners();
   }
 
- Participant? getParticipant(userId) {
-    return this.participants.firstWhereOrNull(
-          (participant) => participant.id == userId
-    );
+  Participant? getParticipant(userId) {
+    return this
+        .participants
+        .firstWhereOrNull((participant) => participant.id == userId);
   }
 
   saveNewMessage() async {
-    if((this.addMEssage != "" || this.toUploadFile.value != null) && !this.isSending.value) {
+    if ((this.addMEssage != "" || this.toUploadFile.value != null) &&
+        !this.isSending.value) {
       this.isSending.value = true;
       String textTSend = this.addMEssage;
       Message message = new Message(meta: "", text: textTSend);
-      if(this.selectedMessageId.value != null && this.addMEssage != "") { //edition
+      if (this.selectedMessageId.value != null && this.addMEssage != "") {
+        //edition
         ChatMessage chatMessage = this.chatMessages.value.firstWhere(
               (message) => message.id == this.selectedMessageId.value,
-        );
+            );
         chatMessage.message = message;
-        ApiResponse apiResponse = await _chatRepository.editMessage(chatMessage);
-        if(apiResponse.status == 200) {
+        ApiResponse apiResponse =
+            await _chatRepository.editMessage(chatMessage);
+        if (apiResponse.status == 200) {
           var decodeData = json.decode(apiResponse.data);
-          ChatMessage newChatMessage = ChatMessage.fromJson(decodeData['chatMessage']);
+          ChatMessage newChatMessage =
+              ChatMessage.fromJson(decodeData['chatMessage']);
           this.updateChatMessageInList(newChatMessage);
           this.unSelectMessage();
         } else {
           _errorMessageService.errorShoMessage("Non modifié !");
         }
-      } else { //new message
-        ChatMessage chatMessage = new ChatMessage(id: 'ini', author: 'me', edited: false, deleted: false, message: message, type: "text",  showAuthor: false);
-        ApiResponse apiResponse = await _chatRepository.addMessage(textTSend, thread, this.toUploadFile.value, this.fileToUploadName);
-        if(apiResponse.status == 200) {
+      } else {
+        //new message
+        ChatMessage chatMessage = new ChatMessage(
+            id: 'ini',
+            author: 'me',
+            edited: false,
+            deleted: false,
+            message: message,
+            type: "text",
+            showAuthor: false);
+        ApiResponse apiResponse = await _chatRepository.addMessage(
+            textTSend, thread, this.toUploadFile.value, this.fileToUploadName);
+        if (apiResponse.status == 200) {
           var decodeData = json.decode(apiResponse.data);
-          ChatMessage newChatMessage = ChatMessage.fromJson(decodeData['message']);
+          ChatMessage newChatMessage =
+              ChatMessage.fromJson(decodeData['message']);
           this.addBubbleOnChat(newChatMessage);
           this.addMEssage = "";
           textEditingController.text = "";
@@ -206,26 +232,26 @@ class ChatContoller extends FutureViewModel<dynamic> {
 
   //real time
   initialiseHub(hubUrl) async {
-    if(hubUrl != false) {
+    if (hubUrl != false) {
       var uri = Uri.dataFromString(hubUrl);
       // Map<String, String> params = uri.queryParameters;
       // var topic = params['topic'];
       // hubUrl = 'http://192.168.0.18:3002/.well-known/mercure?topic=$topic';
-      this.eventSource = await EventSource.connect(hubUrl, openOnlyOnFirstListener: true, closeOnLastListener: true);
+      this.eventSource = await EventSource.connect(hubUrl,
+          openOnlyOnFirstListener: true, closeOnLastListener: true);
       this.listner = this.eventSource.listen((event) {
-        var data  = json.decode(event.data!);
+        var data = json.decode(event.data!);
         var type = data['type'];
         var value = data['value'];
-        if(type == 'typing' && this.userId != value) {
+        if (type == 'typing' && this.userId != value) {
           this.typingParticipant = getParticipant(value);
           this.showTypingIndicator.value = value;
-        } else if(type == 'newMessage' && this.userId != value) {
+        } else if (type == 'newMessage' && this.userId != value) {
           this.page = 1;
           this.loadThreadData(false, false);
         }
       });
     }
-
   }
 
   closeEventSourceListner() {
@@ -233,9 +259,9 @@ class ChatContoller extends FutureViewModel<dynamic> {
     // this.eventSource.client.close();
   }
 
-  handleOnType () async {
+  handleOnType() async {
     if (this.typingTimeout != null && this.typingTimeout?.isActive == true) {
-      if(this.sendIsTyping) {
+      if (this.sendIsTyping) {
         this.sendIsTyping = false;
         //Typing notif on hub
         _chatRepository.sendtypingNotification(this.thread, 'typing');
@@ -258,15 +284,16 @@ class ChatContoller extends FutureViewModel<dynamic> {
   }
 
   openImageFullScreen(url, chatMessageId) {
-    if(this.selectedMessageId.value != chatMessageId) {
+    if (this.selectedMessageId.value != chatMessageId) {
       _navigationService.navigateToView(ImageFullscreen(url));
-    } else { //unselect
+    } else {
+      //unselect
       this.selectedMessageId.value = null;
     }
   }
 
   selectMessage(ChatMessage message) {
-    if(message.author == 'me' && !message.deleted) {
+    if (message.author == 'me' && !message.deleted) {
       this.selectedMessageId.value = message.id;
       this.isDeleting.value = false;
     }
@@ -279,15 +306,21 @@ class ChatContoller extends FutureViewModel<dynamic> {
   }
 
   deleteMessage() async {
-    if(this.selectedMessageId.value != null) {
-      var confirm = await _dialogService.showConfirmationDialog(title: "Supprimer le message", description: 'Confirmer la suppression ?', cancelTitle: 'Annuler', confirmationTitle: 'Supprimer');
-      if(confirm?.confirmed == true) {
+    if (this.selectedMessageId.value != null) {
+      var confirm = await _dialogService.showConfirmationDialog(
+          title: "Supprimer le message",
+          description: 'Confirmer la suppression ?',
+          cancelTitle: 'Annuler',
+          confirmationTitle: 'Supprimer');
+      if (confirm?.confirmed == true) {
         this.isDeleting.value = true;
-        ApiResponse apiResponse = await _chatRepository.deleteMessage(this.selectedMessageId.value);
+        ApiResponse apiResponse =
+            await _chatRepository.deleteMessage(this.selectedMessageId.value);
         if (apiResponse.status == 200) {
           //replace message
           var decodeData = json.decode(apiResponse.data);
-          ChatMessage newChatMessage = ChatMessage.fromJson(decodeData['chatMessage']);
+          ChatMessage newChatMessage =
+              ChatMessage.fromJson(decodeData['chatMessage']);
           this.updateChatMessageInList(newChatMessage);
           this.unSelectMessage();
         } else {
@@ -298,7 +331,6 @@ class ChatContoller extends FutureViewModel<dynamic> {
     }
   }
 
-
   updateChatMessageInList(ChatMessage newChatMessage) {
     String newChatMessageId = newChatMessage.id;
     this.chatMessages.value = this.chatMessages.value.map((chatMessage) {
@@ -307,34 +339,48 @@ class ChatContoller extends FutureViewModel<dynamic> {
   }
 
   iniEditMessage() async {
-    ChatMessage chatMessage =  this.chatMessages.value.firstWhere(
+    ChatMessage chatMessage = this.chatMessages.value.firstWhere(
           (message) => message.id == this.selectedMessageId.value,
-    );
+        );
     this.addMEssage = chatMessage.message!.text;
     this.textEditingController.text = this.addMEssage;
   }
 
   openFilePicker(type) async {
-    var allowedExtensions = ['jpg', 'png', 'jpeg', 'heic', 'gif', 'svg', 'pdf', 'gps', 'tcx', 'fit', 'xml'];
+    var allowedExtensions = [
+      'jpg',
+      'png',
+      'jpeg',
+      'heic',
+      'gif',
+      'svg',
+      'pdf',
+      'gps',
+      'tcx',
+      'fit',
+      'xml'
+    ];
     PlatformFile? fileDatas;
-    if(type == 'file') {
+    if (type == 'file') {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: allowedExtensions,
       );
-      if(result != null) {
+      if (result != null) {
         fileDatas = result.files.first;
       }
-    } else { //image
+    } else {
+      //image
       XFile? pickedFile = await this._picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 500,
-        maxHeight: 500,
-      );
-      if(pickedFile != null) {
+            source: ImageSource.gallery,
+            maxWidth: 500,
+            maxHeight: 500,
+          );
+      if (pickedFile != null) {
         File file = File(pickedFile.path);
         fileDatas = PlatformFile(
-          name: pickedFile.name, // XFile does not have a direct name, you can extract from path
+          name: pickedFile
+              .name, // XFile does not have a direct name, you can extract from path
           path: pickedFile.path,
           size: await file.length(), // Get file size in bytes
           bytes: await file.readAsBytes(), // Read the file as bytes
@@ -342,35 +388,40 @@ class ChatContoller extends FutureViewModel<dynamic> {
       }
     }
 
-    if(fileDatas != null) {
-      if(!allowedExtensions.contains(fileDatas.extension)) {
-        _errorMessageService.errorShoMessage(title: 'Format', 'Format non supporté !');
+    if (fileDatas != null) {
+      if (!allowedExtensions.contains(fileDatas.extension)) {
+        _errorMessageService.errorShoMessage(
+            title: 'Format', 'Format non supporté !');
         return;
       }
-      var sizeInMB = fileDatas.size/1000000;
+      var sizeInMB = fileDatas.size / 1000000;
       this.fileToUploadName = fileDatas.name;
       String filePath = fileDatas.path!;
-      bool isImage = ['jpg', 'png', 'jpeg', 'heic'].contains(fileDatas.extension);
+      bool isImage =
+          ['jpg', 'png', 'jpeg', 'heic'].contains(fileDatas.extension);
       //si imlage traitement !
-      if(fileDatas.extension == 'heic') {
+      if (fileDatas.extension == 'heic') {
         filePath = await ImageService.convertHeicToJpeg(filePath);
       }
-      if(isImage) {
+      if (isImage) {
         this.fileType = 'image';
         try {
-          final String targetPath = p.join(Directory.systemTemp.path, this.fileToUploadName);
-          var imageCompressresult = await FlutterImageCompress.compressAndGetFile(
-            filePath, targetPath,
+          final String targetPath =
+              p.join(Directory.systemTemp.path, this.fileToUploadName);
+          var imageCompressresult =
+              await FlutterImageCompress.compressAndGetFile(
+            filePath,
+            targetPath,
             minWidth: 1200,
             minHeight: 1500,
             quality: 92,
           );
-          var newSizeMB = (await imageCompressresult!.length()) /1000000;
-          if(newSizeMB < sizeInMB) {
+          var newSizeMB = (await imageCompressresult!.length()) / 1000000;
+          if (newSizeMB < sizeInMB) {
             filePath = targetPath;
             sizeInMB = newSizeMB;
           }
-        } catch(e) {}
+        } catch (e) {}
       }
       //PREVIEW
       this.toUploadFile.value = File(filePath);
@@ -383,14 +434,15 @@ class ChatContoller extends FutureViewModel<dynamic> {
     this.toUploadFile.value = null;
   }
 
-
   leaveThread() async {
-    var confirm = await _dialogService.showConfirmationDialog(title: "Quitter la conversation ?",
+    var confirm = await _dialogService.showConfirmationDialog(
+        title: "Quitter la conversation ?",
         cancelTitle: 'Annuler',
         confirmationTitle: 'Quitter');
-    if(confirm?.confirmed == true) {
+    if (confirm?.confirmed == true) {
       this.threadLoading.value = true;
-      ApiResponse apiResponse = await _chatRepository.leaveThread(this.thread.id);
+      ApiResponse apiResponse =
+          await _chatRepository.leaveThread(this.thread.id);
       if (apiResponse.status == 200) {
         this.closeEventSourceListner();
         _navigationService.back(result: 'refresh');
@@ -402,11 +454,14 @@ class ChatContoller extends FutureViewModel<dynamic> {
   }
 
   deleteThread() async {
-    var confirm = await _dialogService.showConfirmationDialog(title: "Supprimer la discussion et les messages ?", cancelTitle: 'Annuler',
+    var confirm = await _dialogService.showConfirmationDialog(
+        title: "Supprimer la discussion et les messages ?",
+        cancelTitle: 'Annuler',
         confirmationTitle: 'Supprimer');
-    if(confirm?.confirmed == true) {
+    if (confirm?.confirmed == true) {
       this.threadLoading.value = true;
-      ApiResponse apiResponse = await _chatRepository.deleteThread(this.thread.id);
+      ApiResponse apiResponse =
+          await _chatRepository.deleteThread(this.thread.id);
       if (apiResponse.status == 200) {
         this.closeEventSourceListner();
         _navigationService.back(result: 'refresh');

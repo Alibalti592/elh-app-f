@@ -10,7 +10,6 @@ import 'package:elh/ui/views/modules/Salat/AddSalataView.dart';
 import 'package:elh/ui/views/modules/Salat/SalatCard.dart';
 import 'package:elh/ui/views/modules/Salat/SharetoView.dart';
 import 'package:flutter/material.dart';
-import 'package:pdf/widgets.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -34,13 +33,14 @@ class SalatListController extends FutureViewModel<dynamic> {
   Future loadDatas() async {
     this.isLoading = true;
     notifyListeners();
-    ApiResponse apiResponse = await _salatRepository.loadSalats(passedOnly: true);
+    ApiResponse apiResponse =
+        await _salatRepository.loadSalats(passedOnly: true);
     if (apiResponse.status == 200) {
       try {
         this.salats = salatFromJson(json.decode(apiResponse.data)['salats']);
-        this.salatsOfMosque = salatFromJson(json.decode(apiResponse.data)['salatsOfMosque']);
-      } catch(e) {
-      }
+        this.salatsOfMosque =
+            salatFromJson(json.decode(apiResponse.data)['salatsOfMosque']);
+      } catch (e) {}
       this.isLoading = false;
       notifyListeners();
     } else {
@@ -49,8 +49,12 @@ class SalatListController extends FutureViewModel<dynamic> {
   }
 
   addSalats() {
-    _navigationService.navigateWithTransition(AddSalatView(fromView: 'salatList'), transitionStyle: Transition.rightToLeft, duration:Duration(milliseconds: 300))?.then((value) async {
-      if(value is Salat) {
+    _navigationService
+        .navigateWithTransition(AddSalatView(fromView: 'salatList'),
+            transitionStyle: Transition.rightToLeft,
+            duration: Duration(milliseconds: 300))
+        ?.then((value) async {
+      if (value is Salat) {
         await this.loadDatas();
         this.openautoNewSalatCard(value);
       }
@@ -59,15 +63,18 @@ class SalatListController extends FutureViewModel<dynamic> {
 
   void openautoNewSalatCard(salat) {
     Navigator.of(this.context).push(
-      HeroDialogRoute(
-        builder: (context) => SalatCard(salat: salat)
-      ),
+      HeroDialogRoute(builder: (context) => SalatCard(salat: salat)),
     );
   }
 
   editSalat(salat) {
-    _navigationService.navigateWithTransition(AddSalatView(salat: salat, fromView: 'salatList'), transitionStyle: Transition.rightToLeft, duration:Duration(milliseconds: 300))?.then((value) async {
-      if(value is Salat) {
+    _navigationService
+        .navigateWithTransition(
+            AddSalatView(salat: salat, fromView: 'salatList'),
+            transitionStyle: Transition.rightToLeft,
+            duration: Duration(milliseconds: 300))
+        ?.then((value) async {
+      if (value is Salat) {
         await this.loadDatas();
         this.openautoNewSalatCard(value);
       }
@@ -77,12 +84,13 @@ class SalatListController extends FutureViewModel<dynamic> {
   deleteSalat(salat) async {
     var confirm = await _dialogService.showConfirmationDialog(
         title: "Confirmer la suprression ?",
-        cancelTitle: 'Annuler', confirmationTitle: 'Supprimer');
-    if(confirm?.confirmed == true) {
+        cancelTitle: 'Annuler',
+        confirmationTitle: 'Supprimer');
+    if (confirm?.confirmed == true) {
       this.isLoading = true;
       notifyListeners();
       ApiResponse apiResponse = await _salatRepository.deleteSalata(salat.id);
-      if(apiResponse.status == 200) {
+      if (apiResponse.status == 200) {
         this.loadDatas();
       } else {
         _errorMessageService.errorDefault();
@@ -95,5 +103,4 @@ class SalatListController extends FutureViewModel<dynamic> {
   shareSalat(Salat salat) {
     _navigationService.navigateToView(SharetoView(salat));
   }
-
 }

@@ -6,7 +6,6 @@ import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/modules/Pompe/AddPompeController.dart';
 import 'package:flutter/material.dart';
 import 'package:elh/common/theme.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:stacked/stacked.dart';
 
@@ -341,9 +340,9 @@ class AddPompeViewState extends State<AddPompeView> {
           ),
           style: ButtonStyle(
             visualDensity: VisualDensity.compact,
-            foregroundColor: MaterialStateProperty.all<Color>(primaryColor),
-            backgroundColor: MaterialStateProperty.all<Color>(primaryColor),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            foregroundColor: WidgetStateProperty.all<Color>(primaryColor),
+            backgroundColor: WidgetStateProperty.all<Color>(primaryColor),
+            shape: WidgetStateProperty.all(RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(30.0),
             )),
           ),

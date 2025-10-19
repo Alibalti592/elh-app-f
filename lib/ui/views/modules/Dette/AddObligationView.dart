@@ -484,7 +484,6 @@
 import 'package:elh/models/Tranche.dart';
 import 'package:elh/services/TrancheService.dart';
 import 'package:elh/ui/shared/text_styles.dart';
-import 'package:elh/ui/views/common/BBottombar/nav_custom_painter.dart';
 import 'package:elh/ui/views/modules/Relation/SelectContactView.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -683,7 +682,7 @@ class AddObligationViewState extends State<AddObligationView> {
 
                             // Currency Dropdown
                             DropdownButtonFormField<String>(
-                              value: controller.currency,
+                              initialValue: controller.currency,
                               decoration: InputDecoration(
                                 labelText: 'Devise',
                                 border: OutlineInputBorder(
@@ -1236,7 +1235,7 @@ class AddObligationViewState extends State<AddObligationView> {
                   num.tryParse(value.replaceAll(',', '.')) == null) {
                 return 'Veuillez entrer un nombre valide';
               }
-              if (label == 'En date du' && (value == null || value.isEmpty)) {
+              if (label == 'En date du' && (value.isEmpty)) {
                 return 'La date de remboursement est obligatoire';
               }
               return null;

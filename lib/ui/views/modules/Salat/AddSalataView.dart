@@ -1,4 +1,3 @@
-import 'package:elh/common/elh_icons.dart';
 import 'package:elh/common/theme.dart';
 import 'package:elh/models/salat.dart';
 import 'package:elh/ui/shared/BBLoader.dart';
@@ -77,7 +76,8 @@ class AddSalatViewState extends State<AddSalatView> {
                             UIHelper.verticalSpace(5),
                             controller.listAfiliations.isNotEmpty
                                 ? DropdownButtonFormField<String>(
-                                    value: controller.newSalat.afiliation,
+                                    initialValue:
+                                        controller.newSalat.afiliation,
                                     icon: Icon(MdiIcons.chevronDown),
                                     isExpanded: true,
                                     borderRadius: BorderRadius.circular(10),

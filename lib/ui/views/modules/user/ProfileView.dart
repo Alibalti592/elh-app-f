@@ -4,7 +4,6 @@ import 'package:elh/common/theme.dart';
 import 'package:elh/models/userInfos.dart';
 import 'package:elh/ui/shared/BBLoader.dart';
 import 'package:elh/ui/shared/Validators.dart';
-import 'package:elh/ui/shared/text_styles.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/modules/user/ProfileModel.dart';
 import 'package:intl/intl.dart';

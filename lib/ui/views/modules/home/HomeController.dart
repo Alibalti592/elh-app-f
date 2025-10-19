@@ -11,7 +11,6 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:elh/services/UserInfosReactiveService.dart';
 import 'package:elh/models/userInfos.dart';
-import 'package:elh/locator.dart';
 
 class HomeController extends FutureViewModel<dynamic> {
   final PushNotificationService _pushNotificationService =

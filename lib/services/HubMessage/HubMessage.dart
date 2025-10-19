@@ -1,7 +1,6 @@
 import "dart:async";
 import "dart:convert";
 import "package:http/http.dart" as http;
-import "dart:convert";
 import "package:http_parser/http_parser.dart" show MediaType;
 import "package:elh/services/HubMessage/class/decoder.dart";
 import "package:elh/services/HubMessage/class/event.dart";

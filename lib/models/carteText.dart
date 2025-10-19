@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:intl/intl.dart';
-
-List<CarteText> carteTextFromJson(jsondata) => List<CarteText>.from(jsondata.map((x) => CarteText.fromJson(x)));
-String carteTextToJson(List<CarteText> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+List<CarteText> carteTextFromJson(jsondata) =>
+    List<CarteText>.from(jsondata.map((x) => CarteText.fromJson(x)));
+String carteTextToJson(List<CarteText> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class CarteText {
   String type;
@@ -17,13 +17,13 @@ class CarteText {
   });
 
   factory CarteText.fromJson(Map<String, dynamic> json) => CarteText(
-    type: json["type"], //death || malade
-    content: json["content"],
-    forOther: json["forOther"],
-  );
+        type: json["type"], //death || malade
+        content: json["content"],
+        forOther: json["forOther"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "type": type,
-    "content": content,
-  };
+        "type": type,
+        "content": content,
+      };
 }

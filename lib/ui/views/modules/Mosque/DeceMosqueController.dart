@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:elh/models/MosqueDece.dart';
 import 'package:elh/models/mosque.dart';
 import 'package:elh/models/salat.dart';
 import 'package:elh/repository/MosqueRepository.dart';
@@ -22,7 +21,6 @@ class DeceMosqueController extends FutureViewModel<dynamic> {
   List<Salat> salats = [];
   Mosque mosque;
 
-
   DeceMosqueController(this.mosque);
 
   @override
@@ -31,14 +29,13 @@ class DeceMosqueController extends FutureViewModel<dynamic> {
   Future loadDeceMosques() async {
     this.isLoading = true;
     notifyListeners();
-    ApiResponse apiResponse = await _mosqueRepository.loadMosquesDeces(this.mosque);
+    ApiResponse apiResponse =
+        await _mosqueRepository.loadMosquesDeces(this.mosque);
     if (apiResponse.status == 200) {
       var decodeData = json.decode(apiResponse.data);
       try {
         this.salats = salatFromJson(decodeData['salats']);
-      } catch(e) {
-
-      }
+      } catch (e) {}
     } else {
       _errorMessageService.errorOnAPICall();
     }
@@ -53,5 +50,4 @@ class DeceMosqueController extends FutureViewModel<dynamic> {
   shareSalat(Salat salat) {
     _navigationService.navigateToView(SharetoView(salat));
   }
-
 }

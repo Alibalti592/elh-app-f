@@ -5,7 +5,6 @@ import 'package:elh/repository/RelationRepository.dart';
 import 'package:elh/services/BaseApi/ApiResponse.dart';
 import 'package:elh/services/ErrorMessageService.dart';
 import 'package:elh/locator.dart';
-import 'package:elh/ui/views/modules/Relation/RelationView.dart';
 import 'package:elh/ui/views/modules/Relation/SearchRelationView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:stacked/stacked.dart';
@@ -21,12 +20,12 @@ class ShareToController extends FutureViewModel<dynamic> {
   List<Relation> relations = [];
   int? nbShareTos;
 
-
   @override
   Future<dynamic> futureToRun() => loadDatas();
 
   Future loadDatas() async {
-    ApiResponse apiResponse = await _relationRepository.loadRelationShareTestatement();
+    ApiResponse apiResponse =
+        await _relationRepository.loadRelationShareTestatement();
     if (apiResponse.status == 200) {
       var decodeData = json.decode(apiResponse.data);
       this.relations = relationFromJson(decodeData['relations']);
@@ -44,9 +43,8 @@ class ShareToController extends FutureViewModel<dynamic> {
     this.loadDatas();
   }
 
-
   String nbShareTosLabel() {
-    if(this.nbShareTos == null) {
+    if (this.nbShareTos == null) {
       return "";
     } else {
       return "(${this.nbShareTos.toString()})";
@@ -55,7 +53,8 @@ class ShareToController extends FutureViewModel<dynamic> {
 
   validateShareTo(Relation relation, accept) async {
     this.relationChangeId.value = relation.id!;
-    ApiResponse apiResponse = await _relationRepository.validateShareTo(relation, accept);
+    ApiResponse apiResponse =
+        await _relationRepository.validateShareTo(relation, accept);
     if (apiResponse.status == 200) {
       relation.shareTestament = accept;
     } else {
@@ -67,8 +66,10 @@ class ShareToController extends FutureViewModel<dynamic> {
   }
 
   void goToContact() {
-    _navigationService.navigateToView(SearchRelationView('updateList'))?.then((value) {
-      if(value == "updateList") {
+    _navigationService
+        .navigateToView(SearchRelationView('updateList'))
+        ?.then((value) {
+      if (value == "updateList") {
         this.loadDatas();
       }
     });

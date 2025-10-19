@@ -21,8 +21,16 @@ class AddDeceController extends FutureViewModel<dynamic> {
   bool isLoading = false;
   Map<String, dynamic> listOptions = {};
   Map<String, dynamic> listLieux = {};
-  Dece newDece = new Dece( afiliation: 'father', lieu: 'maison', firstname: '',
-      lastname: '', dateDisplay: '', lieuLabel: '', afiliationLabel: '', notifPf: false, notifyMosque: false);
+  Dece newDece = new Dece(
+      afiliation: 'father',
+      lieu: 'maison',
+      firstname: '',
+      lastname: '',
+      dateDisplay: '',
+      lieuLabel: '',
+      afiliationLabel: '',
+      notifPf: false,
+      notifyMosque: false);
   final _formKey = GlobalKey<FormState>();
   get formKey => _formKey;
   TextEditingController dateController = TextEditingController();
@@ -31,7 +39,7 @@ class AddDeceController extends FutureViewModel<dynamic> {
   ValueNotifier<bool> isSaving = ValueNotifier<bool>(false);
 
   AddDeceController(dece) {
-    if(dece != null) {
+    if (dece != null) {
       this.newDece = dece;
       adresse1Controller.text = this.newDece.adress!.label;
       dateController.text = this.newDece.dateDisplay!;
@@ -48,9 +56,10 @@ class AddDeceController extends FutureViewModel<dynamic> {
     if (apiResponse.status == 200) {
       this.listOptions = json.decode(apiResponse.data)['options'];
       this.listLieux = json.decode(apiResponse.data)['lieux'];
-      if(this.newDece.id == null) {
+      if (this.newDece.id == null) {
         DateTime date = new DateTime.now();
-        this.newDece.dateDisplay  = DateFormat("EEEE dd MMMM yyyy", 'fr_FR').format(date);
+        this.newDece.dateDisplay =
+            DateFormat("EEEE dd MMMM yyyy", 'fr_FR').format(date);
         this.newDece.date = date;
         dateController.text = this.newDece.dateDisplay!;
       }
@@ -61,12 +70,11 @@ class AddDeceController extends FutureViewModel<dynamic> {
     }
   }
 
-
   save() async {
-    if(!this.formKey.currentState!.validate()) {
+    if (!this.formKey.currentState!.validate()) {
       return;
     }
-    if(this.newDece!.adress?.lat == 0 || this.newDece!.adress?.lng == null) {
+    if (this.newDece.adress?.lat == 0 || this.newDece.adress?.lng == null) {
       _errorMessageService.errorShoMessage("Merci de sélectionner l'adresse");
       return;
     }
@@ -87,16 +95,19 @@ class AddDeceController extends FutureViewModel<dynamic> {
     notifyListeners();
   }
 
-
   setLieuType(key) {
     this.newDece.lieu = key;
     notifyListeners();
   }
 
   openSearchLocation(context, type) {
-    _navigationService.navigateWithTransition(BBLocationView(fullAdress: true), transitionStyle: Transition.downToUp, duration:Duration(milliseconds: 300))?.then((value) {
-      if(value == "setLocation" && type == 'adresse1') {
-        if(_locationStore.selectedLocation != null) {
+    _navigationService
+        .navigateWithTransition(BBLocationView(fullAdress: true),
+            transitionStyle: Transition.downToUp,
+            duration: Duration(milliseconds: 300))
+        ?.then((value) {
+      if (value == "setLocation" && type == 'adresse1') {
+        if (_locationStore.selectedLocation != null) {
           this.newDece.adress = _locationStore.selectedLocation;
           adresse1Controller.text = _locationStore.selectedLocation!.label;
         }
@@ -106,7 +117,7 @@ class AddDeceController extends FutureViewModel<dynamic> {
   }
 
   updateDate(DateTime date) {
-    newDece.dateDisplay  = DateFormat("EEEE dd MMMM yyyy", 'fr_FR').format(date);
+    newDece.dateDisplay = DateFormat("EEEE dd MMMM yyyy", 'fr_FR').format(date);
     newDece.date = date;
     dateController.text = newDece.dateDisplay!;
   }
@@ -115,6 +126,7 @@ class AddDeceController extends FutureViewModel<dynamic> {
     this.newDece.notifPf = val;
     notifyListeners();
   }
+
   updateNotifmosque(val) {
     this.newDece.notifyMosque = val;
     notifyListeners();

@@ -122,7 +122,7 @@ class PardonViewState extends State<AddPardonView> {
                                     maxLength: 2000,
                                     initialValue: controller.newPardon.content,
                                     onChanged: (text) {
-                                      controller.newPardon!.content = text;
+                                      controller.newPardon.content = text;
                                     },
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(),
