@@ -27,7 +27,7 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '
 
 android {
     // Android configuration
-    compileSdkVersion 35
+    compileSdkVersion 36
     namespace "com.elh.app"
     ndkVersion "26.1.10909125"
 
