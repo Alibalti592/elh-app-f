@@ -1,4 +1,7 @@
 import 'package:elh/ui/shared/Validators.dart';
+import 'package:elh/ui/shared/app_colors.dart';
+import 'package:elh/ui/shared/text_styles.dart';
+import 'package:elh/ui/widgets/google_sign_up_button.dart';
 import 'package:flutter/material.dart';
 import 'package:elh/common/theme.dart';
 import 'package:elh/ui/shared/BBLoader.dart';
@@ -8,7 +11,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:stacked/stacked.dart';
+import 'package:elh/ui/widgets/google_sign_in_button.dart';
 import 'package:elh/ui/views/modules/user/WelcomeDesign.dart';
+import 'package:elh/ui/views/modules/user/LogoAndName.dart';
 
 class Login extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
@@ -69,11 +74,11 @@ class Login extends StatelessWidget {
                           style: ButtonStyle(
                             visualDensity: VisualDensity.compact,
                             foregroundColor:
-                                WidgetStateProperty.all<Color>(primaryColor),
+                                MaterialStateProperty.all<Color>(primaryColor),
                             backgroundColor:
-                                WidgetStateProperty.all<Color>(primaryColor),
-                            shape:
-                                WidgetStateProperty.all(RoundedRectangleBorder(
+                                MaterialStateProperty.all<Color>(primaryColor),
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(30.0),
                             )),
                           ),
@@ -153,195 +158,6 @@ class Login extends StatelessWidget {
       ),
     );
   }
-//
-  // Widget loginPage(context, LoginModel model, _keyboardVisible) {
-  //   return Scaffold(
-  //       body: Container(
-  //     height: MediaQuery.of(context).size.height,
-  //     decoration: _backgroundImageGradient(
-  //         Color(0xFFC4BBB2), Color(0xFFE1D8CE), Color(0xFFC4BBB2), 0.1),
-  //     child: AutofillGroup(
-  //       child: ListView(
-  //         children: <Widget>[
-  //           _LogoAndName(model, keyboardVisible: _keyboardVisible),
-  //           new Container(
-  //             width: MediaQuery.of(context).size.width,
-  //             margin: const EdgeInsets.only(
-  //                 left: 25.0, right: 25.0, top: 0.0, bottom: 20),
-  //             alignment: Alignment.center,
-  //             padding: const EdgeInsets.only(left: 0.0, right: 10.0),
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Padding(
-  //                   padding: const EdgeInsets.only(left: 16, bottom: 3),
-  //                   child: Text('Email', style: labelSmallStyle),
-  //                 ),
-  //                 new Row(
-  //                   crossAxisAlignment: CrossAxisAlignment.center,
-  //                   mainAxisAlignment: MainAxisAlignment.start,
-  //                   children: <Widget>[
-  //                     new Expanded(
-  //                       child: TextField(
-  //                           autofillHints: const [
-  //                             AutofillHints.email,
-  //                             AutofillHints.username,
-  //                             AutofillHints.newUsername,
-  //                           ],
-  //                           keyboardType: TextInputType.emailAddress,
-  //                           controller: _usernameController,
-  //                           autofocus: true,
-  //                           textAlign: TextAlign.left,
-  //                           decoration: bbInputDecoration(null)),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //           new Container(
-  //             width: MediaQuery.of(context).size.width,
-  //             margin: const EdgeInsets.only(left: 25.0, right: 25.0, top: 0.0),
-  //             alignment: Alignment.center,
-  //             padding: const EdgeInsets.only(left: 0.0, right: 10.0),
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Padding(
-  //                   padding: const EdgeInsets.only(left: 16, bottom: 3),
-  //                   child: Text('Mot de passe', style: labelSmallStyle),
-  //                 ),
-  //                 new Row(
-  //                   crossAxisAlignment: CrossAxisAlignment.center,
-  //                   mainAxisAlignment: MainAxisAlignment.start,
-  //                   children: <Widget>[
-  //                     new Expanded(
-  //                       child: TextField(
-  //                           controller: _passwordController,
-  //                           autofillHints: const [AutofillHints.password],
-  //                           obscureText: model.obscureText,
-  //                           textAlign: TextAlign.left,
-  //                           decoration: bbInputDecoration(null).copyWith(
-  //                             suffixIcon: IconButton(
-  //                               icon: Icon(
-  //                                 model.obscureText
-  //                                     ? Icons.visibility_off
-  //                                     : Icons.visibility,
-  //                               ),
-  //                               onPressed: () {
-  //                                 model.toogleobscureText();
-  //                               },
-  //                             ),
-  //                           )),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //           new Container(
-  //             width: MediaQuery.of(context).size.width,
-  //             margin: const EdgeInsets.only(
-  //                 left: 30.0, right: 30.0, top: 25.0, bottom: 10),
-  //             alignment: Alignment.center,
-  //             child: ValueListenableBuilder<bool>(
-  //               builder: (BuildContext context, bool isLogging, Widget? child) {
-  //                 return isLogging
-  //                     ? BBloader()
-  //                     : GestureDetector(
-  //                         onTap: () async {
-  //                           var username = _usernameController.text;
-  //                           var password = _passwordController.text;
-  //                           username.trim();
-  //                           await model.login(username, password);
-  //                         },
-  //                         child: Container(
-  //                             width: double.infinity,
-  //                             padding: const EdgeInsets.symmetric(
-  //                               vertical: 15.0,
-  //                               horizontal: 20.0,
-  //                             ),
-  //                             decoration: BoxDecoration(
-  //                                 boxShadow: [
-  //                                   BoxShadow(
-  //                                     color: Colors.black.withOpacity(0.15),
-  //                                     spreadRadius: 2,
-  //                                     blurRadius: 3,
-  //                                     offset: Offset(
-  //                                         0, 4), // changes position of shadow
-  //                                   ),
-  //                                 ],
-  //                                 color: primaryColor,
-  //                                 borderRadius:
-  //                                     new BorderRadius.circular(30.0)),
-  //                             child: Text('Bismillah',
-  //                                 textAlign: TextAlign.center,
-  //                                 style: TextStyle(
-  //                                     color: Colors.white,
-  //                                     fontWeight: FontWeight.w700,
-  //                                     fontSize: 23))),
-  //                       );
-  //               },
-  //               valueListenable: model.isLogging,
-  //             ),
-  //           ),
-  //           // --- Google login button
-  //           Container(
-  //             width: MediaQuery.of(context)
-  //                 .size
-  //                 .width, // full width like other buttons
-  //             margin:
-  //                 const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-  //             child:
-  //                 GoogleSignInButton(), // just call it, no need to pass context
-  //           ),
-
-  //           new Row(
-  //             mainAxisAlignment: MainAxisAlignment.end,
-  //             children: <Widget>[
-  //               Padding(
-  //                 padding: const EdgeInsets.only(right: 20.0),
-  //                 child: new TextButton(
-  //                   child: new Text(
-  //                     "Mot de passe oublié ?",
-  //                     style: TextStyle(
-  //                       fontWeight: FontWeight.bold,
-  //                       color: fontGrey,
-  //                       fontSize: 15.0,
-  //                     ),
-  //                     textAlign: TextAlign.end,
-  //                   ),
-  //                   onPressed: () => {model.gotToResetPassword()},
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //           UIHelper.verticalSpace(15),
-  //           new Row(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: <Widget>[
-  //               Padding(
-  //                 padding: const EdgeInsets.only(right: 20.0),
-  //                 child: new TextButton(
-  //                   child: new Text(
-  //                     "Créer un compte",
-  //                     style: TextStyle(
-  //                       fontWeight: FontWeight.bold,
-  //                       color: fontGreyDark,
-  //                       fontSize: 15.0,
-  //                     ),
-  //                     textAlign: TextAlign.center,
-  //                   ),
-  //                   onPressed: () => {gotoSignup(model)},
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   ));
-  // }
 
   Widget loginPage(context, LoginModel model, _keyboardVisible) {
     return Scaffold(
@@ -464,7 +280,6 @@ class Login extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
@@ -543,38 +358,44 @@ class Login extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    // Divider
-                    // Row(
-                    //   children: const [
-                    //     Expanded(
-                    //       child: Divider(
-                    //         thickness: 2,
-                    //         color: Color.fromRGBO(143, 151, 121, 1),
-                    //       ),
-                    //     ),
-                    //     Padding(
-                    //       padding: EdgeInsets.symmetric(horizontal: 15),
-                    //       child: Text(
-                    //         "Ou",
-                    //         style: TextStyle(
-                    //           fontFamily: 'inter',
-                    //           fontSize: 15,
-                    //           color: Colors.black,
-                    //           fontWeight: FontWeight.w400,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     Expanded(
-                    //       child: Divider(
-                    //         thickness: 2,
-                    //         color: Color.fromRGBO(143, 151, 121, 1),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    // const SizedBox(height: 14),
-
-                    // GoogleSignInButton(),
+                    Row(
+                      children: const [
+                        Expanded(
+                          child: Divider(
+                            thickness: 2,
+                            color: Color.fromRGBO(143, 151, 121, 1),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Text(
+                            "Ou",
+                            style: TextStyle(
+                              fontFamily: 'inter',
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Divider(
+                            thickness: 2,
+                            color: Color.fromRGBO(143, 151, 121, 1),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    Container(
+                      width: MediaQuery.of(context)
+                          .size
+                          .width, // full width like other buttons
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 10.0),
+                      child:
+                          GoogleSignInButton(), // just call it, no need to pass context
+                    ),
                     const SizedBox(height: 30),
 
                     // Bottom text
@@ -612,247 +433,6 @@ class Login extends StatelessWidget {
     );
   }
 
-  // Widget signUpPage(context, LoginModel model) {
-  //   return Scaffold(
-  //     body: Container(
-  //       padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-  //       decoration: _backgroundImageSimple(),
-  //       child: AutofillGroup(
-  //         child: Form(
-  //           key: model.registerFormKey,
-  //           autovalidateMode: model.autoValidate
-  //               ? AutovalidateMode.always
-  //               : AutovalidateMode.disabled,
-  //           child: ListView(children: <Widget>[
-  //             Container(
-  //               child: Center(
-  //                 child: Image(
-  //                     image: AssetImage("assets/images/logo-no-bg.png"),
-  //                     height: 130),
-  //               ),
-  //             ),
-  //             UIHelper.verticalSpaceMedium(),
-  //             model.showTextBeforeRegister
-  //                 ? _textIntro(model)
-  //                 : Column(
-  //                     children: [
-  //                       TextFormField(
-  //                         autofocus: true,
-  //                         enableSuggestions: true,
-  //                         keyboardType: TextInputType.emailAddress,
-  //                         validator: ValidatorHelpers.validateEmail,
-  //                         autofillHints: const [AutofillHints.email],
-  //                         initialValue: '',
-  //                         onChanged: (text) {
-  //                           model.userRegistrationController('email', text);
-  //                         },
-  //                         decoration: bbInputDecoration('Adresse e-mail'),
-  //                       ),
-  //                       UIHelper.verticalSpaceSmall(),
-  //                       TextFormField(
-  //                         enableSuggestions: true,
-  //                         keyboardType: TextInputType.text,
-  //                         validator: ValidatorHelpers.validateName,
-  //                         autofillHints: const [AutofillHints.givenName],
-  //                         onChanged: (text) {
-  //                           model.userRegistrationController('firstname', text);
-  //                         },
-  //                         decoration: bbInputDecoration('Prénom'),
-  //                       ),
-  //                       UIHelper.verticalSpaceSmall(),
-  //                       TextFormField(
-  //                         enableSuggestions: true,
-  //                         keyboardType: TextInputType.text,
-  //                         validator: ValidatorHelpers.validateName,
-  //                         autofillHints: const [AutofillHints.familyName],
-  //                         onChanged: (text) {
-  //                           model.userRegistrationController('lastname', text);
-  //                         },
-  //                         decoration: bbInputDecoration('Nom'),
-  //                       ),
-  //                       UIHelper.verticalSpaceSmall(),
-  //                       //Tel
-  //                       Container(
-  //                         clipBehavior: Clip.hardEdge,
-  //                         padding: const EdgeInsets.only(left: 10),
-  //                         decoration: BoxDecoration(
-  //                             color: Colors.white,
-  //                             borderRadius: BorderRadius.circular(30)),
-  //                         child: InternationalPhoneNumberInput(
-  //                           onInputChanged: (PhoneNumber number) {
-  //                             model.setPhoneNumber(number);
-  //                           },
-  //                           onInputValidated: (bool value) {},
-  //                           selectorConfig: SelectorConfig(
-  //                             selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-  //                             showFlags: true,
-  //                           ),
-  //                           initialValue: model.phoneNumber,
-  //                           hintText: 'Téléphone',
-  //                           locale: 'fr',
-  //                           ignoreBlank: false,
-  //                           autoValidateMode: AutovalidateMode.disabled,
-  //                           selectorTextStyle:
-  //                               TextStyle(color: Colors.black, fontSize: 15),
-  //                           textFieldController: model.phoneController,
-  //                           formatInput: true,
-  //                           validator: ValidatorHelpers.validatePhone,
-  //                           keyboardType: TextInputType.numberWithOptions(
-  //                               signed: true, decimal: true),
-  //                           inputBorder: InputBorder.none,
-  //                           inputDecoration: InputDecoration(
-  //                             isDense: true,
-  //                             border: InputBorder.none,
-  //                             focusedBorder: InputBorder.none,
-  //                             enabledBorder: InputBorder.none,
-  //                             errorBorder: InputBorder.none,
-  //                             disabledBorder: InputBorder.none,
-  //                             contentPadding: const EdgeInsets.symmetric(
-  //                                 horizontal: 0, vertical: 5),
-  //                             filled: true,
-  //                             fillColor: Colors.white,
-  //                             labelText: "Téléphone",
-  //                           ),
-  //                           spaceBetweenSelectorAndTextField: 0,
-  //                         ),
-  //                       ),
-  //                       UIHelper.verticalSpaceSmall(),
-  //                       TextFormField(
-  //                         obscureText: model.obscureText,
-  //                         enableSuggestions: false,
-  //                         autovalidateMode: AutovalidateMode.disabled,
-  //                         keyboardType: TextInputType.visiblePassword,
-  //                         validator: ValidatorHelpers.validatePassword,
-  //                         autofillHints: const [AutofillHints.password],
-  //                         onChanged: (text) {
-  //                           model.userRegistrationController('password', text);
-  //                         },
-  //                         decoration:
-  //                             bbInputDecoration('Mot de passe').copyWith(
-  //                           suffixIcon: IconButton(
-  //                             icon: Icon(
-  //                               model.obscureText
-  //                                   ? Icons.visibility_off
-  //                                   : Icons.visibility,
-  //                             ),
-  //                             onPressed: () {
-  //                               model.toogleobscureText();
-  //                             },
-  //                           ),
-  //                         ),
-  //                         onEditingComplete: () =>
-  //                             TextInput.finishAutofillContext(),
-  //                       ),
-  //                       UIHelper.verticalSpaceSmall(),
-  //                       SizedBox(
-  //                         height: 40,
-  //                         child: CheckboxListTile(
-  //                           contentPadding: EdgeInsets.all(0),
-  //                           title: Text(
-  //                               "J'accepte les conditions générales d'utilisation",
-  //                               style: TextStyle(fontSize: 16)),
-  //                           value: model.acceptCondition,
-  //                           onChanged: (value) {
-  //                             model.acceptConditionChange(value);
-  //                           },
-  //                           controlAffinity: ListTileControlAffinity.leading,
-  //                         ),
-  //                       ),
-  //                       UIHelper.verticalSpace(30),
-  //                       Container(
-  //                         width: MediaQuery.of(context).size.width,
-  //                         margin: const EdgeInsets.only(
-  //                             left: 30.0, right: 30.0, top: 25.0, bottom: 10),
-  //                         alignment: Alignment.center,
-  //                         child: ValueListenableBuilder<bool>(
-  //                           builder: (BuildContext context, bool isRegistering,
-  //                               Widget? child) {
-  //                             return isRegistering
-  //                                 ? BBloader()
-  //                                 : GestureDetector(
-  //                                     onTap: () async {
-  //                                       TextInput.finishAutofillContext();
-  //                                       await model.register(_controller);
-  //                                     },
-  //                                     child: Container(
-  //                                         width: double.infinity,
-  //                                         padding: const EdgeInsets.symmetric(
-  //                                           vertical: 15.0,
-  //                                           horizontal: 20.0,
-  //                                         ),
-  //                                         decoration: BoxDecoration(
-  //                                             boxShadow: [
-  //                                               BoxShadow(
-  //                                                 color: Colors.black
-  //                                                     .withOpacity(0.15),
-  //                                                 spreadRadius: 2,
-  //                                                 blurRadius: 3,
-  //                                                 offset: Offset(0,
-  //                                                     4), // changes position of shadow
-  //                                               ),
-  //                                             ],
-  //                                             color: primaryColor,
-  //                                             borderRadius:
-  //                                                 new BorderRadius.circular(
-  //                                                     30.0)),
-  //                                         child: Text('Bismillah',
-  //                                             textAlign: TextAlign.center,
-  //                                             style: TextStyle(
-  //                                                 color: Colors.white,
-  //                                                 fontWeight: FontWeight.w700,
-  //                                                 fontSize: 23))),
-  //                                   );
-  //                           },
-  //                           valueListenable: model.isRegistering,
-  //                         ),
-  //                       )
-  //                     ],
-  //                   ),
-  //             UIHelper.verticalSpace(15),
-  //             new Row(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: <Widget>[
-  //                 Padding(
-  //                   padding: const EdgeInsets.only(right: 20.0),
-  //                   child: new TextButton(
-  //                     child: new Text(
-  //                       "J'ai déjà un compte",
-  //                       style: TextStyle(
-  //                         fontWeight: FontWeight.bold,
-  //                         color: fontGreyDark,
-  //                         fontSize: 15.0,
-  //                       ),
-  //                       textAlign: TextAlign.center,
-  //                     ),
-  //                     onPressed: () => {gotoLogin()},
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //             UIHelper.verticalSpace(10),
-  //             Row(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: [
-  //                 GestureDetector(
-  //                   onTap: () {
-  //                     model.openUrl("https://test.muslim-connect.fr/cgu");
-  //                   },
-  //                   child: Text(
-  //                     'CGU / CGV',
-  //                     style: TextStyle(
-  //                         fontSize: 17,
-  //                         fontWeight: FontWeight.w600,
-  //                         color: fontGreyDark),
-  //                   ),
-  //                 )
-  //               ],
-  //             ),
-  //           ]),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget signUpPage(BuildContext context, LoginModel model) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
@@ -1284,34 +864,47 @@ class Login extends StatelessWidget {
                                     },
                                   ),
                                   const SizedBox(height: 20),
-
-                                  // // Divider "Ou"
-                                  // Row(
-                                  //   children: const [
-                                  //     Expanded(
-                                  //       child: Divider(
-                                  //         thickness: 1,
-                                  //         color: Colors.grey,
-                                  //       ),
-                                  //     ),
-                                  //     Padding(
-                                  //       padding: EdgeInsets.symmetric(
-                                  //           horizontal: 12.0),
-                                  //       child: Text(
-                                  //         "Ou",
-                                  //         style: TextStyle(
-                                  //             fontSize: 15,
-                                  //             color: Colors.black),
-                                  //       ),
-                                  //     ),
-                                  //     Expanded(
-                                  //       child: Divider(
-                                  //         thickness: 1,
-                                  //         color: primaryColor,
-                                  //       ),
-                                  //     ),
-                                  //   ],
-                                  // ),
+                                  Row(
+                                    children: const [
+                                      Expanded(
+                                        child: Divider(
+                                          thickness: 2,
+                                          color:
+                                              Color.fromRGBO(143, 151, 121, 1),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 15),
+                                        child: Text(
+                                          "Ou",
+                                          style: TextStyle(
+                                            fontFamily: 'inter',
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Divider(
+                                          thickness: 2,
+                                          color:
+                                              Color.fromRGBO(143, 151, 121, 1),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 14),
+                                  Container(
+                                    width: MediaQuery.of(context)
+                                        .size
+                                        .width, // full width like other buttons
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 30.0, vertical: 10.0),
+                                    child:
+                                        GoogleSignUpButton(), // just call it, no need to pass context
+                                  ),
                                   const SizedBox(height: 15),
 
                                   // Google Sign-in Button
@@ -1431,9 +1024,9 @@ class Login extends StatelessWidget {
           ),
           style: ButtonStyle(
             visualDensity: VisualDensity.compact,
-            foregroundColor: WidgetStateProperty.all<Color>(primaryColor),
-            backgroundColor: WidgetStateProperty.all<Color>(primaryColor),
-            shape: WidgetStateProperty.all(RoundedRectangleBorder(
+            foregroundColor: MaterialStateProperty.all<Color>(primaryColor),
+            backgroundColor: MaterialStateProperty.all<Color>(primaryColor),
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(30.0),
             )),
           ),

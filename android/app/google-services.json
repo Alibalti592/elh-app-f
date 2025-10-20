@@ -12,7 +12,20 @@
           "package_name": "com.elh.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "238687313253-6pk68gdgepr7esmcm7d77l7gk89okev3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elh.app",
+            "certificate_hash": "994323d10acf16cd8a38eafa0aa1e6e2f79a6943"
+          }
+        },
+        {
+          "client_id": "238687313253-ej0912k574ntmc7868opo8rej9si101m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC48AbdByb6UBnF6kRi6wbQdDY1lbxRvVI"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "238687313253-ej0912k574ntmc7868opo8rej9si101m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "238687313253-07i8bnj3p3e8ec3t04ntp42fi0uad243.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.elh.app"
+              }
+            }
+          ]
         }
       }
     }

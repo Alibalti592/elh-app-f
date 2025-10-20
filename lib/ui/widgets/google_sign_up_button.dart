@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:elh/locator.dart';
 import 'package:elh/services/UserInfosReactiveService.dart';
 import 'package:elh/ui/views/modules/user/AuthServiceWithGoogle.dart';
@@ -11,13 +11,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-class GoogleSignInButton extends StatelessWidget {
-  GoogleSignInButton({super.key});
+class GoogleSignUpButton extends StatelessWidget {
+  GoogleSignUpButton({super.key});
   final UserInfoReactiveService _userInfoReactiveService =
       locator<UserInfoReactiveService>();
   NavigationService _navigationService = locator<NavigationService>();
 
-  Future<void> _handleSignIn(BuildContext context) async {
+  Future<void> _handleSignUp(BuildContext context) async {
     try {
       final userData = await AuthServiceWithGoogle().signInWithGoogle();
       if (userData == null) return; // user cancelled
@@ -31,6 +31,7 @@ class GoogleSignInButton extends StatelessWidget {
       await prefs.clear();
       FlutterSecureStorage storage = const FlutterSecureStorage();
       await storage.deleteAll();
+      // Send token & email to your API
       final resp = await http.post(
         Uri.parse(
             'http://192.168.100.2:8000/elh-api/test-api/sign-in-with-google-flutter'), // Your API endpoint
@@ -81,17 +82,14 @@ class GoogleSignInButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: () {
-          print('Google Sign-In button pressed!');
-          _handleSignIn(context);
-        },
+        onPressed: () => _handleSignUp(context),
         icon: Image.asset(
           'assets/icon/google.png',
           height: 24,
           width: 24,
         ),
         label: const Text(
-          "Se connecter avec Google",
+          "S'inscrire avec Google",
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
