@@ -1,11 +1,4 @@
-# Uncomment this line to define a global platform for your project
-platform :ios, '13.0'
-
-# 🔒 Pin Firebase iOS SDK to a Swift-5 compatible line (works with Xcode 15)
-$FirebaseSDKVersion = '10.24.0'
-
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
-ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+platform :ios, '15.0'
 
 project 'Runner', {
   'Debug' => :debug,
@@ -18,7 +11,6 @@ def flutter_root
   unless File.exist?(generated_xcode_build_settings_path)
     raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
   end
-
   File.foreach(generated_xcode_build_settings_path) do |line|
     matches = line.match(/FLUTTER_ROOT\=(.*)/)
     return matches[1].strip if matches
@@ -31,10 +23,10 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  use_frameworks!
+  use_frameworks! :linkage => :static
   use_modular_headers!
 
-  pod 'PhoneNumberKit', '~> 3.7.8'
+  pod 'PhoneNumberKit', '~> 3.7.8'   # keep if you actually use it
 
   flutter_install_all_ios_pods(File.dirname(File.realpath(__FILE__)))
 end
@@ -42,16 +34,9 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    # Optional: unify min iOS if needed
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-      config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = ""
-      config.build_settings['CODE_SIGNING_REQUIRED'] = "NO"
-      config.build_settings['CODE_SIGNING_ALLOWED'] = "NO"
-      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
-      
-
-      # ✅ Force Swift 5.9 for ALL pods (covers FirebaseCoreInternal, etc.)
-      config.build_settings['SWIFT_VERSION'] = '5.9'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
     end
   end
 end

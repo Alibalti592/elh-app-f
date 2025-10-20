@@ -2,7 +2,6 @@ import 'package:elh/services/TrancheService.dart';
 import 'package:elh/ui/widgets/Upload_file_field.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:elh/common/theme.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
@@ -159,24 +158,6 @@ class _ObligationViewState extends State<ObligationView> {
                       ),
                     ),
                     SizedBox(height: 15),
-
-                    // ElevatedButton(
-                    //   style: ElevatedButton.styleFrom(
-                    //     backgroundColor: primaryColor,
-                    //     shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.circular(8),
-                    //     ),
-                    //   ),
-                    //   onPressed: () async {},
-                    //   child: Text(
-                    //     "Attacher une preuve",
-                    //     style: const TextStyle(
-                    //       fontSize: 15,
-                    //       fontWeight: FontWeight.w600,
-                    //       color: white,
-                    //     ),
-                    //   ),
-                    // ),
                     UploadFileWidget(controller: _controller),
                   ],
                 ),
@@ -251,8 +232,7 @@ class _ObligationViewState extends State<ObligationView> {
 
                 final obligationId = widget.obligation.id;
                 final emprunteurId = widget.obligation.getEmprunteurId();
-                print(
-                    "obligationId: $obligationId, emprunteurId: $emprunteurId, file: ${_controller.obligation.file}");
+
                 try {
                   final newTranche = await _trancheService
                       .createTranche(
@@ -261,12 +241,11 @@ class _ObligationViewState extends State<ObligationView> {
                       .timeout(const Duration(seconds: 10));
 
                   setStateDialog(() => _isLoading = false);
-                  print('amount: ${newTranche?.amount}');
 
                   if (newTranche != null) {
                     if (newTranche.status == 'validée') {
                       int newAmount = amount.toInt();
-                      print(newAmount);
+
                       widget.obligation.remainingAmount =
                           (widget.obligation.remainingAmount ?? 0) - newAmount;
                     }
@@ -409,7 +388,7 @@ class _ObligationViewState extends State<ObligationView> {
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
         leading: Icon(MdiIcons.cash, color: Colors.green),
-        title: Text("${tranche.amount} €"),
+        title: Text("${tranche.amount} "),
         subtitle: Text("Échéance : ${tranche.paidAt}"),
       ),
     );
@@ -452,7 +431,7 @@ class _ObligationViewState extends State<ObligationView> {
   @override
   Widget build(BuildContext context) {
     final obligation = widget.obligation;
-
+    print(obligation.toJson());
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
@@ -482,91 +461,94 @@ class _ObligationViewState extends State<ObligationView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+            if (obligation.fileUrl != null && obligation.fileUrl!.isNotEmpty)
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
-              ),
-              onPressed: () async {
-                if (obligation.fileUrl != null &&
-                    obligation.fileUrl!.isNotEmpty) {
-                  try {
-                    // Get a proper download URL from Firebase Storage
-                    final ref = FirebaseStorage.instance
-                        .refFromURL(obligation.fileUrl!);
-                    final downloadUrl = await ref.getDownloadURL();
+                onPressed: () async {
+                  if (obligation.fileUrl != null &&
+                      obligation.fileUrl!.isNotEmpty) {
+                    try {
+                      // Get a proper download URL from Firebase Storage
+                      final ref = FirebaseStorage.instance
+                          .refFromURL(obligation.fileUrl!);
+                      final downloadUrl = await ref.getDownloadURL();
 
-                    showDialog(
-                      context: context,
-                      builder: (context) => Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: SizedBox(
-                          width: 300, // fixed width
-                          height: 400, // fixed height
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Image.network(
-                                    downloadUrl,
-                                    fit: BoxFit.contain,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(16.0),
-                                          child: Text(
-                                              "Impossible de charger l'image"),
-                                        ),
-                                      );
-                                    },
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: SizedBox(
+                            width: 300, // fixed width
+                            height: 400, // fixed height
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Image.network(
+                                      downloadUrl,
+                                      fit: BoxFit.contain,
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return const Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(16.0),
+                                            child: Text(
+                                                "Impossible de charger l'image"),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text("Fermer"),
-                                ),
-                              ],
+                                  const SizedBox(height: 8),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("Fermer"),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  } catch (e) {
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Impossible de charger l'image")),
+                      );
+                    }
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text("Impossible de charger l'image")),
+                      const SnackBar(content: Text("Pas de preuve disponible")),
                     );
                   }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Pas de preuve disponible")),
-                  );
-                }
-              },
-              child: const Text(
-                "Preuve attachée",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontFamily: 'inter',
-                  fontWeight: FontWeight.w600,
+                },
+                child: const Text(
+                  "Preuve attachée",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontFamily: 'inter',
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
             const SizedBox(height: 16),
 
             // Champs avec labels au-dessus
@@ -575,7 +557,7 @@ class _ObligationViewState extends State<ObligationView> {
             buildLabeledField("Prêteur",
                 "${obligation.emprunteurName} ${obligation.emprunteurNum}"),
             buildLabeledField("Date", obligation.dateDisplay),
-            buildLabeledField("Date remboursement au plus tard",
+            buildLabeledField("Date de remboursement au plus tard",
                 obligation.dateStartDisplay ?? ""),
             buildLabeledField(
               "Montant initial",

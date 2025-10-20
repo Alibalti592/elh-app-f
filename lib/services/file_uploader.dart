@@ -45,7 +45,6 @@ class _FileUploaderState extends State<FileUploader> {
         setState(() {
           fileUrl = data['fileUrl'];
         });
-        print("Upload successful: $fileUrl");
       } else if (response.statusCode == 401) {
         setState(() {
           errorMessage = "Unauthorized: JWT token required.";
@@ -54,13 +53,11 @@ class _FileUploaderState extends State<FileUploader> {
         setState(() {
           errorMessage = "Upload failed with status: ${response.statusCode}";
         });
-        print("Upload failed: ${response.statusCode}");
       }
     } catch (e) {
       setState(() {
         errorMessage = "Error uploading file: $e";
       });
-      print("Error uploading file: $e");
     } finally {
       setState(() {
         isUploading = false;

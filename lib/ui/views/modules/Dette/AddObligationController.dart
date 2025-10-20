@@ -19,6 +19,9 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:currency_picker/currency_picker.dart';
+import 'package:flutter/material.dart'; // pour InputDecoration dans le thème
 
 class AddObligationController extends FutureViewModel<dynamic> {
   DetteRepository _detteRepository = locator<DetteRepository>();
@@ -38,6 +41,8 @@ class AddObligationController extends FutureViewModel<dynamic> {
   TextEditingController dateCreatedAtController = TextEditingController();
   TextEditingController dateStartController = TextEditingController();
   TextEditingController remainingAmount = TextEditingController();
+  final TextEditingController currencyTextController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   ValueNotifier<bool> isSaving = ValueNotifier<bool>(false);
   UserInfos? userInfos;
   String currentUserfullname = "";
@@ -51,9 +56,10 @@ class AddObligationController extends FutureViewModel<dynamic> {
   TextEditingController noteController = TextEditingController();
   TextEditingController dateDueController = TextEditingController();
   final TrancheService _trancheService = TrancheService();
+  PhoneNumber phoneNumber = PhoneNumber(isoCode: 'FR');
+  bool phoneValid = false; // updated by onInputValidated
 
-  // Make sure obligation has currency field
-  String currency = '€';
+  String currency = 'EUR';
   ValueNotifier<bool> hasEmprunteur = ValueNotifier(false);
   final remboursement = TextEditingController();
   bool showContact = true;
@@ -66,18 +72,30 @@ class AddObligationController extends FutureViewModel<dynamic> {
     if (obligation != null) {
       this.obligation = obligation;
       this.isEdit = true;
-      print("Editing obligation: ${obligation.toJson()}");
 
       // ✅ Prefill form fields
       firstnameTextController.text = obligation.firstname ?? '';
       lastNameTextController.text = obligation.lastname ?? '';
-      phoneTextController.text = obligation.tel ?? '';
+      if ((obligation.tel ?? '').isNotEmpty) {
+        // Pre-fill the raw text
+        phoneTextController.text = obligation.tel!;
+        // Provide a best-effort initial value for the widget
+        phoneNumber = PhoneNumber(
+          isoCode: 'FR',
+          phoneNumber:
+              obligation.tel, // E.164 or any raw — the widget will format
+        );
+      }
       addressTextController.text = obligation.adress ?? '';
       noteController.text = obligation.note ?? '';
       dateStartController.text =
-          DateFormat('yyyy-MM-dd').format(obligation.date);
+          DateFormat('dd/MM/yyyy').format(obligation.date);
+
       dateCreatedAtController.text = obligation.dateDisplay ?? '';
-      dateDueController.text = obligation.dateStartDisplay ?? '';
+      dateDueController.text = obligation.dateStartDisplay ??
+          (obligation.dateStartDisplay != null
+              ? DateFormat('dd/MM/yyyy').format(obligation.dateStartDisplay!)
+              : '');
       remainingAmount.text = obligation.remainingAmount.toString() ?? '';
 
       // ✅ Make sure form is visible
@@ -106,8 +124,127 @@ class AddObligationController extends FutureViewModel<dynamic> {
     // Default date
     var inputFormat = DateFormat("EEEE dd MMMM yyyy", 'fr_FR');
     dateCreatedAtController.text = inputFormat.format(this.obligation.date);
-
+    _initCurrencyFromObligation();
     notifyListeners();
+  }
+  void _initCurrencyFromObligation() {
+    final raw = obligation.currency.trim();
+
+    if (raw == null || raw.isEmpty) {
+      currency = 'EUR'; // default
+    } else if (_looksLikeCode(raw)) {
+      currency = raw; // already a code
+    } else {
+      // legacy symbol → code
+      currency = _guessCodeFromSymbol(raw) ?? 'EUR';
+    }
+
+    // normalize model to code
+    obligation.set('currency', currency);
+
+    // UI shows only the code
+    currencyTextController.text = currency;
+  }
+
+  bool _looksLikeCode(String x) => RegExp(r'^[A-Z]{3}$').hasMatch(x);
+  String? _guessCodeFromSymbol(String s) {
+    switch (s) {
+      case '€':
+        return 'EUR';
+      case '\$':
+        return 'USD';
+      case 'TND':
+        return 'TND';
+      case 'MAD':
+        return 'MAD';
+      case 'DZD':
+        return 'DZD';
+      case 'XOF':
+        return 'XOF';
+      default:
+        return null;
+    }
+  }
+
+  void pickCurrency(BuildContext context) {
+    showCurrencyPicker(
+      context: context,
+      showFlag: true,
+      showCurrencyName: true,
+      showCurrencyCode: true,
+      favorite: const ['EUR', 'USD', 'TND', 'MAD', 'DZD', 'XOF'],
+      onSelect: (Currency c) {
+        currency = c.code; // CODE only
+        obligation.set('currency', currency); // normalize model
+        currencyTextController.text = currency; // UI shows code only
+        notifyListeners();
+      },
+      theme: CurrencyPickerThemeData(
+        bottomSheetHeight: 500,
+        titleTextStyle:
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        subtitleTextStyle: const TextStyle(fontSize: 14),
+        flagSize: 24,
+        inputDecoration: InputDecoration(
+          hintText: 'Rechercher…',
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          enabledBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide:
+                BorderSide(color: Color.fromRGBO(229, 231, 235, 1), width: 2),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: Colors.blue, width: 2),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> hydratePhoneFromObligation() async {
+    final raw = obligation.tel; // ex: +21658485001
+    if (raw.trim().isNotEmpty) {
+      try {
+        final parsed = await PhoneNumber.getRegionInfoFromPhoneNumber(raw);
+        phoneNumber = parsed;
+
+        final dial = parsed.dialCode ?? ''; // +216
+        final e164 = parsed.phoneNumber ?? raw; // +21658485001
+        final national =
+            dial.isNotEmpty ? e164.replaceFirst(dial, '') : e164; // 58485001
+
+        phoneController.text = national;
+      } catch (_) {
+        phoneNumber = PhoneNumber(isoCode: 'FR');
+        phoneController.text = raw;
+      }
+    } else {
+      phoneNumber = PhoneNumber(isoCode: 'FR');
+      phoneController.clear();
+    }
+    notifyListeners();
+  }
+
+  void setPhoneNumber(PhoneNumber number) {
+    phoneNumber = number;
+    // number.phoneNumber is E.164 formatted (+33123456789)
+    obligation.tel = number.phoneNumber ?? '';
+    // Do not notifyListeners() on every keystroke unless needed
+  }
+
+  String? phoneFieldValidator(String? value) {
+    // value is the raw text in the field (may not include +cc yet while typing)
+
+    final v = (value ?? '').trim();
+    if (v.isEmpty) return 'Champ obligatoire';
+    // Trust the package's validation result:
+    if (!phoneValid) return 'Téléphone invalide';
+    return null;
   }
 
   // Example: call this on every field change
@@ -204,64 +341,64 @@ class AddObligationController extends FutureViewModel<dynamic> {
     notifyListeners();
   }
 
-  saveObligation() async {
-    print("firstname ${obligation.firstname}");
-    print("note ${obligation.note}");
-    print("raison ${obligation.raison}");
+  void _showDateDueError() {
+    _errorMessageService.showToaster(
+      'error',
+      "Merci de saisir une date d'échéance",
+    );
+  }
 
-    if (formKey.currentState?.validate() ?? false) {
-      formKey.currentState!.save();
+  DateTime? _parseFr(String s) {
+    try {
+      return DateFormat('dd/MM/yyyy').parseStrict(s);
+    } catch (_) {
+      return null;
     }
+  }
+
+  void saveObligation() async {
+    final form = formKey.currentState;
+    if (form == null) return;
+
+    // Trigger all field validators (red borders show here)
+    final ok = form.validate();
+    if (!ok) {
+      _errorMessageService.showToaster(
+          'error', 'Attention : tous les champs ne sont pas renseignés.');
+      return;
+    }
+
+    // Cross-field: Date due required and > start
+    final startText = dateStartController.text.trim();
+    final dueText = dateDueController.text.trim();
+    final start = _parseFr(startText);
+    final due = _parseFr(dueText);
+
+    if (due == null || start == null || !due.isAfter(start)) {
+      _showDateDueError();
+      return;
+    }
+
+    // Safety check (amount already validated in field)
     if (obligation.amount <= 0) {
-      _errorMessageService.showToaster(
-        'error',
-        "Merci de saisir un montant",
-      );
-      return;
-    }
-    if (obligation.dateStartDisplay == null) {
-      _errorMessageService.showToaster(
-        'error',
-        "Merci de saisir une date limite de remboursement",
-      );
-      return;
-    }
-    if (obligation.firstname.length == 0 &&
-        obligation.lastname.length == 0 &&
-        obligation.tel.length == 0) {
-      _errorMessageService.showToaster(
-        'error',
-        "Merci de saisir un contact ",
-      );
-      return;
-    }
-    if (obligation.firstname.length < 2) {
-      _errorMessageService.showToaster(
-        'error',
-        "Le prénom doit contenir au moins 2 caractères",
-      );
-      return;
-    }
-    if (obligation.lastname.length < 2) {
-      _errorMessageService.showToaster(
-        'error',
-        "Le nom doit contenir au moins 2 caractères",
-      );
+      _errorMessageService.showToaster('error', "Merci de saisir un montant");
       return;
     }
 
-    if (this.obligation.dateStart == null && this.obligation.type != 'amana') {
+    // Safety checks for names/tel (also done in field validators)
+    if ((obligation.firstname.trim().length < 2) ||
+        (obligation.lastname.trim().length < 2) ||
+        (obligation.tel.trim().isEmpty)) {
       _errorMessageService.showToaster(
-        'error',
-        "Merci de saisir une date d'échéance",
-      );
+          'error', "Merci de saisir un contact valide");
       return;
     }
 
-    this.isSaving.value = true;
+    isSaving.value = true;
 
     try {
-      Map<String, dynamic> payload = {
+      // Keep your existing mapping
+      final payload = {
         'id': obligation.id,
         'type': obligation.type,
         'amount': obligation.amount,
@@ -273,32 +410,23 @@ class AddObligationController extends FutureViewModel<dynamic> {
         'fileUrl': obligation.fileUrl,
         'date': obligation.date.toIso8601String(),
         'dateStart': obligation.dateStart?.toIso8601String(),
+        'currency': obligation.currency,
       };
-      print("this is comming from AddObligationcontroller : ${payload}");
 
-      print("filePath: ${obligation.file}");
+      print("Payload obligation: $payload");
 
-      ApiResponse apiResponse =
+      final apiResponse =
           await _detteRepository.saveDette(payload, filePath: obligation.file);
 
       if (apiResponse.status == 200) {
-        this.isSaving.value = false;
-        this._navigationService.popRepeated(1);
+        isSaving.value = false;
+        _navigationService.popRepeated(1);
       } else {
-        this.isSaving.value = false;
+        isSaving.value = false;
         _errorMessageService.errorOnAPICall();
-        // print the actual response data
-        print('API returned error: ${apiResponse.data}');
       }
-    } catch (t, stackTrace) {
-      this.isSaving.value = false;
-      print('Error occurred: $t');
-      print('Stack trace: $stackTrace');
-
-      if (t is DioException) {
-        print('DioError details: ${t.response?.data}');
-        print('Status code: ${t.response?.statusCode}');
-      }
+    } catch (_) {
+      isSaving.value = false;
     }
   }
 
@@ -342,9 +470,6 @@ class AddObligationController extends FutureViewModel<dynamic> {
         // Phone contacts have no related user ID
         this.obligation.relatedUserId = null;
 
-        print("Phone contact selected: ${contact.name.first}");
-        print("Controller text: ${firstnameTextController.text}");
-
         // Toggle form to show user info
         tglePersonFormDetails();
         notifyListeners();
@@ -379,7 +504,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
             this.phoneTextController.text = this.obligation.tel;
           }
           this.obligation.relatedUserId = relation.user.id;
-          print(relation.user.id);
+
           tglePersonFormDetails();
         } else if (value is UserInfos) {
           // Phone contact selected
@@ -395,7 +520,6 @@ class AddObligationController extends FutureViewModel<dynamic> {
           addressTextController.text = obligation.adress;
 
           obligation.relatedUserId = value.id ?? null;
-          print(obligation.firstname);
 
           tglePersonFormDetails();
         }

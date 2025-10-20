@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:elh/locator.dart';
 import 'package:elh/services/UserInfosReactiveService.dart';
 import 'package:elh/ui/views/modules/user/AuthServiceWithGoogle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -34,7 +32,7 @@ class GoogleSignUpButton extends StatelessWidget {
       // Send token & email to your API
       final resp = await http.post(
         Uri.parse(
-            'http://192.168.100.2:8000/elh-api/test-api/sign-in-with-google-flutter'), // Your API endpoint
+            'https://test.muslim-connect.fr/elh-api/test-api/sign-in-with-google-flutter'), // Your API endpoint
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,

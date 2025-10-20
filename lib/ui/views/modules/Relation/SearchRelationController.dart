@@ -56,27 +56,26 @@ class SearchRelationController extends BaseViewModel {
   addRelation(Relation relation) async {
     this.isAddingRelationId = relation.user.id;
     notifyListeners();
-    ApiResponse apiResponse = await _relationRepository.addRelation(this.isAddingRelationId.toString());
-    print(apiResponse.status);
-    if(apiResponse.status == 200) {
+    ApiResponse apiResponse = await _relationRepository
+        .addRelation(this.isAddingRelationId.toString());
+
+    if (apiResponse.status == 200) {
       this.isAddingRelationId = null;
       relation.status = 'active';
       this.updateListcontacts = true;
       try {
         var decodeData = json.decode(apiResponse.data);
         Thread thread = Thread.fromJson(decodeData['thread']);
-        if(this.backview == 'chat') {
+        if (this.backview == 'chat') {
           _navigationService.clearTillFirstAndShow('chatThread',
-              arguments : {
-                "thread" : thread
-              });
+              arguments: {"thread": thread});
         } else {
           _navigationService.back(result: 'updateList');
         }
-      } catch(e) {
+      } catch (e) {
         _navigationService.back(result: 'updateList');
       }
-    } else if(apiResponse.status == 403) {
+    } else if (apiResponse.status == 403) {
       this.isAddingRelationId = null;
       _errorMessageService.errorShoMessage("Désolé ce contact est introuvable");
     } else {
@@ -88,7 +87,7 @@ class SearchRelationController extends BaseViewModel {
 
   sendInvitation() async {
     String search = searchTextController.text.trim();
-    if(ValidatorHelpers.validateEmail(search) != null) {
+    if (ValidatorHelpers.validateEmail(search) != null) {
       this.isInviting = true;
       notifyListeners();
       await Future.delayed(Duration(seconds: 5));
@@ -98,12 +97,14 @@ class SearchRelationController extends BaseViewModel {
       this.showErrorText = false;
       this.isInviting = true;
       notifyListeners();
-      ApiResponse apiResponse = await _relationRepository.sendInvitation(search);
+      ApiResponse apiResponse =
+          await _relationRepository.sendInvitation(search);
       if (apiResponse.status == 200) {
         var decodeData = json.decode(apiResponse.data);
         this.hasSearchRelation = false;
         this.searchTextController.text = "";
-        _errorMessageService.errorShoMessage(decodeData['message'], title: 'Invitation enovyée');
+        _errorMessageService.errorShoMessage(decodeData['message'],
+            title: 'Invitation enovyée');
       } else {
         _errorMessageService.errorOnAPICall();
       }
@@ -113,13 +114,17 @@ class SearchRelationController extends BaseViewModel {
   }
 
   listPhoneContact() {
-    _navigationService.navigateWithTransition(ListPhoneContactView(), transitionStyle: Transition.downToUp, duration:Duration(milliseconds: 300))?.then((contact) {
-      if(contact != null && contact is Contact) {
+    _navigationService
+        .navigateWithTransition(ListPhoneContactView(),
+            transitionStyle: Transition.downToUp,
+            duration: Duration(milliseconds: 300))
+        ?.then((contact) {
+      if (contact != null && contact is Contact) {
         print(contact);
         this.searchBy = 'phone';
-        if(!contact.phones.isEmpty) {
+        if (!contact.phones.isEmpty) {
           this.searchTextController.text = contact.phones[0].number;
-          if(this.searchTextController.text .length > 4) {
+          if (this.searchTextController.text.length > 4) {
             this.searchRelations();
           }
         }
@@ -127,20 +132,15 @@ class SearchRelationController extends BaseViewModel {
     });
   }
 
-
   chatWithHim(relation) async {
     ApiResponse apiResponse = await _contactRepository.getThread(relation);
     if (apiResponse.status == 200) {
       var decodeData = json.decode(apiResponse.data);
       Thread thread = Thread.fromJson(decodeData['thread']);
-      _navigationService.clearTillFirstAndShow('chatThread',
-          arguments : {
-            "thread" : thread
-          });
+      _navigationService
+          .clearTillFirstAndShow('chatThread', arguments: {"thread": thread});
     } else {
       _errorMessageService.errorOnAPICall();
     }
   }
-
-  
 }

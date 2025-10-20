@@ -372,8 +372,8 @@ class DashboardViewState extends State<DashboardView>
                     children: [
                       Image.asset(
                         'assets/images/Group-5.png',
-                        width: 28,
-                        height: 28,
+                        width: 38,
+                        height: 38,
                       ),
                       const SizedBox(width: 6),
                       Expanded(
@@ -384,7 +384,7 @@ class DashboardViewState extends State<DashboardView>
                               city.isEmpty ? '—' : city,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 16,
+                                fontSize: 18,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -392,7 +392,7 @@ class DashboardViewState extends State<DashboardView>
                               '$date - $dateMuslim',
                               style: TextStyle(
                                 color: Colors.grey[600],
-                                fontSize: 13,
+                                fontSize: 17,
                               ),
                             ),
                           ],
@@ -407,16 +407,13 @@ class DashboardViewState extends State<DashboardView>
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: () {
-                        controller.goTo('qibla');
-                      },
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.asset(
                             'assets/images/Group-6.png',
-                            width: 28,
-                            height: 28,
+                            width: 38,
+                            height: 38,
                           ),
                           const SizedBox(width: 6),
                           Expanded(
@@ -427,7 +424,7 @@ class DashboardViewState extends State<DashboardView>
                                   'Prochaine Prière',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 15,
+                                    fontSize: 17,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
@@ -435,21 +432,69 @@ class DashboardViewState extends State<DashboardView>
                               ],
                             ),
                           ),
-                          Text('Voir Qibla'),
-                          // 👉 Arrow icon
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 15,
-                            color: Colors.grey[600],
-                          ),
                         ],
                       ),
                     ),
-                  )
+                  ),
+
+                  // ⬆️ Add top margin before the buttons row
+                  const SizedBox(height: 14),
+
+                  // ➡️ Buttons row: spaced between, larger icons, primaryColor
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Item 1: Voir Qibla
+                      InkWell(
+                        onTap: () => controller.goTo('qibla'),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 8,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.explore,
+                                  size: 26, color: primaryColor),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Qibla',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Item 2: Voir toutes les prières
+                      InkWell(
+                        onTap: () =>
+                            controller.goTo('pray'), // change route if needed
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.schedule,
+                                  size: 26, color: primaryColor),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Toutes les prières',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-
             const SizedBox(width: 12),
           ],
         ),
@@ -982,9 +1027,9 @@ class DashboardViewState extends State<DashboardView>
             Text(
               "${controller.nextPrayName} dans $nextPrayHour",
               style: const TextStyle(
-                fontSize: 13,
+                fontSize: 17,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey,
+                color: primaryColor,
               ),
             ),
           ],

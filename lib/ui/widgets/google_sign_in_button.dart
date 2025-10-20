@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:elh/locator.dart';
+import 'package:elh/models/user.dart';
+import 'package:elh/repository/UserRepository.dart';
+import 'package:elh/services/AuthenticationService.dart';
 import 'package:elh/services/UserInfosReactiveService.dart';
 import 'package:elh/ui/views/modules/user/AuthServiceWithGoogle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -15,8 +17,13 @@ class GoogleSignInButton extends StatelessWidget {
   GoogleSignInButton({super.key});
   final UserInfoReactiveService _userInfoReactiveService =
       locator<UserInfoReactiveService>();
+  UserRepository _userRepository = locator<UserRepository>();
+  AuthenticationService _authenticationService =
+      locator<AuthenticationService>();
   NavigationService _navigationService = locator<NavigationService>();
-
+  final FlutterSecureStorage _secureStorage = locator<FlutterSecureStorage>();
+  User? user;
+  StreamController<User> userController = StreamController<User>();
   Future<void> _handleSignIn(BuildContext context) async {
     try {
       final userData = await AuthServiceWithGoogle().signInWithGoogle();
@@ -33,7 +40,7 @@ class GoogleSignInButton extends StatelessWidget {
       await storage.deleteAll();
       final resp = await http.post(
         Uri.parse(
-            'http://192.168.100.2:8000/elh-api/test-api/sign-in-with-google-flutter'), // Your API endpoint
+            'https://test.muslim-connect.fr/elh-api/test-api/sign-in-with-google-flutter'), // Your API endpoint
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,
@@ -45,6 +52,13 @@ class GoogleSignInButton extends StatelessWidget {
         final jwt = data['token'] as String;
         print("Bienvenue ${data["user"]["firstname"]}");
         await _userInfoReactiveService.getUserInfos(cache: false);
+        if (_authenticationService.jwtIsToken(jwt)) {
+          await this.saveJwtInStorage(jwt);
+          User fetchedUser = User.fromJwt(jwt);
+          user = fetchedUser;
+          userController.add(fetchedUser);
+          //check if eneabled ??
+        }
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', jwt);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -108,5 +122,9 @@ class GoogleSignInButton extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  saveJwtInStorage(jwt) async {
+    await _secureStorage.write(key: 'jwt', value: jwt);
   }
 }

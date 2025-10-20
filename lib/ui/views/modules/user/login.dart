@@ -74,11 +74,11 @@ class Login extends StatelessWidget {
                           style: ButtonStyle(
                             visualDensity: VisualDensity.compact,
                             foregroundColor:
-                                MaterialStateProperty.all<Color>(primaryColor),
+                                WidgetStateProperty.all<Color>(primaryColor),
                             backgroundColor:
-                                MaterialStateProperty.all<Color>(primaryColor),
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
+                                WidgetStateProperty.all<Color>(primaryColor),
+                            shape:
+                                WidgetStateProperty.all(RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(30.0),
                             )),
                           ),
@@ -1024,9 +1024,9 @@ class Login extends StatelessWidget {
           ),
           style: ButtonStyle(
             visualDensity: VisualDensity.compact,
-            foregroundColor: MaterialStateProperty.all<Color>(primaryColor),
-            backgroundColor: MaterialStateProperty.all<Color>(primaryColor),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            foregroundColor: WidgetStateProperty.all<Color>(primaryColor),
+            backgroundColor: WidgetStateProperty.all<Color>(primaryColor),
+            shape: WidgetStateProperty.all(RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(30.0),
             )),
           ),

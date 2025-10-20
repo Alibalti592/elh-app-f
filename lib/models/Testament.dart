@@ -25,40 +25,38 @@ class Testament {
   });
 
   factory Testament.fromJson(Map<String, dynamic> json) => Testament(
-    id: json["id"],
-    from: json["from"],
-    location: json["location"],
-    family: json["family"],
-    goods: json["goods"],
-    toilette: json["toilette"],
-    fixe: json["fixe"],
-    lastwill: json["lastwill"],
-  );
+        id: json["id"],
+        from: json["from"],
+        location: json["location"],
+        family: json["family"],
+        goods: json["goods"],
+        toilette: json["toilette"],
+        fixe: json["fixe"],
+        lastwill: json["lastwill"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "location": location,
-    "family": family,
-    "goods": goods,
-    "toilette": toilette,
-    "fixe": fixe,
-    "lastwill": lastwill,
-  };
-
+        "id": id,
+        "location": location,
+        "family": family,
+        "goods": goods,
+        "toilette": toilette,
+        "fixe": fixe,
+        "lastwill": lastwill,
+      };
 
   dynamic set(String propertyName, value) {
-    print(propertyName);
-    if(propertyName == 'location') {
+    if (propertyName == 'location') {
       this.location = value;
-    } else if(propertyName == 'family') {
+    } else if (propertyName == 'family') {
       this.family = value;
-    } else if(propertyName == 'goods') {
+    } else if (propertyName == 'goods') {
       this.goods = value;
-    }else if(propertyName == 'toilette') {
+    } else if (propertyName == 'toilette') {
       this.toilette = value;
-    }else if(propertyName == 'fixe') {
+    } else if (propertyName == 'fixe') {
       this.fixe = value;
-    }else if(propertyName == 'lastwill') {
+    } else if (propertyName == 'lastwill') {
       this.lastwill = value;
     }
   }

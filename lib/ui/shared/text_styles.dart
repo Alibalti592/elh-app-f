@@ -32,7 +32,7 @@ const labelSmallStyle = TextStyle(
   fontFamily: 'Karla',
   fontWeight: FontWeight.w600,
   color: Color.fromRGBO(55, 65, 81, 1),
-  fontSize: 12.0,
+  fontSize: 14.0,
 );
 const labelSmallStyleB = TextStyle(
   fontFamily: 'inter',

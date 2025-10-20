@@ -19,19 +19,20 @@ class MosqueRepository {
   Future<ApiResponse> saveMosque(Mosque mosque) async {
     var map = new Map<String, dynamic>();
     map['mosque'] = json.encode(mosque.toJson());
-    return _authApiHelper.post('/save-mosque', map, type: 'x-www-form-urlencoded');
+    return _authApiHelper.post('/save-mosque', map,
+        type: 'x-www-form-urlencoded');
   }
 
   Future<ApiResponse> loadMosques(String location, distance) async {
     String params = "?location=$location&distance=$distance";
-    // print('/load-mosques$params');
+
     return _authApiHelper.get('/load-mosques$params');
   }
 
   Future<ApiResponse> markFavorite(Mosque mosque) async {
     var map = new Map<String, dynamic>();
     map['mosque'] = mosque.id.toString();
-    return _authApiHelper.post('/mark-favorite-mosque', map, type: 'x-www-form-urlencoded');
+    return _authApiHelper.post('/mark-favorite-mosque', map,
+        type: 'x-www-form-urlencoded');
   }
-
 }

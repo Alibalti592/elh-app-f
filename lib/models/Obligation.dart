@@ -65,7 +65,7 @@ class Obligation {
     this.adress = "",
     this.tel = "",
     this.amount = 0,
-    this.currency = "€",
+    this.currency = "",
     this.note = "",
     DateTime? date,
     String? dateDisplay,
@@ -105,7 +105,7 @@ class Obligation {
         adress: json["adress"] ?? "",
         tel: json["tel"] ?? "",
         amount: json["amount"] ?? 0,
-        currency: json["currency"] ?? "€",
+        currency: json["currency"] ?? "",
         note: json["raison"] ?? "",
         date: json["date"] != null
             ? DateTime.parse(json["date"])

@@ -19,20 +19,22 @@ class DeceRepository {
   Future<ApiResponse> saveDece(Dece dece) async {
     var map = new Map<String, dynamic>();
     map['dece'] = json.encode(dece.toJson());
-    return _authApiHelper.post('/save-dece', map, type: 'x-www-form-urlencoded');
+    return _authApiHelper.post('/save-dece', map,
+        type: 'x-www-form-urlencoded');
   }
 
   Future<ApiResponse> deleteDece(Dece dece) async {
     var map = new Map<String, dynamic>();
     map['deceId'] = dece.id.toString();
-    return _authApiHelper.post('/delete-dece', map, type: 'x-www-form-urlencoded');
+    return _authApiHelper.post('/delete-dece', map,
+        type: 'x-www-form-urlencoded');
   }
-
 
   Future<ApiResponse> notifyPFs(deceId) {
     var map = new Map<String, dynamic>();
     map['deceId'] = deceId;
-    return _authApiHelper.post('/dece-notify-pfs', map, type: 'x-www-form-urlencoded');
+    return _authApiHelper.post('/dece-notify-pfs', map,
+        type: 'x-www-form-urlencoded');
   }
 
   Future<ApiResponse> loadPfs(deceId) async {
@@ -41,7 +43,7 @@ class DeceRepository {
 
   Future<ApiResponse> loadImams(String location, distance) async {
     String params = "?location=$location&distance=$distance";
-    // print('/load-mosques$params');
+
     return _authApiHelper.get('/load-imams$params');
   }
 }

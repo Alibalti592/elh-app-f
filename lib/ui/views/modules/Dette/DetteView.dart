@@ -239,7 +239,6 @@ class DetteViewState extends State<DetteView> {
     }
     List<Widget> obligationWigets = [];
     if (obligations.isEmpty) {
-      print(obligations);
       String text = "Vous n’avez rien prêté pour l’instant";
 
       if (type == 'amana') {

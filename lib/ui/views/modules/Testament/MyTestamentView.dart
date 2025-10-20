@@ -188,7 +188,7 @@ class MyTestamentViewState extends State<MyTestamentView> {
         tag: "obligation-tag-${obligation.id}",
         child: Material(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(8),
           ),
           child: ListTile(
               onTap: () {

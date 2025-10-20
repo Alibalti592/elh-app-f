@@ -21,14 +21,15 @@ class TestamentRepository {
   }
 
   Future<ApiResponse> loadTestamentDettes(testament) async {
-    // print('/load-testament-dettes?testament=${testament.id}');
-    return _authApiHelper.get('/load-testament-dettes?testament=${testament.id}');
+    return _authApiHelper
+        .get('/load-testament-dettes?testament=${testament.id}');
   }
 
   Future<ApiResponse> saveTestament(Testament testament) async {
     var map = new Map<String, dynamic>();
     map['testament'] = json.encode(testament.toJson());
-    return _authApiHelper.post('/save-testament', map, type: 'x-www-form-urlencoded');
+    return _authApiHelper.post('/save-testament', map,
+        type: 'x-www-form-urlencoded');
   }
 
   Future<ApiResponse> getJeun() async {
@@ -37,29 +38,27 @@ class TestamentRepository {
 
   Future<ApiResponse> loadJeuntext(testament) async {
     String param = '';
-    if(testament != null) {
+    if (testament != null) {
       param = '?testament=${testament.id}';
     }
     return _authApiHelper.get('/get-jeun-string-for-testatement$param');
   }
 
-  Future<ApiResponse> saveJeun(String jeunText, int jeunnbDays, int jeunNbDaysR, int selectedYear) async {
+  Future<ApiResponse> saveJeun(String jeunText, int jeunnbDays, int jeunNbDaysR,
+      int selectedYear) async {
     var map = new Map<String, dynamic>();
     map['jeunText'] = jeunText;
     map['jeunNbDays'] = jeunnbDays.toString();
     map['jeunNbDaysR'] = jeunNbDaysR.toString();
     map['selectedYear'] = selectedYear.toString();
-    return _authApiHelper.post('/save-jeun-textnbdays', map, type: 'x-www-form-urlencoded');
+    return _authApiHelper.post('/save-jeun-textnbdays', map,
+        type: 'x-www-form-urlencoded');
   }
-
-
 
   Future<ApiResponse> getPdfLink(Testament testament) async {
     var map = new Map<String, dynamic>();
     map['testament'] = testament.id.toString();
-    return _authApiHelper.post('/testamenet-generate-pdf', map, type: 'x-www-form-urlencoded');
+    return _authApiHelper.post('/testamenet-generate-pdf', map,
+        type: 'x-www-form-urlencoded');
   }
-
-
-
 }

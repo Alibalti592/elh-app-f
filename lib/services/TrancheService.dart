@@ -35,11 +35,8 @@ class TrancheService {
 
       if (res.statusCode == 200) return true;
 
-      // Debug
-      // print("Erreur backend: ${res.statusCode} => ${res.body}");
       return false;
     } catch (e) {
-      // print("Erreur réseau: $e");
       return false;
     }
   }
@@ -79,7 +76,6 @@ class TrancheService {
     String? filePath, // <- pass a path to send a file
   }) async {
     String token = await this.getUserToken();
-    print(token);
 
     // Common payload (without fileUrl; server will upload and set it)
     final Map<String, dynamic> payload = {
@@ -88,7 +84,6 @@ class TrancheService {
       'amount': amount,
       'paidAt': paidAt,
     };
-    print(payload);
 
     // ---- Multipart path (with file) ----
     if (filePath != null) {
@@ -119,7 +114,6 @@ class TrancheService {
           'fileUrl': data['fileUrl'],
         });
       } else {
-        // print('Failed multipart: ${res.statusCode} ${res.body}');
         return null;
       }
     }
@@ -136,10 +130,10 @@ class TrancheService {
             body: jsonEncode(payload),
           )
           .timeout(const Duration(seconds: 10));
-      print(res.statusCode);
+
       if (res.statusCode == 200 || res.statusCode == 201) {
         final data = jsonDecode(res.body);
-        print("la data : ${data}");
+
         return Tranche.fromJson({
           'id': data['trancheId'],
           'amount': data['amount'] ?? amount,

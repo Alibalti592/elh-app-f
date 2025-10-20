@@ -27,7 +27,7 @@ class NotificationService {
 
     if (res.statusCode == 200) {
       final List data = jsonDecode(res.body);
-      print(data);
+
       // Cast each element to AppNotification
       return data.map((e) => AppNotification.fromJson(e)).toList();
     } else {

@@ -5,7 +5,6 @@ import 'package:elh/ui/shared/BBLoader.dart';
 import 'package:elh/ui/shared/Validators.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/modules/user/loginModel.dart';
-import 'package:elh/ui/widgets/google_sign_up_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';

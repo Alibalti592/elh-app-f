@@ -27,9 +27,9 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_widget_from_html_core: ^0.16.0
+  flutter_widget_from_html_core: ^0.17.0
   provider: ^6.0.5
-  google_sign_in: ^5.4.4
+  google_sign_in: ^6.3.0
   http: ^1.5.0
   material_design_icons_flutter: ^7.0.7296
   fancy_bottom_navigation: ^0.3.3
@@ -41,8 +41,8 @@ dependencies:
   expandable_bottom_bar: any
   flutter_placeholder_textlines: ^1.2.0
   scrollable_positioned_list: any
-  firebase_core: ^3.15.2
-  firebase_messaging: ^15.2.5
+  firebase_core: ^4.2.0
+  firebase_messaging: ^16.0.3
   flutter_local_notifications: ^19.1.0
   # state management
   stacked: ^3.4.1
@@ -55,8 +55,8 @@ dependencies:
   get: ^4.6.5
   observable_ish: ^6.0.5
   carousel_slider: ^5.0.0
-  package_info_plus: ^8.3.0
-  share_plus: ^11.0.0
+  package_info_plus: ^9.0.0
+  share_plus: ^12.0.1
   path_provider: ^2.1.1
   buttons_tabbar: ^1.3.15
   visibility_detector: ^0.4.0+2
@@ -67,7 +67,7 @@ dependencies:
   shared_preferences: ^2.2.1
   #IMAGE -> recréer ?!
   image_picker: ^1.0.4
-  image_cropper: ^9.1.0
+  image_cropper: ^11.0.0
   #heic_to_jpg: ^0.2.0
   exif: ^3.1.4
   youtube_player_flutter: ^9.1.2
@@ -84,22 +84,24 @@ dependencies:
   #  curved_navigation_bar: ^1.0.3
   convex_bottom_bar: ^3.2.0
   google_places_flutter: ^2.0.8
-  intl_phone_number_input: 0.7.4
+  intl_phone_number_input: ^0.7.5
   flutter_contacts: ^1.1.7+1
   pdf: ^3.11.2
   timezone: ^0.10.0
-  geocoding: ^3.0.0
+  geocoding: ^4.0.0
   photo_view: ^0.15.0
   mime_type: ^1.0.1
   flutter_image_compress: ^2.3.0
-  device_info_plus: ^11.4.0
+  device_info_plus: ^12.2.0
   dio: ^5.4.1
   open_file: ^3.3.2
   permission_handler: ^12.0.0+1
-  fluttertoast: ^8.1.4
-  firebase_storage: ^12.4.10
+  app_settings: ^6.1.1
+  fluttertoast: ^9.0.0
+  firebase_storage: ^13.0.3
   badges: ^3.1.2
-  firebase_auth: ^5.7.0
+  firebase_auth: ^6.1.1
+  currency_picker: ^2.0.21
   #use flutter_inapwebview 6.0 ??
   #error inapp webview => youtube, trouver une laternative : flutter_youtube: ^2.0.0 ??
 dependency_overrides:

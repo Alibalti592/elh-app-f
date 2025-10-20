@@ -175,7 +175,7 @@ class EditTestamentViewState extends State<EditTestamentView> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             child: Text(label, style: labelSmallStyle),
           ),
           UIHelper.verticalSpace(5),

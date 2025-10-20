@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:elh/models/BBLocation.dart';
 import 'package:elh/models/pompe.dart';
 import 'package:elh/models/userInfos.dart';
@@ -10,7 +9,6 @@ import 'package:elh/locator.dart';
 import 'package:elh/services/UserInfosReactiveService.dart';
 import 'package:elh/store/LocationStore.dart';
 import 'package:elh/ui/views/common/BBLocation/BBLocationView.dart';
-import 'package:elh/ui/views/modules/home/DashboardView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:stacked/stacked.dart';
