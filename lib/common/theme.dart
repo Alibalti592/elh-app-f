@@ -47,7 +47,8 @@ const shadow1 = [
 ];
 
 // FONT STYLE
-TextStyle smallText = TextStyle(color: fontGrey, fontSize: 11);
+TextStyle smallText =
+    TextStyle(color: fontGrey, fontSize: 12, fontWeight: FontWeight.w700);
 
 SweepGradient bblinearGradient() {
   return SweepGradient(

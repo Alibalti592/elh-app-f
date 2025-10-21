@@ -41,7 +41,7 @@ class ObligationCardState extends State<ObligationCard> {
             child: RepaintBoundary(
               key: controller.globalKey,
               child: Material(
-                color: bgLightCard,
+                color: Color.fromRGBO(220, 198, 169, 1.0),
                 elevation: 2,
                 child: Container(
                   decoration: BoxDecoration(image: backgroundImageSimple()),
@@ -57,10 +57,10 @@ class ObligationCardState extends State<ObligationCard> {
                               Text(
                                 "Bismillahi R-Rahmani R-Rahim",
                                 style: TextStyle(
-                                    color: white,
+                                    color: Color.fromRGBO(55, 65, 81, 1),
                                     fontFamily: 'Karla',
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 16),
+                                    fontSize: 18),
                               ),
                               UIHelper.verticalSpace(0),
                               Text(
@@ -68,17 +68,17 @@ class ObligationCardState extends State<ObligationCard> {
                                     ? "Détails de la amana"
                                     : "Détails de la dette",
                                 style: TextStyle(
-                                    color: fontGreyDark,
+                                    color: Color.fromRGBO(55, 65, 81, 1),
                                     fontFamily: 'Karla',
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 14),
+                                    fontSize: 16),
                               ),
                               UIHelper.verticalSpace(7),
                               _itemIUsers(obligation),
                               UIHelper.verticalSpace(7),
                               _item(MdiIcons.calendarOutline,
                                   obligation.dateDisplay,
-                                  title: 'Date'),
+                                  title: 'En Date du'),
                               if (obligation.type != 'amana') ...[
                                 UIHelper.verticalSpace(
                                     obligation.amount != 0 ? 7 : 0),
@@ -165,23 +165,6 @@ class ObligationCardState extends State<ObligationCard> {
                                 );
                         },
                       ),
-                      // Add Tranche button (only for debts)
-                      // if (obligation.type != 'amana')
-                      //   Positioned(
-                      //     bottom: 10,
-                      //     left: 10,
-                      //     child: ElevatedButton(
-                      //       onPressed: _showAddTrancheDialog,
-                      //       child: Text('Ajouter une tranche'),
-                      //       style: ElevatedButton.styleFrom(
-                      //         backgroundColor: Colors.green,
-                      //         padding: const EdgeInsets.symmetric(
-                      //             horizontal: 16, vertical: 12),
-                      //         shape: RoundedRectangleBorder(
-                      //             borderRadius: BorderRadius.circular(8)),
-                      //       ),
-                      //     ),
-                      //   ),
                     ],
                   ),
                 ),
@@ -269,7 +252,7 @@ class ObligationCardState extends State<ObligationCard> {
       child: Container(
         decoration: BoxDecoration(
           color: white,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(8),
         ),
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
         child: Row(
@@ -285,8 +268,8 @@ class ObligationCardState extends State<ObligationCard> {
                       Text("Emprunteur : ",
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: fontGrey)),
+                              fontSize: 14,
+                              color: Color.fromRGBO(55, 65, 81, 1))),
                     SizedBox(width: 1),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +290,7 @@ class ObligationCardState extends State<ObligationCard> {
                           "${obligation.preteurNum}",
                           style: TextStyle(
                               fontWeight: FontWeight.w400,
-                              fontSize: 12,
+                              fontSize: 14,
                               color: Colors.black),
                         ),
                       ],
@@ -323,8 +306,8 @@ class ObligationCardState extends State<ObligationCard> {
                         "Prêteur: ",
                         style: TextStyle(
                             fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                            color: fontGrey),
+                            fontSize: 14,
+                            color: Color.fromRGBO(55, 65, 81, 1)),
                       ),
                     SizedBox(width: 1),
                     Column(
@@ -367,7 +350,7 @@ class ObligationCardState extends State<ObligationCard> {
       child: Container(
         decoration: BoxDecoration(
           color: white,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(8),
         ),
         padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
         child: Row(
@@ -381,14 +364,17 @@ class ObligationCardState extends State<ObligationCard> {
                   Container(
                     width: 195,
                     child: Text(title,
-                        style: TextStyle(color: fontGrey, fontSize: 10)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: Color.fromRGBO(55, 65, 81, 1),
+                            fontSize: 14)),
                   ),
                 Container(
                     width: 190,
                     child: Text(text,
                         style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
                             color: Colors.black))),
                 if (extraTextWidget != null) extraTextWidget,
               ],

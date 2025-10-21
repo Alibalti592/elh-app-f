@@ -172,7 +172,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
       showFlag: true,
       showCurrencyName: true,
       showCurrencyCode: true,
-      favorite: const ['EUR', 'USD', 'TND', 'MAD', 'DZD', 'XOF'],
+      favorite: const ['EUR', 'USD'],
       onSelect: (Currency c) {
         currency = c.code; // CODE only
         obligation.set('currency', currency); // normalize model

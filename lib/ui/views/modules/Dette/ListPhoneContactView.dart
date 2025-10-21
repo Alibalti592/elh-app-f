@@ -4,6 +4,7 @@ import 'package:elh/ui/shared/text_styles.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/ui/views/modules/Dette/ListPhoneContactController.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
 
@@ -14,11 +15,11 @@ class ListPhoneContactView extends StatefulWidget {
   ListPhoneContactViewState createState() => ListPhoneContactViewState();
 }
 
+// ListPhoneContactView.dart
 class ListPhoneContactViewState extends State<ListPhoneContactView>
     with WidgetsBindingObserver {
   ListPhoneContactController? _vm;
-
-  ListPhoneContactViewState();
+  VoidCallback? _searchListener; // <— for cleanup
 
   @override
   void initState() {
@@ -29,22 +30,69 @@ class ListPhoneContactViewState extends State<ListPhoneContactView>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    // remove listener if attached
+    if (_vm != null && _searchListener != null) {
+      _vm!.searchController.removeListener(_searchListener!);
+    }
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // When we come back from Settings, re-check permission + reload
     if (state == AppLifecycleState.resumed && _vm != null) {
       _vm!.refreshDatas();
     }
+  }
+
+  List<Contact> _filter(List<Contact> contacts, String qRaw) {
+    final q = qRaw.trim().toLowerCase();
+    if (q.isEmpty) return contacts;
+
+    // If the query has digits or +, we also search in phones
+    final flatQ = q.replaceAll(RegExp(r'[^0-9+]'), '');
+    final checkPhones = flatQ.isNotEmpty;
+
+    final result = contacts.where((c) {
+      // Name match
+      final name = c.displayName.toLowerCase();
+      final nameHit = name.contains(q) ||
+          (c.name.first?.toLowerCase().contains(q) ?? false) ||
+          (c.name.last?.toLowerCase().contains(q) ?? false);
+
+      // Phone match (only if query has digits/+)
+      bool phoneHit = false;
+      if (checkPhones) {
+        for (final p in c.phones) {
+          final pFlat = p.number.replaceAll(RegExp(r'[^0-9+]'), '');
+          if (pFlat.contains(flatQ)) {
+            phoneHit = true;
+            break;
+          }
+        }
+      }
+
+      return nameHit || phoneHit;
+    }).toList();
+
+    return result;
   }
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ListPhoneContactController>.reactive(
       viewModelBuilder: () => ListPhoneContactController(),
-      onViewModelReady: (vm) => _vm = vm,
+      onViewModelReady: (vm) {
+        _vm = vm;
+
+        // Attach ONE listener that calls setState and logs typed text
+        _searchListener ??= () {
+          final t = vm.searchController.text;
+
+          // trigger list rebuild every keystroke
+          if (mounted) setState(() {});
+        };
+        vm.searchController.addListener(_searchListener!);
+      },
       builder: (context, controller, child) => Scaffold(
         backgroundColor: bgLight,
         appBar: AppBar(
@@ -72,144 +120,191 @@ class ListPhoneContactViewState extends State<ListPhoneContactView>
                 child: controller.permissionGranted
                     ? Column(
                         children: [
-                          // Search
+                          // Search field
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 20),
                             child: TextFormField(
-                              style: TextStyle(color: fontDark),
                               controller: controller.searchController,
                               focusNode: controller.focusNode,
+                              style: TextStyle(color: fontDark),
+                              autocorrect: false,
+                              textInputAction: TextInputAction.search,
+                              // onChanged not required (listener already added),
+                              // but you can keep it for extra safety:
+                              onChanged: (_) => setState(() {}),
+
                               decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.all(10.0),
-                                fillColor: white,
+                                hintText: "Rechercher nom ou téléphone…",
+                                hintStyle: TextStyle(color: fontGreyLight),
                                 filled: true,
-                                hintText: "Rechercher...",
+                                fillColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 12),
+                                prefixIcon: Icon(Icons.search,
+                                    color: fontGreyLight, size: 20),
+                                suffixIcon: controller
+                                        .searchController.text.isEmpty
+                                    ? null
+                                    : IconButton(
+                                        tooltip: 'Effacer',
+                                        icon: Icon(Icons.clear,
+                                            color: fontGreyLight, size: 20),
+                                        onPressed: () {
+                                          controller.searchController.clear();
+                                          setState(() {});
+                                        },
+                                      ),
+                                // Borders with color
                                 border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: bgLight),
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFFE5E7EB),
+                                    width: 2,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFFE5E7EB),
+                                    width: 2,
+                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: bgLight),
                                   borderRadius: BorderRadius.circular(10),
-                                ),
-                                hintStyle: TextStyle(color: fontGreyLight),
-                                suffixIcon: IconButton(
-                                  onPressed: controller.searchContact,
-                                  icon: Icon(
-                                    Icons.search,
-                                    color: fontGreyLight,
-                                    size: 20,
+                                  borderSide: BorderSide(
+                                    color: primaryColor,
+                                    width: 2,
                                   ),
                                 ),
                               ),
-                              onChanged: (_) => controller.searchContact(),
                             ),
                           ),
-                          // List
+
+                          // List (filtered every rebuild)
                           Expanded(
                             child: RefreshIndicator(
                               onRefresh: controller.refreshDatas,
-                              child: ListView(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 20),
-                                children: __contacts(controller),
+                              child: Builder(
+                                builder: (_) {
+                                  final filtered = _filter(
+                                    controller.contacts,
+                                    controller.searchController.text,
+                                  );
+
+                                  // DEBUG: show counts on screen too
+
+                                  if (filtered.isEmpty) {
+                                    return ListView(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5, horizontal: 20),
+                                      children: const [
+                                        SizedBox(height: 40),
+                                        Center(
+                                          child: Text(
+                                            "Aucun contact trouvé.",
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }
+
+                                  return ListView.builder(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 20),
+                                    itemCount: filtered.length,
+                                    itemBuilder: (_, i) => _contactTile(
+                                      filtered[i],
+                                      controller,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ),
                         ],
                       )
-                    : Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.contacts,
-                                size: 56, color: Colors.grey),
-                            const SizedBox(height: 12),
-                            const Text("Autorisation requise",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w700)),
-                            const SizedBox(height: 8),
-                            const Text(
-                              "Accès aux contacts désactivé.\n"
-                              "Activez-le dans Réglages pour afficher vos contacts.",
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: controller.openSettings,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24, vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: const Text("Ouvrir les réglages"),
-                            ),
-                          ],
-                        ),
-                      ),
+                    : _NoPermission(controller: controller),
               ),
       ),
     );
   }
 
-  List<Widget> __contacts(ListPhoneContactController controller) {
-    final List<Widget> contactWidgets = [];
-    for (final contact in controller.contactsFiltered) {
-      contactWidgets.add(
-        GestureDetector(
-          onTap: () => controller.selectContact(contact),
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    clipBehavior: Clip.hardEdge,
-                    decoration: const BoxDecoration(
-                      color: Colors.black12,
-                      shape: BoxShape.circle,
-                    ),
-                    child: contact.thumbnail != null
-                        ? Image.memory(contact.thumbnail!, width: 40)
-                        : Container(),
-                  ),
-                  UIHelper.horizontalSpace(10),
-                  Expanded(
-                    child: Text(
-                      contact.displayName,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 90,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(MdiIcons.arrowRight, color: fontDark, size: 22),
-                      ],
-                    ),
-                  ),
-                ],
+  Widget _contactTile(Contact contact, ListPhoneContactController controller) {
+    return GestureDetector(
+      onTap: () => controller.selectContact(contact),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                clipBehavior: Clip.hardEdge,
+                decoration: const BoxDecoration(
+                  color: Colors.black12,
+                  shape: BoxShape.circle,
+                ),
+                child: contact.thumbnail != null
+                    ? Image.memory(contact.thumbnail!, width: 40)
+                    : Container(),
               ),
-            ),
+              UIHelper.horizontalSpace(10),
+              Expanded(
+                child: Text(
+                  contact.displayName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Icon(Icons.chevron_right, color: Colors.black54, size: 22),
+            ],
           ),
         ),
-      );
-    }
-    return contactWidgets;
+      ),
+    );
+  }
+}
+
+class _NoPermission extends StatelessWidget {
+  const _NoPermission({required this.controller});
+  final ListPhoneContactController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.contacts, size: 56, color: Colors.grey),
+          const SizedBox(height: 12),
+          const Text("Autorisation requise",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 8),
+          const Text(
+            "Accès aux contacts désactivé.\n"
+            "Activez-le dans Réglages pour afficher vos contacts.",
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: controller.openSettings,
+            child: const Text("Ouvrir les réglages"),
+          ),
+        ],
+      ),
+    );
   }
 }
