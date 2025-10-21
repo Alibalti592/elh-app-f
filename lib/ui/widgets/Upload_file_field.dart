@@ -91,7 +91,8 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
       children: [
         ElevatedButton.icon(
           onPressed: _showPickerOptions,
-          icon: const Icon(Icons.attach_file, color: Colors.white),
+          icon: const Icon(Icons.attach_file,
+              color: Color.fromARGB(255, 255, 191, 0)),
           label: Text(
             _selectedFile != null
                 ? "Changer le fichier"

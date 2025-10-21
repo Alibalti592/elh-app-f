@@ -105,7 +105,7 @@ class Obligation {
         adress: json["adress"] ?? "",
         tel: json["tel"] ?? "",
         amount: json["amount"] ?? 0,
-        currency: json["currency"] ?? "",
+        currency: json["currency"] ?? "EUR",
         note: json["raison"] ?? "",
         date: json["date"] != null
             ? DateTime.parse(json["date"])

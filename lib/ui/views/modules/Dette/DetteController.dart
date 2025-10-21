@@ -44,7 +44,6 @@ class DetteController extends FutureViewModel<dynamic> {
         await _detteRepository.loadDette(this.detteType, filter);
     if (apiResponse.status == 200) {
       var data = json.decode(apiResponse.data);
-      print(data);
 
       try {
         this.obligations = obligationFromJson(data['obligations']);

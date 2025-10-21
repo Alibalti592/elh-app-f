@@ -243,7 +243,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
     final v = (value ?? '').trim();
     if (v.isEmpty) return 'Champ obligatoire';
     // Trust the package's validation result:
-    if (!phoneValid) return 'Téléphone invalide';
+    //if (!phoneValid) return 'Téléphone invalide';
     return null;
   }
 

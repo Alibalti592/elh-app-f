@@ -431,7 +431,7 @@ class _ObligationViewState extends State<ObligationView> {
   @override
   Widget build(BuildContext context) {
     final obligation = widget.obligation;
-    print(obligation.toJson());
+
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
@@ -561,10 +561,10 @@ class _ObligationViewState extends State<ObligationView> {
                 obligation.dateStartDisplay ?? ""),
             buildLabeledField(
               "Montant initial",
-              "${obligation.amount}${obligation.currency}",
+              "${obligation.amount} ${obligation.currency}",
             ),
             buildLabeledField("Montant restant",
-                "${obligation.remainingAmount}${obligation.currency}"),
+                "${obligation.remainingAmount} ${obligation.currency}"),
             buildLabeledField("Note", obligation.note),
 
             const SizedBox(height: 16),

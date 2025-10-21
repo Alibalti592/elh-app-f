@@ -84,11 +84,11 @@ class ObligationCardState extends State<ObligationCard> {
                                     obligation.amount != 0 ? 7 : 0),
                                 if (obligation.amount != 0)
                                   _item(MdiIcons.cashCheck,
-                                      "${obligation.amount} ${obligation.currency}",
+                                      "${obligation.amount}  ${obligation.currency}",
                                       title: controller.montantText()),
                                 UIHelper.verticalSpace(7),
                                 _item(MdiIcons.cashCheck,
-                                    "${obligation.remainingAmount} ${obligation.currency}",
+                                    "${obligation.remainingAmount}  ${obligation.currency}",
                                     title: "Montant restant"),
                                 UIHelper.verticalSpace(7),
                                 if (obligation.note.isNotEmpty)

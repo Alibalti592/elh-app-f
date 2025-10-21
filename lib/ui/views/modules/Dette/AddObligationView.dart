@@ -182,9 +182,9 @@ class AddObligationViewState extends State<AddObligationView> {
                                                               .phoneTextController,
 
                                                       // Let the Form control validation
-                                                      // autoValidateMode:
-                                                      //     AutovalidateMode
-                                                      //         .disabled,
+                                                      autoValidateMode:
+                                                          AutovalidateMode
+                                                              .disabled,
 
                                                       // Optional: also formats while typing
                                                       formatInput: true,
