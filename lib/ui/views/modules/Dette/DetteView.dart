@@ -19,25 +19,57 @@ class DetteView extends StatefulWidget {
 
 class DetteViewState extends State<DetteView> {
   final String detteType;
-  String tab = 'processing';
+  String tab;
+  late DetteController controller;
+
   DetteViewState(this.detteType, {this.tab = 'processing'});
+
   String getTitle(String type) {
-    if (type == 'jed') {
-      return "On me doit";
-    } else if (type == 'onm') {
-      return "Je dois";
-    } else if (type == 'amana') {
-      return "Mes Amanas";
-    } else {
-      return "Mes Obligations"; // fallback title
+    switch (type) {
+      case 'jed':
+        return "On me doit";
+      case 'onm':
+        return "Je dois";
+      case 'amana':
+        return "Mes Amanas";
+      default:
+        return "Mes Obligations";
     }
   }
 
   @override
+  void initState() {
+    super.initState();
+    print("initState called");
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    print("didChangeDependencies called");
+  }
+
+  @override
+  void dispose() {
+    print("dispose called");
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    print("didPopNext called");
+    controller.refreshDatas(); // ✅ safe to use now (after init)
+  }
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<DetteController>.reactive(
       viewModelBuilder: () => DetteController(this.detteType, this.tab),
+      onViewModelReady: (vm) {
+        controller = vm;
+        print("onViewModelReady → controller initialized");
+        controller.loadDatas(); // ✅ safe place to start fetching
+      },
       builder: (context, controller, child) => SafeArea(
         child: Scaffold(
           backgroundColor: white,
@@ -346,7 +378,8 @@ class DetteViewState extends State<DetteView> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            Navigator.of(context).push(
+            Navigator.of(context)
+                .push(
               HeroDialogRoute(
                 // builder: (context) => Center(
                 //   child: ObligationCard(
@@ -362,7 +395,12 @@ class DetteViewState extends State<DetteView> {
                   },
                 ),
               ),
-            );
+            )
+                .then((value) {
+              if (value == true) {
+                controller.refreshDatas();
+              }
+            });
           },
           child: Padding(
             padding: const EdgeInsets.all(12.0),

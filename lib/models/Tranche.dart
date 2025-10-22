@@ -22,4 +22,19 @@ class Tranche {
       fileUrl: json['fileUrl'],
     );
   }
+  Tranche copyWith({
+    int? id,
+    double? amount,
+    String? paidAt,
+    String? status,
+    String? fileUrl,
+  }) {
+    return Tranche(
+      id: id ?? this.id,
+      amount: amount ?? this.amount,
+      paidAt: paidAt ?? this.paidAt,
+      status: status ?? this.status,
+      fileUrl: fileUrl ?? this.fileUrl,
+    );
+  }
 }

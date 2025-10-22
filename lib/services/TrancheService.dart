@@ -7,9 +7,8 @@ import 'package:elh/models/Tranche.dart';
 
 class TrancheService {
   // Keep your existing endpoints
-  final String baseUrl =
-      'https://test.muslim-connect.fr/elh-api/tranche/tranche';
-  final String baseUrl1 = 'https://test.muslim-connect.fr/elh-api/tranche';
+  final String baseUrl = 'http://192.168.100.2:8000/elh-api/tranche/tranche';
+  final String baseUrl1 = 'http://192.168.100.2:8000/elh-api/tranche';
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
   getUserToken() async {
@@ -146,5 +145,108 @@ class TrancheService {
       print("Erreur réseau: $e");
     }
     return null;
+  }
+
+  // -----------------------------
+  // Update a tranche
+  // -----------------------------
+  Future<Tranche?> updateTranche({
+    required int trancheId,
+    required double amount,
+    required String paidAt,
+    required String status,
+    required int emprunteurId,
+    String? filePath, // optional file path
+  }) async {
+    String token = await this.getUserToken();
+
+    final payload = {
+      'amount': amount,
+      'paidAt': paidAt,
+      'status': status,
+      'emprunteurId': emprunteurId,
+    };
+
+    // ---- Multipart path (with file) ----
+    if (filePath != null) {
+      final uri = Uri.parse('$baseUrl1/update/$trancheId');
+
+      final req = http.MultipartRequest('POST', uri)
+        ..headers['Authorization'] = 'Bearer $token'
+        ..fields['tranche'] = jsonEncode(payload);
+
+      req.files.add(await http.MultipartFile.fromPath(
+        'file',
+        filePath,
+        filename: p.basename(filePath),
+      ));
+
+      final streamed = await req.send();
+      final res = await http.Response.fromStream(streamed);
+
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final data = jsonDecode(res.body);
+        return Tranche.fromJson({
+          'id': data['trancheId'],
+          'amount': data['amount'] ?? amount,
+          'status': data['status'] ?? status,
+          'paidAt': paidAt,
+          'fileUrl': data['fileUrl'],
+        });
+      } else {
+        print('Erreur updateTranche (multipart): ${res.statusCode}');
+        return null;
+      }
+    }
+
+    // ---- JSON path (no file) ----
+    try {
+      final res = await http
+          .put(
+            Uri.parse('$baseUrl1/update/$trancheId'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode(payload),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final data = jsonDecode(res.body);
+        return Tranche.fromJson({
+          'id': data['trancheId'],
+          'amount': data['amount'] ?? amount,
+          'status': data['status'] ?? status,
+          'paidAt': paidAt,
+          'fileUrl': data['fileUrl'],
+        });
+      }
+    } catch (e) {
+      print("Erreur réseau updateTranche: $e");
+    }
+
+    return null;
+  }
+
+  // -----------------------------
+  // Delete a tranche
+  // -----------------------------
+  Future<bool> deleteTranche(int trancheId) async {
+    String token = await this.getUserToken();
+
+    try {
+      final res = await http.delete(
+        Uri.parse('$baseUrl1/delete/$trancheId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return res.statusCode == 200 || res.statusCode == 204;
+    } catch (e) {
+      print('Erreur deleteTranche: $e');
+      return false;
+    }
   }
 }

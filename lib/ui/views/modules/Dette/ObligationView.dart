@@ -1,7 +1,14 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:elh/services/BaseApi/ApiResponse.dart';
 import 'package:elh/services/TrancheService.dart';
+import 'package:elh/ui/views/modules/Dette/DetailVersementDialog.dart';
+import 'package:elh/ui/views/modules/Dette/DetteController.dart';
 import 'package:elh/ui/widgets/Upload_file_field.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:elh/common/theme.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
@@ -11,12 +18,12 @@ import 'package:elh/ui/views/modules/Dette/AddObligationController.dart';
 
 class ObligationView extends StatefulWidget {
   final Obligation obligation;
-  final Future<void> Function()? onTrancheAdded; // 👈 Add this callback
+  final Future<void> Function()? onTrancheAdded;
 
   const ObligationView({
     super.key,
     required this.obligation,
-    this.onTrancheAdded, // 👈 Include it in constructor
+    this.onTrancheAdded,
   });
 
   @override
@@ -29,8 +36,20 @@ class _ObligationViewState extends State<ObligationView> {
   final _dateController = TextEditingController();
   final AddObligationController _controller =
       AddObligationController('onm', Obligation());
+  DateTime? _selectedDate; // Holds the picked date internally
 
   String? _uploadedFileUrl;
+  String getTitle(String type) {
+    if (type == 'jed') {
+      return "On me doit";
+    } else if (type == 'onm') {
+      return "Je dois";
+    } else if (type == 'amana') {
+      return "Mes Amanas";
+    } else {
+      return "Mes Obligations"; // fallback title
+    }
+  }
 
   bool _isLoading = false;
   List<Tranche> _tranches = [];
@@ -53,9 +72,10 @@ class _ObligationViewState extends State<ObligationView> {
     super.dispose();
   }
 
-  void _showAddTrancheDialog() {
+  void _showAddTrancheDialog({required String date}) {
     _amountController.clear();
     _dateController.clear();
+    _selectedDate = null; // Reset previous selection
 
     final scaffoldContext = context; // Outer context for SnackBars
 
@@ -77,18 +97,17 @@ class _ObligationViewState extends State<ObligationView> {
               children: [
                 // Montant
                 Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Align children to the left
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Montant du versement",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: Color.fromRGBO(55, 65, 81, 1),
                       ),
                     ),
-                    SizedBox(height: 7),
+                    const SizedBox(height: 7),
                     TextField(
                       controller: _amountController,
                       keyboardType: TextInputType.number,
@@ -114,34 +133,41 @@ class _ObligationViewState extends State<ObligationView> {
 
                 // Date
                 Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Align children to the left
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Date du versement",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: Color.fromRGBO(55, 65, 81, 1),
                       ),
                     ),
-                    SizedBox(height: 7),
+                    const SizedBox(height: 7),
                     TextField(
                       controller: _dateController,
                       readOnly: true,
                       onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
-                          initialDate: DateTime.now(),
+                          initialDate: _selectedDate ?? DateTime.now(),
                           firstDate: DateTime(2000),
                           lastDate: DateTime(2100),
                         );
+
                         if (pickedDate != null) {
+                          // Save internally
+                          setState(() => _selectedDate = pickedDate);
+
+                          // Display for user
                           _dateController.text =
-                              pickedDate.toIso8601String().split('T')[0];
+                              "${pickedDate.day.toString().padLeft(2, '0')}/"
+                              "${pickedDate.month.toString().padLeft(2, '0')}/"
+                              "${pickedDate.year}";
                         }
                       },
                       decoration: InputDecoration(
+                        hintText: "Choisir une date",
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(6)),
                         enabledBorder: OutlineInputBorder(
@@ -157,11 +183,10 @@ class _ObligationViewState extends State<ObligationView> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 15),
-                    UploadFileWidget(controller: _controller),
                   ],
                 ),
                 const SizedBox(height: 12),
+                UploadFileWidget(controller: _controller),
               ],
             ),
           ),
@@ -181,9 +206,9 @@ class _ObligationViewState extends State<ObligationView> {
                 if (_isLoading) return;
 
                 final amountText = _amountController.text.trim();
-                final dateText = _dateController.text.trim();
+                final selectedDate = _selectedDate;
 
-                if (amountText.isEmpty || dateText.isEmpty) {
+                if (amountText.isEmpty || selectedDate == null) {
                   ScaffoldMessenger.of(scaffoldContext)
                     ..hideCurrentSnackBar()
                     ..showSnackBar(
@@ -193,20 +218,8 @@ class _ObligationViewState extends State<ObligationView> {
                   return;
                 }
 
-                // Parse the selected date string to DateTime
-                final selectedDate = DateTime.tryParse(dateText);
-                if (selectedDate == null) {
-                  ScaffoldMessenger.of(scaffoldContext)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(content: Text("Date invalide")),
-                    );
-                  return;
-                }
-
-                // Parse obligation date as DateTime if needed, then compare
-                final obligationDate = widget.obligation.date;
-
+                // Compare with obligation date
+                final obligationDate = widget.obligation.date; // DateTime
                 if (selectedDate.isBefore(obligationDate)) {
                   ScaffoldMessenger.of(scaffoldContext)
                     ..hideCurrentSnackBar()
@@ -235,8 +248,8 @@ class _ObligationViewState extends State<ObligationView> {
 
                 try {
                   final newTranche = await _trancheService
-                      .createTranche(
-                          obligationId, emprunteurId, amount, dateText,
+                      .createTranche(obligationId, emprunteurId, amount,
+                          selectedDate.toIso8601String(),
                           filePath: _controller.obligation.file)
                       .timeout(const Duration(seconds: 10));
 
@@ -245,13 +258,14 @@ class _ObligationViewState extends State<ObligationView> {
                   if (newTranche != null) {
                     if (newTranche.status == 'validée') {
                       int newAmount = amount.toInt();
-
                       widget.obligation.remainingAmount =
                           (widget.obligation.remainingAmount ?? 0) - newAmount;
                     }
+
                     setState(() => _tranches.add(newTranche));
                     await widget.onTrancheAdded?.call();
                     Navigator.pop(context);
+
                     ScaffoldMessenger.of(scaffoldContext)
                       ..hideCurrentSnackBar()
                       ..showSnackBar(
@@ -282,7 +296,7 @@ class _ObligationViewState extends State<ObligationView> {
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white, // same as other button text color
+                        color: Colors.white,
                       ),
                     )
                   : const Text(
@@ -290,7 +304,7 @@ class _ObligationViewState extends State<ObligationView> {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white, // same as other button text color
+                        color: Colors.white,
                       ),
                     ),
             ),
@@ -438,6 +452,7 @@ class _ObligationViewState extends State<ObligationView> {
         iconTheme: const IconThemeData(
           color: Colors.white, // back arrow color
         ),
+        centerTitle: true, // ✅ centers the title
         title: const Text(
           "Details",
           style: TextStyle(color: Colors.white),
@@ -596,9 +611,25 @@ class _ObligationViewState extends State<ObligationView> {
                   return Card(
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       child: ListTile(
-                        title: Text("Versement $i"),
+                        title: Row(
+                          children: [
+                            Text("Versement $i "),
+                            Text(
+                              tranche.status,
+                              style: TextStyle(
+                                color: tranche.status == "en attente"
+                                    ? Colors.orange
+                                    : tranche.status == "validée"
+                                        ? Colors.green
+                                        : Colors.grey,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                         subtitle: Text(
-                            "${tranche.amount} ${obligation.currency} le ${tranche.paidAt.toString()}"),
+                          "${tranche.amount.toStringAsFixed(0)} ${obligation.currency} le ${DateFormat('dd-MM-yyyy').format(DateTime.parse(tranche.paidAt))}",
+                        ),
                         trailing: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
@@ -607,82 +638,95 @@ class _ObligationViewState extends State<ObligationView> {
                             ),
                           ),
                           onPressed: () async {
-                            if (tranche.fileUrl != null &&
-                                tranche.fileUrl!.isNotEmpty) {
-                              try {
-                                // Get a proper download URL from Firebase Storage
-                                final ref = FirebaseStorage.instance
-                                    .refFromURL(tranche.fileUrl!);
-                                final downloadUrl = await ref.getDownloadURL();
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => Dialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: SizedBox(
-                                      width: 300, // fixed width
-                                      height: 400, // fixed height
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              child: Image.network(
-                                                downloadUrl,
-                                                fit: BoxFit.contain,
-                                                loadingBuilder: (context, child,
-                                                    loadingProgress) {
-                                                  if (loadingProgress == null)
-                                                    return child;
-                                                  return const Center(
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  );
-                                                },
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                  return const Center(
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.all(16.0),
-                                                      child: Text(
-                                                          "Impossible de charger l'image"),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text("Fermer"),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                            await showDetailVersementDialog(
+                              context: context,
+                              id: tranche.id,
+                              date: widget.obligation.dateDisplay.toString(),
+                              montant: tranche.amount,
+                              paidAt: tranche.paidAt,
+                              photo: tranche.fileUrl,
+                              status: tranche.status,
+                              emprunteurId: 1,
+                              onDelete: (int id) async {
+                                // Find the tranche to delete
+                                final index =
+                                    _tranches.indexWhere((t) => t.id == id);
+                                if (index == -1) return false; // not found
+
+                                final tranche = _tranches[index];
+
+                                // Delete from backend
+                                await _trancheService
+                                    .deleteTranche(id)
+                                    .timeout(const Duration(seconds: 10));
+
+                                setState(() {
+                                  // Update remainingAmount if tranche was validated
+                                  if (tranche.status == 'validée') {
+                                    widget.obligation.remainingAmount =
+                                        ((widget.obligation.remainingAmount ??
+                                                    0) +
+                                                tranche.amount)
+                                            .toInt();
+                                  }
+
+                                  // Remove from local list
+                                  _tranches.removeAt(index);
+                                });
+
+                                // Trigger callback
+                                await widget.onTrancheAdded?.call();
+
+                                return true;
+                              },
+                              onUpdate: ({
+                                required int trancheId,
+                                required double amount,
+                                required String paidAt,
+                                required String status,
+                                required int emprunteurId,
+                                String? filePath,
+                              }) async {
+                                await _trancheService.updateTranche(
+                                  trancheId: trancheId,
+                                  amount: amount,
+                                  paidAt: paidAt,
+                                  status: status,
+                                  emprunteurId: emprunteurId,
                                 );
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          "Impossible de charger l'image")),
-                                );
-                              }
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("Pas de preuve disponible")),
-                              );
-                            }
+                                // Update local list
+                                setState(() {
+                                  final index = _tranches
+                                      .indexWhere((t) => t.id == trancheId);
+                                  if (index != -1) {
+                                    final oldAmount = _tranches[index].amount;
+                                    _tranches[index] =
+                                        _tranches[index].copyWith(
+                                      amount: amount,
+                                      paidAt: paidAt,
+                                      status: status,
+                                    );
+
+                                    // Update remaining amount based on difference
+                                    if (status == 'validée') {
+                                      widget.obligation.remainingAmount =
+                                          ((widget.obligation.remainingAmount ??
+                                                      0) +
+                                                  oldAmount -
+                                                  amount)
+                                              .toInt(); // <- cast to int
+                                    }
+                                  }
+                                });
+                                await widget.onTrancheAdded?.call();
+                                await _loadTranches();
+
+                                return true;
+                              },
+                            );
                           },
                           child: const Text(
-                            "voir preuve",
+                            "voir details",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -700,7 +744,8 @@ class _ObligationViewState extends State<ObligationView> {
             // Ajouter une tranche
             Center(
               child: ElevatedButton(
-                onPressed: _showAddTrancheDialog,
+                onPressed: () => _showAddTrancheDialog(
+                    date: widget.obligation.dateDisplay.toString()),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(143, 151, 121, 1.0),
                   padding:
