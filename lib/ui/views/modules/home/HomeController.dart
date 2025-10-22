@@ -7,6 +7,7 @@ import 'package:elh/ui/views/common/BBLocation/BBLocationView.dart';
 import 'package:elh/ui/views/modules/chat/ThreadsView.dart';
 import 'package:flutter/material.dart';
 import 'package:observable_ish/observable_ish.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:elh/services/UserInfosReactiveService.dart';
@@ -62,6 +63,12 @@ class HomeController extends FutureViewModel<dynamic> {
     // if(_dashboardStore.youtubecontroller1 != null) {
     //   _dashboardStore.youtubecontroller1!.pause();
     // }
+  }
+  shareApp() {
+    //selon plateform lien Appstrore / android
+    Share.share(
+        subject: '',
+        "Télécharge l’application gratuite Muslim Connect pour gérer tes dettes, emprunts et testament, avec un partage sécurisé à tes proches, et reste connecté et informé des Salât al-Janaza dans ta mosquée : https://apps.apple.com/us/app/muslim-connect/id6478540540");
   }
 
   @override

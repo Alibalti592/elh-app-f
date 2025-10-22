@@ -37,8 +37,7 @@ class PreviewTestamentViewState extends State<PreviewTestamentView> {
               elevation: 0,
               iconTheme: new IconThemeData(color: Colors.white),
               backgroundColor: Colors.transparent,
-              title: Text("Testament de ${testament.from}",
-                  style: headerTextWhite),
+              title: Text("Moi ${testament.from}", style: headerTextWhite),
               actions: [
                 controller.pdfLoading ? BBloader() : Container(),
                 Padding(

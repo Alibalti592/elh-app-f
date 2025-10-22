@@ -166,14 +166,24 @@ class SelectContactViewState extends State<SelectContactView> {
                       _topRow(
                         icon: Icons.add,
                         text: "Ajouter un membre à ma communauté",
-                        onTap: () {
-                          _navigationService.navigateWithTransition(
-                            SearchRelationView('chat'),
+                        onTap: () async {
+                          final result =
+                              await _navigationService.navigateWithTransition(
+                            SearchRelationView(
+                                'select_contact'), // 👈 not "chat"
                             transitionStyle: Transition.downToUp,
-                            duration: Duration(milliseconds: 300),
+                            duration: const Duration(milliseconds: 300),
                           );
+
+                          if (result == 'updateList') {
+                            await controller.refreshDatas(); // repull relations
+                            if (mounted)
+                              setState(
+                                  () {}); // re-apply search filter in the UI
+                          }
                         },
                       ),
+
                       SizedBox(height: 20),
 
                       // Relations list

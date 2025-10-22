@@ -2,6 +2,7 @@ import 'package:elh/models/AppNotification.dart';
 import 'package:elh/services/NotificationService.dart';
 import 'package:elh/ui/views/modules/chat/ThreadsView.dart';
 import 'package:flutter/material.dart';
+
 import 'package:stacked/stacked.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:elh/ui/views/modules/home/HomeController.dart';
@@ -76,10 +77,6 @@ class HomeViewState extends State<HomeView> {
                   ],
                 ),
               ),
-
-              // -----------------------------
-              // Handler pour notifications de tranche
-              // -----------------------------
               const TrancheNotificationHandler(),
             ],
           ),
@@ -313,6 +310,10 @@ class HomeViewState extends State<HomeView> {
                     );
                   },
                 ),
+                IconButton(
+                  icon: const Icon(Icons.share, color: Colors.white),
+                  onPressed: () => {controller.shareApp()},
+                ),
               ],
             ),
           );
@@ -320,119 +321,6 @@ class HomeViewState extends State<HomeView> {
       ),
     );
   }
-
-  // __topBar(HomeController controller, int initialIndex) {
-  //   return PreferredSize(
-  //     preferredSize: Size.fromHeight(60),
-  //     child: ValueListenableBuilder<int>(
-  //       valueListenable: controller.pageIndex,
-  //       builder: (context, currentIndex, child) {
-  //         // Map index to pageKey
-  //         final pageKeyMap = {
-  //           0: 'home',
-  //           1: 'dette',
-  //           2: 'deuil',
-  //           3: 'pray',
-  //           4: 'don',
-  //         };
-  //         String pageKey = pageKeyMap[currentIndex] ?? 'home';
-
-  //         // Default title
-  //         String title = 'Muslim Connect';
-
-  //         // Same gradient for all pages
-  //         List<Color> gradientColors = [
-  //           Color.fromRGBO(220, 198, 169, 1.0), // light beige
-  //           Color.fromRGBO(143, 151, 121, 1.0), // olive green
-  //         ];
-
-  //         return Container(
-  //           decoration: BoxDecoration(
-  //             gradient: LinearGradient(
-  //               colors: gradientColors,
-  //               begin: Alignment.topLeft,
-  //               end: Alignment.bottomRight,
-  //             ),
-  //           ),
-  //           child: AppBar(
-  //             leadingWidth: controller.appBarLeadinWidth.value,
-  //             toolbarHeight: 60,
-  //             titleSpacing: 0,
-  //             elevation: 0,
-  //             backgroundColor: Colors.transparent,
-  //             iconTheme: IconThemeData(
-  //               color: fontGreyDark,
-  //             ),
-
-  //             // Drawer button
-  //             leading: Container(
-  //               margin: const EdgeInsets.all(10),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.white,
-  //                 borderRadius: BorderRadius.circular(50),
-  //               ),
-  //               child: IconButton(
-  //                 onPressed: () => scaffoldKey.currentState?.openDrawer(),
-  //                 icon: Icon(MdiIcons.menu, color: Colors.black, size: 24),
-  //               ),
-  //             ),
-
-  //             title: Padding(
-  //               padding: const EdgeInsets.only(left: 10),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 mainAxisAlignment: MainAxisAlignment.center,
-  //                 children: [
-  //                   Text(
-  //                     title,
-  //                     style: TextStyle(
-  //                       fontWeight: FontWeight.w600,
-  //                       fontSize: 20,
-  //                       color: Colors.white,
-  //                     ),
-  //                   ),
-
-  //                   // Dynamic subtitle only on home page
-  //                   if (pageKey == 'home')
-  //                     ValueListenableBuilder<String?>(
-  //                       valueListenable: controller.userName,
-  //                       builder: (context, name, _) {
-  //                         String firstName = '';
-  //                         if (name != null && name.isNotEmpty) {
-  //                           firstName =
-  //                               name.split(' ')[0]; // take first part as prenom
-  //                         }
-  //                         return Text(
-  //                           'Assalem Alaykom, ${firstName ?? ''}',
-  //                           style: TextStyle(
-  //                             fontSize: 15,
-  //                             color: Colors.white,
-  //                             fontWeight: FontWeight.w500,
-  //                           ),
-  //                         );
-  //                       },
-  //                     ),
-  //                 ],
-  //               ),
-  //             ),
-
-  //             actions: [
-  //               if (pageKey == 'home')
-  //                 Container(
-  //                   margin: const EdgeInsets.only(right: 20),
-  //                   child: Image.asset(
-  //                     'assets/images/logo-no-bg.png',
-  //                     width: 43,
-  //                     height: 41,
-  //                   ),
-  //                 ),
-  //             ],
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 
   Widget bottomBar(HomeController controller, initialIndex) {
     return ValueListenableBuilder<int>(
@@ -493,10 +381,7 @@ class HomeViewState extends State<HomeView> {
             ],
             onTap: (index) {
               controller.setPageIndex(index);
-              if (index == 0) {
-                // print(this._popoverKey.currentState);
-                // _popoverKey.currentState?.showButtonMenu();
-              }
+              if (index == 0) {}
             });
       },
       valueListenable: controller.pageIndexColor,

@@ -37,7 +37,7 @@ class TestamentWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: UIHelper.h1("Testament de : ${testament.from}"),
+                child: UIHelper.h1("Moi : ${testament.from}"),
               ),
               UIHelper.verticalSpace(10),
               Text(

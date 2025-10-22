@@ -9,7 +9,7 @@ class NotificationService {
   final String baseUrl = 'https://test.muslim-connect.fr/elh-api';
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
-  getUserToken() async {
+  Future<String> getUserToken() async {
     String token = await _authenticationService.getUserToken();
     return token;
   }
@@ -26,12 +26,16 @@ class NotificationService {
     );
 
     if (res.statusCode == 200) {
-      final List data = jsonDecode(res.body);
+      final List<dynamic> data = jsonDecode(res.body);
 
       // Cast each element to AppNotification
-      return data.map((e) => AppNotification.fromJson(e)).toList();
+      return data
+          .map((e) => AppNotification.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
+      print('Error fetching notifications: ${res.body}');
       throw Exception('Failed to fetch notifications');
+      // print the error
     }
   }
 

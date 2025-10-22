@@ -131,7 +131,7 @@ class MyTestamentController extends FutureViewModel<dynamic> {
         XFile imageToShare = XFile.fromData(pngBytes);
         // Share.shareXFiles([imageToShare], text: "Salât al-janaza, ${carte.firstname} ${carte.lastname}");
         final result = await Share.shareXFiles([XFile(filePath)],
-            text: "Testament de ${this.userInfos!.fullname}");
+            text: "Moi ${this.userInfos!.fullname}");
         File(filePath).delete();
       });
     } catch (e) {}
