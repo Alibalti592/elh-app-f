@@ -136,7 +136,7 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
   }
 
   Future<void> _DialogDateErreur(String message) async {
-    final confirm = await showDialog<bool>(
+    await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
         title: const Text('Erreur de date'),
@@ -198,7 +198,6 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
 
   Future<void> _handleUpdate() async {
     final amountText = amountController.text.trim();
-    final dateText = dateController.text.trim();
     final status = widget.status;
     final amount = double.tryParse(amountText);
     if (amount == null) {
@@ -215,22 +214,12 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
         _selectedDate =
             DateTime.tryParse(widget.paidAt) ?? dateFormat.parse(widget.paidAt);
       } catch (_) {
-        // if parsing fails, force user to pick a date (edge case where widget.paidAt is invalid)
         _DialogDateErreur("Veuillez sélectionner une date");
         return;
       }
     }
 
     if (_selectedDate!.isBefore(obligationDate)) {
-      /* ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text(
-              "La date du versement ne peut pas être antérieure à la date de l'obligation",
-            ),
-          ),
-        );*/
       _DialogDateErreur(
         "La date du versement ne peut pas être antérieure à la date de l'obligation",
       );
@@ -290,6 +279,8 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
     return WillPopScope(
       onWillPop: () async => !isLoading,
       child: AlertDialog(
+        // Optionnel: tu peux plafonner la largeur si tu veux
+        // insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         title: const Text(
           "Détails du versement",
           style: TextStyle(
@@ -301,47 +292,52 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            // Étire les enfants sur la largeur finie fournie par AlertDialog
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Image section
               if (widget.photo != null && widget.photo!.isNotEmpty)
-                Stack(
-                  children: [
-                    SizedBox(
-                      height: 140,
-                      child: ClipRRect(
+                SizedBox(
+                  height: 140,
+                  child: Stack(
+                    fit: StackFit.expand, // occupe toute la largeur dispo
+                    children: [
+                      ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(
                           convertToFirebaseUrl(widget.photo!),
                           fit: BoxFit.cover,
-                          width: double.infinity,
                           errorBuilder: (_, __, ___) =>
                               const Center(child: Text('Image non disponible')),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      right: 4,
-                      bottom: 4,
-                      child: GestureDetector(
-                        onTap: _pickImage,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.black54,
-                            borderRadius: BorderRadius.circular(6),
+                      Positioned(
+                        right: 4,
+                        bottom: 4,
+                        child: GestureDetector(
+                          onTap: _pickImage,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Icon(Icons.edit, color: Colors.white),
                           ),
-                          child: const Icon(Icons.edit, color: Colors.white),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 )
               else if (pickedImage != null)
                 SizedBox(
                   height: 140,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.file(pickedImage!, fit: BoxFit.cover),
+                    child: Image.file(
+                      pickedImage!,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 )
               else
@@ -349,7 +345,6 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
                   onTap: _pickImage,
                   child: Container(
                     height: 140,
-                    width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey.shade400, width: 2),
@@ -357,6 +352,7 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
                     child: const Center(child: Text("Attacher une image")),
                   ),
                 ),
+
               const SizedBox(height: 12),
 
               // Montant
@@ -366,9 +362,10 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
                   const Text(
                     "Montant du versement",
                     style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromRGBO(55, 65, 81, 1)),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromRGBO(55, 65, 81, 1),
+                    ),
                   ),
                   const SizedBox(height: 7),
                   TextField(
@@ -386,19 +383,12 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 12, horizontal: 10),
                     ),
-                    /* onEditingComplete: () {
-                      final text = amountController.text.trim();
-                      final value = double.tryParse(text);
-                      if (value != null) {
-                        amountController.text = (value % 1 == 0)
-                            ? value.toInt().toString()
-                            : value.toString();
-                      }
-                    },*/
-                  )
+                  ),
                 ],
               ),
+
               const SizedBox(height: 12),
+
               // Date
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -406,16 +396,18 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
                   const Text(
                     "Date du versement",
                     style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromRGBO(55, 65, 81, 1)),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromRGBO(55, 65, 81, 1),
+                    ),
                   ),
                   const SizedBox(height: 7),
                   TextField(
                     controller: dateController,
                     readOnly: true,
                     onTap: () async {
-                      DateTime initial = _selectedDate ?? DateTime.now();
+                      DateTime initial = _selectedDate ??
+                          (DateTime.tryParse(widget.paidAt) ?? DateTime.now());
                       final pickedDate = await showDatePicker(
                         context: context,
                         initialDate: initial,

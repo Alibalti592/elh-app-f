@@ -45,7 +45,7 @@ class GoogleSignUpButton extends StatelessWidget {
       await storage.deleteAll();
       final resp = await http.post(
         Uri.parse(
-            'http://192.168.100.2:8000/elh-api/test-api/sign-in-with-google-flutter'), // Your API endpoint
+            'https://test.muslim-connect.fr/elh-api/test-api/sign-in-with-google-flutter'), // Your API endpoint
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,
