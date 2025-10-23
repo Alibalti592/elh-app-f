@@ -7,9 +7,8 @@ import 'package:elh/models/Tranche.dart';
 
 class TrancheService {
   // Keep your existing endpoints
-  final String baseUrl =
-      'https://test.muslim-connect.fr/elh-api/tranche/tranche';
-  final String baseUrl1 = 'https://test.muslim-connect.fr/elh-api/tranche';
+  final String baseUrl = 'http://192.168.100.2:8000/elh-api/tranche/tranche';
+  final String baseUrl1 = 'http://192.168.100.2:8000/elh-api/tranche';
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
   getUserToken() async {
@@ -176,9 +175,15 @@ class TrancheService {
       final req = http.MultipartRequest('POST', uri)
         ..headers['Authorization'] = 'Bearer $token';
 
-      // send only the keys that exist (payload may be empty, that's fine)
-      req.fields['tranche'] = jsonEncode(payload);
+      // Add each payload key as a simple form field (string)
+      payload.forEach((key, value) {
+        // ensure non-null and convert to string
+        if (value != null) {
+          req.fields[key] = value.toString();
+        }
+      });
 
+      // Add file (field name must match server: 'file')
       req.files.add(await http.MultipartFile.fromPath(
         'file',
         filePath,
@@ -194,11 +199,12 @@ class TrancheService {
           'id': data['trancheId'],
           'amount': data['amount'] ?? amount,
           'status': data['status'] ?? status,
-          'paidAt': paidAt ?? data['paidAt'],
+          'paidAt': data['paidAt'] ?? paidAt,
           'fileUrl': data['fileUrl'],
         });
       } else {
-        print('Erreur updateTranche (multipart): ${res.statusCode}');
+        print(
+            'Erreur updateTranche (multipart): ${res.statusCode} ${res.body}');
         return null;
       }
     }

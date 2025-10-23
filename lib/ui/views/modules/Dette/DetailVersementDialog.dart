@@ -91,7 +91,7 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
   void _listener() {
     final changed = amountController.text.trim() != origAmount ||
         dateController.text.trim() != origDate ||
-        pickedImage != null; // mark as changed if image picked
+        pickedImage != null; // detect image change
     if (changed != isChanged) {
       setState(() {
         isChanged = changed;
@@ -99,18 +99,50 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
     }
   }
 
+  final dateFormatDisplay = DateFormat('dd-MM-yyyy');
+  final dateFormatIso = DateFormat('yyyy-MM-dd');
+
+  DateTime? tryParseAnyDate(String? s) {
+    if (s == null || s.isEmpty) return null;
+    // Try DateTime.tryParse (handles ISO like 2025-10-24T00:00:00.000)
+    final p = DateTime.tryParse(s);
+    if (p != null) return p;
+    // Try common formats you might receive
+    try {
+      return DateFormat('dd/MM/yyyy').parseStrict(s);
+    } catch (_) {}
+    try {
+      return DateFormat('yyyy-MM-dd').parseStrict(s);
+    } catch (_) {}
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
-    origAmount = widget.montant.toString();
-    origDate = widget.paidAt;
+
+    _selectedDate = tryParseAnyDate(widget.paidAt);
 
     final amount = widget.montant;
     amountController = TextEditingController(
       text: (amount % 1 == 0) ? amount.toInt().toString() : amount.toString(),
     );
-    dateController = TextEditingController(text: widget.paidAt);
 
+    // Format the date properly for display (dd-MM-yyyy)
+    String displayDate;
+    if (_selectedDate != null) {
+      displayDate = dateFormatDisplay.format(_selectedDate!);
+    } else {
+      displayDate = widget.paidAt; // fallback to raw string
+    }
+
+    dateController = TextEditingController(text: displayDate);
+
+    // Save originals for change detection
+    origAmount = amountController.text;
+    origDate = displayDate;
+
+    // Listeners
     amountController.addListener(_listener);
     dateController.addListener(_listener);
   }
@@ -131,7 +163,7 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
       setState(() {
         pickedImage = File(image.path);
       });
-      _listener();
+      _listener(); // notify dialog to enable "Mettre à jour"
     }
   }
 
@@ -211,10 +243,12 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
 
     if (_selectedDate == null) {
       try {
-        _selectedDate =
-            DateTime.tryParse(widget.paidAt) ?? dateFormat.parse(widget.paidAt);
+        _selectedDate = DateTime.tryParse(widget.paidAt);
+        if (_selectedDate == null) {
+          _selectedDate = dateFormat.parse(widget.paidAt);
+        }
       } catch (_) {
-        _DialogDateErreur("Veuillez sélectionner une date");
+        await _DialogDateErreur("Veuillez sélectionner une date valide");
         return;
       }
     }
@@ -300,16 +334,47 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
                 SizedBox(
                   height: 140,
                   child: Stack(
-                    fit: StackFit.expand, // occupe toute la largeur dispo
+                    fit: StackFit.expand,
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          convertToFirebaseUrl(widget.photo!),
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
-                              const Center(child: Text('Image non disponible')),
-                        ),
+                        child: pickedImage != null
+                            ? Image.file(
+                                pickedImage!,
+                                fit: BoxFit.cover,
+                              )
+                            : (widget.photo != null && widget.photo!.isNotEmpty
+                                ? Image.network(
+                                    convertToFirebaseUrl(widget.photo!),
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return const Center(
+                                        child: SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2),
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (_, __, ___) => const Center(
+                                      child: Text('Image non disponible'),
+                                    ),
+                                  )
+                                : Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: Colors.grey.shade400,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: const Center(
+                                      child: Text("Attacher une image"),
+                                    ),
+                                  )),
                       ),
                       Positioned(
                         right: 4,
@@ -407,7 +472,8 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
                     readOnly: true,
                     onTap: () async {
                       DateTime initial = _selectedDate ??
-                          (DateTime.tryParse(widget.paidAt) ?? DateTime.now());
+                          DateTime.tryParse(widget.paidAt) ??
+                          DateTime.now();
                       final pickedDate = await showDatePicker(
                         context: context,
                         initialDate: initial,
@@ -417,11 +483,10 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
 
                       if (pickedDate != null) {
                         setState(() {
-                          _selectedDate = pickedDate; // store internally
+                          _selectedDate = pickedDate;
+                          // show as 24-10-2025
                           dateController.text =
-                              "${pickedDate.day.toString().padLeft(2, '0')}/"
-                              "${pickedDate.month.toString().padLeft(2, '0')}/"
-                              "${pickedDate.year}";
+                              dateFormatDisplay.format(pickedDate);
                         });
                       }
                     },
