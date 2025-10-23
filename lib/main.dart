@@ -13,6 +13,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
   await Firebase.initializeApp();
 

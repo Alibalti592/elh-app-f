@@ -687,37 +687,63 @@ class _ObligationViewState extends State<ObligationView> {
                                 required int emprunteurId,
                                 String? filePath,
                               }) async {
-                                await _trancheService.updateTranche(
+                                // find current local tranche
+                                final index = _tranches
+                                    .indexWhere((t) => t.id == trancheId);
+                                if (index == -1) return false;
+                                final current = _tranches[index];
+
+                                // detect if only image changed (amount, paidAt, status equal old ones)
+                                final isOnlyPicture = filePath != null &&
+                                    amount == current.amount &&
+                                    (paidAt == current.paidAt ||
+                                        paidAt == (current.paidAt ?? '')) &&
+                                    status == current.status;
+
+                                // call service using nulls for unchanged fields (service now accept nullable)
+                                final updatedTranche =
+                                    await _trancheService.updateTranche(
                                   trancheId: trancheId,
-                                  amount: amount,
-                                  paidAt: paidAt,
-                                  status: status,
+                                  amount: isOnlyPicture ? null : amount,
+                                  paidAt: isOnlyPicture ? null : paidAt,
+                                  status: isOnlyPicture ? null : status,
                                   emprunteurId: emprunteurId,
+                                  filePath: filePath,
                                 );
-                                // Update local list
+
+                                if (updatedTranche == null) return false;
+
+                                // update local list: if only picture -> update fileUrl only, otherwise update fields
                                 setState(() {
-                                  final index = _tranches
-                                      .indexWhere((t) => t.id == trancheId);
-                                  if (index != -1) {
-                                    final oldAmount = _tranches[index].amount;
+                                  final oldAmount = current.amount;
+                                  if (isOnlyPicture) {
                                     _tranches[index] =
                                         _tranches[index].copyWith(
-                                      amount: amount,
-                                      paidAt: paidAt,
-                                      status: status,
+                                      fileUrl: updatedTranche.fileUrl ??
+                                          current.fileUrl,
+                                    );
+                                  } else {
+                                    _tranches[index] =
+                                        _tranches[index].copyWith(
+                                      amount: updatedTranche.amount ?? amount,
+                                      paidAt: updatedTranche.paidAt ?? paidAt,
+                                      status: updatedTranche.status ?? status,
+                                      fileUrl: updatedTranche.fileUrl ??
+                                          current.fileUrl,
                                     );
 
-                                    // Update remaining amount based on difference
+                                    // update obligation.remainingAmount if needed (preserve your existing logic)
                                     if (status == 'validée') {
                                       widget.obligation.remainingAmount =
                                           ((widget.obligation.remainingAmount ??
                                                       0) +
                                                   oldAmount -
                                                   amount)
-                                              .toInt(); // <- cast to int
+                                              .toInt();
                                     }
                                   }
                                 });
+
                                 await widget.onTrancheAdded?.call();
                                 await _loadTranches();
 

@@ -105,7 +105,10 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
     origAmount = widget.montant.toString();
     origDate = widget.paidAt;
 
-    amountController = TextEditingController(text: widget.montant.toString());
+    final amount = widget.montant;
+    amountController = TextEditingController(
+      text: (amount % 1 == 0) ? amount.toInt().toString() : amount.toString(),
+    );
     dateController = TextEditingController(text: widget.paidAt);
 
     amountController.addListener(_listener);
@@ -208,13 +211,14 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
     final DateTime obligationDate = dateFormat.parse(widget.date);
 
     if (_selectedDate == null) {
-      /*ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(content: Text("Veuillez sélectionner une date")),
-        );*/
-      _DialogDateErreur("Veuillez sélectionner une date");
-      return;
+      try {
+        _selectedDate =
+            DateTime.tryParse(widget.paidAt) ?? dateFormat.parse(widget.paidAt);
+      } catch (_) {
+        // if parsing fails, force user to pick a date (edge case where widget.paidAt is invalid)
+        _DialogDateErreur("Veuillez sélectionner une date");
+        return;
+      }
     }
 
     if (_selectedDate!.isBefore(obligationDate)) {
@@ -283,10 +287,6 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final amount = widget.montant;
-    amountController.text =
-        (amount % 1 == 0) ? amount.toInt().toString() : amount.toString();
-
     return WillPopScope(
       onWillPop: () async => !isLoading,
       child: AlertDialog(
@@ -386,7 +386,7 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 12, horizontal: 10),
                     ),
-                    onEditingComplete: () {
+                    /* onEditingComplete: () {
                       final text = amountController.text.trim();
                       final value = double.tryParse(text);
                       if (value != null) {
@@ -394,7 +394,7 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
                             ? value.toInt().toString()
                             : value.toString();
                       }
-                    },
+                    },*/
                   )
                 ],
               ),

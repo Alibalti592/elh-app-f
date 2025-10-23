@@ -9,13 +9,13 @@ const bool isProduction = bool.fromEnvironment('dart.vm.product');
 // };
 const Map<String, String> devConfig = {
   'baseApiUrl':
-      'https://test.muslim-connect.fr/elh-api', // points to PC localhost from emulator
-  'baseApiUrlPublic': 'https://test.muslim-connect.fr',
+      'http://192.168.100.2:8000/elh-api', // points to PC localhost from emulator
+  'baseApiUrlPublic': 'http://192.168.100.2:8000',
 };
 
 const Map<String, String> productionConfig = {
-  'baseApiUrl': 'https://test.muslim-connect.fr/elh-api',
-  'baseApiUrlPublic': 'https://test.muslim-connect.fr',
+  'baseApiUrl': 'http://192.168.100.2:8000/elh-api',
+  'baseApiUrlPublic': 'http://192.168.100.2:8000',
 };
 
 final Map<String, String> environment =

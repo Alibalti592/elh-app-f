@@ -131,50 +131,59 @@ class HomeViewState extends State<HomeView> {
                       itemCount: pending.length,
                       itemBuilder: (context, index) {
                         final notif = pending[index];
+                        final hideActions =
+                            notif.title == "Mise à jour d'une tranche" ||
+                                notif.title == "Tranche supprimée";
+
                         return Card(
                           margin: EdgeInsets.symmetric(vertical: 5),
                           child: ListTile(
                             title: Text(notif.title),
                             subtitle: Text(notif.message),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: Icon(Icons.check, color: Colors.green),
-                                  onPressed: () async {
-                                    bool ok = await NotificationService()
-                                        .respondNotif(notif.id, 'accept');
-                                    if (ok) {
-                                      setStateModal(() {
-                                        notif.status = 'accept';
-                                        pending.removeAt(index);
-                                      });
-                                      setState(() {
-                                        _notifications =
-                                            List.from(_notifications);
-                                      });
-                                    }
-                                  },
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.close, color: Colors.red),
-                                  onPressed: () async {
-                                    bool ok = await NotificationService()
-                                        .respondNotif(notif.id, 'decline');
-                                    if (ok) {
-                                      setStateModal(() {
-                                        notif.status = 'decline';
-                                        pending.removeAt(index);
-                                      });
-                                      setState(() {
-                                        _notifications =
-                                            List.from(_notifications);
-                                      });
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
+                            trailing: hideActions
+                                ? null
+                                : Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(Icons.check,
+                                            color: Colors.green),
+                                        onPressed: () async {
+                                          bool ok = await NotificationService()
+                                              .respondNotif(notif.id, 'accept');
+                                          if (ok) {
+                                            setStateModal(() {
+                                              notif.status = 'accept';
+                                              pending.removeAt(index);
+                                            });
+                                            setState(() {
+                                              _notifications =
+                                                  List.from(_notifications);
+                                            });
+                                          }
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.close,
+                                            color: Colors.red),
+                                        onPressed: () async {
+                                          bool ok = await NotificationService()
+                                              .respondNotif(
+                                                  notif.id, 'decline');
+                                          if (ok) {
+                                            setStateModal(() {
+                                              notif.status = 'decline';
+                                              pending.removeAt(index);
+                                            });
+                                            setState(() {
+                                              _notifications =
+                                                  List.from(_notifications);
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
                           ),
                         );
                       },

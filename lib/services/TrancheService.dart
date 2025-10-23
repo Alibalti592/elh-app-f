@@ -7,9 +7,8 @@ import 'package:elh/models/Tranche.dart';
 
 class TrancheService {
   // Keep your existing endpoints
-  final String baseUrl =
-      'https://test.muslim-connect.fr/elh-api/tranche/tranche';
-  final String baseUrl1 = 'https://test.muslim-connect.fr/elh-api/tranche';
+  final String baseUrl = 'http://192.168.100.2:8000/elh-api/tranche/tranche';
+  final String baseUrl1 = 'http://192.168.100.2:8000/elh-api/tranche';
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
   getUserToken() async {
@@ -153,28 +152,31 @@ class TrancheService {
   // -----------------------------
   Future<Tranche?> updateTranche({
     required int trancheId,
-    required double amount,
-    required String paidAt,
-    required String status,
+    double? amount, // <-- now nullable
+    String? paidAt, // <-- nullable
+    String? status, // <-- nullable
     required int emprunteurId,
-    String? filePath, // optional file path
+    String? filePath,
   }) async {
     String token = await this.getUserToken();
 
-    final payload = {
-      'amount': amount,
-      'paidAt': paidAt,
-      'status': status,
-      'emprunteurId': emprunteurId,
-    };
+    // build payload including only provided fields
+    final Map<String, dynamic> payload = {};
+    if (amount != null) payload['amount'] = amount;
+    if (paidAt != null) payload['paidAt'] = paidAt;
+    if (status != null) payload['status'] = status;
+    // you can include emprunteurId if you want the backend to know it; keep it always
+    payload['emprunteurId'] = emprunteurId;
 
     // ---- Multipart path (with file) ----
     if (filePath != null) {
       final uri = Uri.parse('$baseUrl1/update/$trancheId');
 
       final req = http.MultipartRequest('POST', uri)
-        ..headers['Authorization'] = 'Bearer $token'
-        ..fields['tranche'] = jsonEncode(payload);
+        ..headers['Authorization'] = 'Bearer $token';
+
+      // send only the keys that exist (payload may be empty, that's fine)
+      req.fields['tranche'] = jsonEncode(payload);
 
       req.files.add(await http.MultipartFile.fromPath(
         'file',
@@ -191,7 +193,7 @@ class TrancheService {
           'id': data['trancheId'],
           'amount': data['amount'] ?? amount,
           'status': data['status'] ?? status,
-          'paidAt': paidAt,
+          'paidAt': paidAt ?? data['paidAt'],
           'fileUrl': data['fileUrl'],
         });
       } else {
@@ -219,7 +221,7 @@ class TrancheService {
           'id': data['trancheId'],
           'amount': data['amount'] ?? amount,
           'status': data['status'] ?? status,
-          'paidAt': paidAt,
+          'paidAt': paidAt ?? data['paidAt'],
           'fileUrl': data['fileUrl'],
         });
       }
