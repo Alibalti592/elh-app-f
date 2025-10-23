@@ -33,10 +33,9 @@ const Color bgGrey = Color(0xFFefefef);
 const Color successColor = Color(0xFF66bb6a);
 const Color greenElh = Color(0xFF8F9779);
 const Color errorColor = Color(0xFFFA3E3E);
-const textCommu =
-    "Créez votre communauté pour échanger, partager des cartes virtuelles et gérer vos dettes et emprunts facilement. "
-    "Quand vous ajoutez un prêt, un emprunt ou une amana avec un membre de votre communauté, cela apparaîtra directement sur son tableau de bord."
-    "Pour donner un accès privé de votre testament à un ou plusieurs membres de votre communauté, il faudra valider ce partage via la page testament.";
+const textCommu = "Ton emprunteur/prêteur est membre  Muslim Connect ! "
+    "Ajoute-le à ta communauté ! Il pourra suivre automatiquement, depuis son application, toutes les opérations qui vous lient."
+    "S’il n’est pas encore membre de Muslim Connect, invite-le dès maintenant !";
 
 const shadow1 = [
   BoxShadow(

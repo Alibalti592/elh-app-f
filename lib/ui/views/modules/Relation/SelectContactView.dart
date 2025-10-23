@@ -22,6 +22,7 @@ class SelectContactView extends StatefulWidget {
     Key? key,
     this.showContact = false,
   }) : super(key: key);
+
   @override
   SelectContactViewState createState() => SelectContactViewState();
 }
@@ -29,7 +30,7 @@ class SelectContactView extends StatefulWidget {
 NavigationService _navigationService = locator<NavigationService>();
 
 class SelectContactViewState extends State<SelectContactView> {
-  String searchQuery = ""; // Define and initialize _searchQuery
+  String searchQuery = "";
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class SelectContactViewState extends State<SelectContactView> {
                 : "Ajouter un contact",
             style: headerTextWhite,
           ),
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colors.transparent,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
@@ -60,21 +61,22 @@ class SelectContactViewState extends State<SelectContactView> {
           ),
         ),
         body: controller.isLoading
-            ? Center(child: BBloader())
+            ? const Center(child: BBloader())
             : SafeArea(
                 child: RefreshIndicator(
                   onRefresh: controller.refreshDatas,
                   child: ListView(
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 20),
                     children: [
-                      // Top rows
+                      // --------- Section accès répertoire / créer contact ---------
                       if (widget.showContact) ...[
                         if (controller.canOpenPhoneContacts)
                           _topRow(
                             icon: Icons.search,
                             text: "Rechercher un contact du répertoire",
                             onTap: () async {
-                              final value = await NavigationService()
+                              final value = await _navigationService
                                   .navigateWithTransition(
                                 ListPhoneContactView(),
                                 transitionStyle: Transition.downToUp,
@@ -99,8 +101,9 @@ class SelectContactViewState extends State<SelectContactView> {
                                 } else {
                                   user = value;
                                 }
-
-                                Navigator.of(context).pop(user);
+                                if (mounted) {
+                                  Navigator.of(context).pop(user);
+                                }
                               }
                             },
                           ),
@@ -115,45 +118,8 @@ class SelectContactViewState extends State<SelectContactView> {
                         const SizedBox(height: 20),
                       ],
 
-                      // Person form (if visible)
-                      if (controller.isPersonFormVisible)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Column(
-                            children: [
-                              TextField(
-                                controller: controller.firstnameTextController,
-                                decoration: InputDecoration(
-                                  labelText: 'Prénom',
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8)),
-                                ),
-                              ),
-                              UIHelper.verticalSpace(10),
-                              TextField(
-                                controller: controller.lastNameTextController,
-                                decoration: InputDecoration(
-                                  labelText: 'Nom',
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8)),
-                                ),
-                              ),
-                              UIHelper.verticalSpace(10),
-                              TextField(
-                                controller: controller.phoneTextController,
-                                decoration: InputDecoration(
-                                  labelText: 'Téléphone',
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8)),
-                                ),
-                                keyboardType: TextInputType.phone,
-                              ),
-                            ],
-                          ),
-                        ),
-                      SizedBox(height: 20),
-                      // Relations list title
-                      Text(
+                      // --------- Titre Ma communauté ---------
+                      const Text(
                         "Ma communauté",
                         style: TextStyle(
                           fontFamily: 'inter',
@@ -162,51 +128,76 @@ class SelectContactViewState extends State<SelectContactView> {
                           color: Color.fromRGBO(55, 65, 81, 1),
                         ),
                       ),
-                      SizedBox(height: 10),
-                      _topRow(
-                        icon: Icons.add,
-                        text: "Ajouter un membre à ma communauté",
-                        onTap: () async {
-                          final result =
-                              await _navigationService.navigateWithTransition(
-                            SearchRelationView(
-                                'select_contact'), // 👈 not "chat"
-                            transitionStyle: Transition.downToUp,
-                            duration: const Duration(milliseconds: 300),
-                          );
+                      const SizedBox(height: 10),
 
-                          if (result == 'updateList') {
-                            await controller.refreshDatas(); // repull relations
-                            if (mounted)
-                              setState(
-                                  () {}); // re-apply search filter in the UI
+                      // --------- Affichage conditionnel selon la présence de relations ---------
+                      Builder(
+                        builder: (_) {
+                          final hasRelations = controller.relations.isNotEmpty;
+
+                          if (!hasRelations) {
+                            // EMPTY STATE : aucun membre
+                            return _emptyCommunity(
+                              onAddPressed: () async {
+                                final result = await _navigationService
+                                    .navigateWithTransition(
+                                  SearchRelationView('select_contact'),
+                                  transitionStyle: Transition.downToUp,
+                                  duration: const Duration(milliseconds: 300),
+                                );
+                                if (result == 'updateList') {
+                                  await controller.refreshDatas();
+                                  if (mounted) setState(() {});
+                                }
+                              },
+                            );
                           }
+
+                          // LISTE NON VIDE : bouton + champ recherche + liste filtrée
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _topRow(
+                                icon: Icons.add,
+                                text: "Ajouter un membre à ma communauté",
+                                onTap: () async {
+                                  final result = await _navigationService
+                                      .navigateWithTransition(
+                                    SearchRelationView('select_contact'),
+                                    transitionStyle: Transition.downToUp,
+                                    duration: const Duration(milliseconds: 300),
+                                  );
+
+                                  if (result == 'updateList') {
+                                    await controller.refreshDatas();
+                                    if (mounted) setState(() {});
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              TextField(
+                                decoration: const InputDecoration(
+                                  hintText: "Rechercher par nom",
+                                  prefixIcon: Icon(Icons.search),
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchQuery = value;
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                              ...relations(controller, searchQuery),
+                            ],
+                          );
                         },
                       ),
-
-                      SizedBox(height: 20),
-
-                      // Relations list
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: "Rechercher un contact",
-                          prefixIcon: Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            searchQuery =
-                                value; // _searchQuery is a String in your State
-                          });
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      // Relations list
-                      ...relations(controller, searchQuery),
                     ],
                   ),
                 ),
@@ -215,7 +206,7 @@ class SelectContactViewState extends State<SelectContactView> {
     );
   }
 
-  // Reusable top row widget
+  // --------- Top row réutilisable ---------
   Widget _topRow({
     required IconData icon,
     required String text,
@@ -224,7 +215,7 @@ class SelectContactViewState extends State<SelectContactView> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -232,19 +223,19 @@ class SelectContactViewState extends State<SelectContactView> {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                 color: primaryColor,
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: Colors.white, size: 24),
             ),
-            SizedBox(width: 15),
+            const SizedBox(width: 15),
             Expanded(
               child: Text(
                 text,
-                selectionColor: Color.fromRGBO(55, 65, 81, 1),
-                style: TextStyle(
+                selectionColor: const Color.fromRGBO(55, 65, 81, 1),
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Color.fromRGBO(55, 65, 81, 1),
@@ -258,12 +249,11 @@ class SelectContactViewState extends State<SelectContactView> {
     );
   }
 
-// Relations list with search filter
+  // --------- Liste des relations avec filtre ---------
   List<Widget> relations(
       SelectContactController controller, String searchQuery) {
-    List<Widget> relationList = [];
+    final List<Widget> relationList = [];
 
-    // Filter relations based on the search query
     final filteredRelations = controller.relations.where((relation) {
       final fullName =
           "${relation.user.firstname} ${relation.user.lastname}".toLowerCase();
@@ -271,7 +261,7 @@ class SelectContactViewState extends State<SelectContactView> {
     }).toList();
 
     if (filteredRelations.isNotEmpty) {
-      filteredRelations.forEach((relation) {
+      for (final relation in filteredRelations) {
         relationList.add(
           Container(
             margin: const EdgeInsets.only(bottom: 10),
@@ -286,7 +276,7 @@ class SelectContactViewState extends State<SelectContactView> {
             child: _userInfos(controller, relation, true),
           ),
         );
-      });
+      }
     } else {
       relationList.add(
         const Padding(
@@ -302,33 +292,10 @@ class SelectContactViewState extends State<SelectContactView> {
     return relationList;
   }
 
-  // // Relations list
-  // List<Widget> relations(SelectContactController controller) {
-  //   List<Widget> relationList = [];
-  //   if (controller.relations.isNotEmpty) {
-  //     controller.relations.forEach((relation) {
-  //       relationList.add(
-  //         Container(
-  //           margin: EdgeInsets.only(bottom: 10),
-  //           decoration: BoxDecoration(
-  //             color: Colors.white,
-  //             borderRadius: BorderRadius.circular(2),
-  //             border: Border.all(
-  //               color: Color.fromRGBO(229, 231, 235, 1),
-  //               width: 2,
-  //             ),
-  //           ),
-  //           child: _userInfos(controller, relation, true),
-  //         ),
-  //       );
-  //     });
-  //   }
-  //   return relationList;
-  // }
-
+  // --------- Carte d'un membre ---------
   Widget _userInfos(
       SelectContactController controller, Relation relation, bool toValidate) {
-    UserInfos user = relation.user;
+    final UserInfos user = relation.user;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -340,19 +307,22 @@ class SelectContactViewState extends State<SelectContactView> {
           children: [
             Row(
               children: [
-                // Profile picture with circular border
+                // Avatar
                 Container(
-                  padding: EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Color.fromRGBO(229, 231, 235, 1),
+                      color: const Color.fromRGBO(229, 231, 235, 1),
                       width: 2,
                     ),
                   ),
                   child: ClipOval(
                     child: userThumbDirect(
-                        user.photo, "${user.firstname.substring(0, 2)}", 20.0),
+                      user.photo,
+                      "${user.firstname.substring(0, 2)}",
+                      20.0,
+                    ),
                   ),
                 ),
                 UIHelper.horizontalSpace(20),
@@ -362,18 +332,21 @@ class SelectContactViewState extends State<SelectContactView> {
                     children: [
                       Text(
                         user.fullname,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: Color.fromRGBO(55, 65, 81, 1)),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Color.fromRGBO(55, 65, 81, 1),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                Container(
+                SizedBox(
                   width: 90,
-                  alignment: Alignment.topRight,
-                  child: _status(controller, relation, toValidate),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: _status(controller, relation, toValidate),
+                  ),
                 ),
               ],
             ),
@@ -383,16 +356,80 @@ class SelectContactViewState extends State<SelectContactView> {
     );
   }
 
+  // --------- Bouton sélectionner / aller à la fiche ---------
   Widget _status(
       SelectContactController controller, Relation relation, bool toValidate) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: GestureDetector(
         onTap: () => controller.selectRelation(relation),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [Icon(MdiIcons.arrowRight, color: fontDark, size: 22)],
         ),
+      ),
+    );
+  }
+
+  // --------- Empty State Ma communauté ---------
+  Widget _emptyCommunity({required VoidCallback onAddPressed}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color.fromRGBO(229, 231, 235, 1),
+          width: 2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(Icons.group_outlined,
+              size: 48, color: Color.fromRGBO(107, 114, 128, 1)),
+          const SizedBox(height: 12),
+          const Text(
+            "Vous n’avez aucun membre dans votre communauté.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color.fromRGBO(55, 65, 81, 1),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            "Ajoutez votre premier membre pour commencer.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              color: Color.fromRGBO(107, 114, 128, 1),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                elevation: 0,
+              ),
+              onPressed: onAddPressed,
+              icon: const Icon(Icons.person_add_alt_1),
+              label: const Text(
+                "Ajouter un membre à ma communauté",
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

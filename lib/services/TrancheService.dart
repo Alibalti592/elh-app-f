@@ -7,8 +7,9 @@ import 'package:elh/models/Tranche.dart';
 
 class TrancheService {
   // Keep your existing endpoints
-  final String baseUrl = 'http://192.168.100.2:8000/elh-api/tranche/tranche';
-  final String baseUrl1 = 'http://192.168.100.2:8000/elh-api/tranche';
+  final String baseUrl =
+      'https://test.muslim-connect.fr/elh-api/tranche/tranche';
+  final String baseUrl1 = 'https://test.muslim-connect.fr/elh-api/tranche';
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
   getUserToken() async {
