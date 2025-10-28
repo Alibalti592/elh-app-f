@@ -81,7 +81,7 @@ class MyPompeViewState extends State<MyPompeView> {
                                 )
                               : Container(
                                   child: Text(
-                                      "Vous n'avez pas de pompe funèbre enregistrée !"))
+                                      "Tu n'as pas de pompe funèbre enregistrée !"))
                         ],
                       ),
                     ),

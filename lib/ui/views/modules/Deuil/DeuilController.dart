@@ -31,7 +31,6 @@ class DeuilController extends FutureViewModel<dynamic> {
   int step = 1;
   String type = 'nc';
 
-
   DeuilController() {
     maxTime = maxTime.add(Duration(days: 30));
     notifyListeners();
@@ -41,20 +40,20 @@ class DeuilController extends FutureViewModel<dynamic> {
   Future<dynamic> futureToRun() => loadDeuilDates();
 
   getBarLAbel() {
-    if( this.type == 'nc') {
+    if (this.type == 'nc') {
       return 'Calcul de la période de deuil';
-    } else if(this.type == "family"){
+    } else if (this.type == "family") {
       return "Pour la famille";
-    } else if(this.type == "epouse"){
+    } else if (this.type == "epouse") {
       return "Pour l'épouse";
-    } else if(this.type == "enceinte"){
+    } else if (this.type == "enceinte") {
       return "Pour l'épouse enceinte";
     }
   }
 
   selectType(type) {
     this.type = type;
-    this.step  = 2;
+    this.step = 2;
     this.content = "";
     this.endDate = "";
     this.ref = "na";
@@ -64,8 +63,8 @@ class DeuilController extends FutureViewModel<dynamic> {
   }
 
   goBack() {
-    if(this.step == 2) {
-      this.step  = 1;
+    if (this.step == 2) {
+      this.step = 1;
       notifyListeners();
     } else {
       _navigationService.back();
@@ -73,17 +72,18 @@ class DeuilController extends FutureViewModel<dynamic> {
   }
 
   getLabelDate() {
-    if(this.type == 'enceinte') {
+    if (this.type == 'enceinte') {
       return "Saisir la date de l'accouchement";
     }
     return "Saisir la date du décès";
   }
 
   Future loadDatas() async {
-    if(this.startDate != null) {
+    if (this.startDate != null) {
       this.isLoading = true;
       notifyListeners();
-      ApiResponse apiResponse = await _deuilRepository.loadDeuil(this.startDate!.toIso8601String(), type);
+      ApiResponse apiResponse = await _deuilRepository.loadDeuil(
+          this.startDate!.toIso8601String(), type);
       if (apiResponse.status == 200) {
         var decodeData = json.decode(apiResponse.data);
         this.content = decodeData['content'];
@@ -97,13 +97,13 @@ class DeuilController extends FutureViewModel<dynamic> {
     }
   }
 
-
   Future loadDeuilDates() async {
     ApiResponse apiResponse = await _deuilRepository.loadDeuilDates();
     if (apiResponse.status == 200) {
       try {
-        this.deuilDates = deuildatesFromJson(json.decode(apiResponse.data)['deuilDates']);
-      } catch(e) {
+        this.deuilDates =
+            deuildatesFromJson(json.decode(apiResponse.data)['deuilDates']);
+      } catch (e) {
         print(e);
       }
       this.isLoadingdeuilsdates = false;
@@ -127,7 +127,7 @@ class DeuilController extends FutureViewModel<dynamic> {
   savePeriode(dateString) async {
     this.isSsaving = true;
     notifyListeners();
-    await _deuilRepository.saveDeuilDate(dateString.toString(),  this.ref);
+    await _deuilRepository.saveDeuilDate(dateString.toString(), this.ref);
     this.isSsaving = false;
     this.step = 1;
     this.startDate = null;
@@ -138,17 +138,18 @@ class DeuilController extends FutureViewModel<dynamic> {
     this.loadDeuilDates();
   }
 
-
   deleteDeuildate(deuilDate) async {
     var confirm = await _dialogService.showConfirmationDialog(
-        title: 'Période de deuil', description: "Vous êtes certain de vouloir supprimer cette période de deuil ?",
-        cancelTitle: 'Annuler', confirmationTitle: 'Confirmer');
-    if(confirm?.confirmed == true) {
+        title: 'Période de deuil',
+        description:
+            "Tu es certain de vouloir supprimer cette période de deuil ?",
+        cancelTitle: 'Annuler',
+        confirmationTitle: 'Confirmer');
+    if (confirm?.confirmed == true) {
       this.isLoadingdeuilsdates = true;
       notifyListeners();
       await _deuilRepository.deleteDeuilDate(deuilDate.id.toString());
       this.loadDeuilDates();
     }
   }
-
 }

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:elh/locator.dart';
 import 'package:elh/ui/views/modules/Faq/QsnView.dart';
 import 'package:elh/ui/views/modules/Relation/RelationView.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +10,8 @@ import 'package:elh/ui/views/layout/drawerModel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class BBNavigationDrawer extends StatefulWidget {
   const BBNavigationDrawer({Key? key}) : super(key: key);
@@ -103,13 +108,57 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                   model.navigateToView(QsnView());
                 }),
 
+            InkWell(
+              onTap: () => gotToWhatsapp(),
+              borderRadius: BorderRadius.circular(50),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 19),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    UIHelper.horizontalSpace(6),
+                    SizedBox(
+                      width: 35,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          MdiIcons.whatsapp,
+                          color: fontGrey,
+                          size:
+                              25, // même logique que 'size' dans ton widget menu
+                        ),
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.only(left: 25.0)),
+                    SizedBox(
+                      width: 180,
+                      child: Text(
+                        'Contactez le support',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors
+                              .black, // même couleur que l’icône SVG du menu
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             createDrawerBodyItem(
                 iconData: Icons.exit_to_app,
                 text: 'Se déconnecter',
                 onTap: () {
                   model.logout();
                 }),
-
             // Divider(),
             UIHelper.verticalSpace(200),
 
@@ -199,7 +248,14 @@ Widget createDrawerBodyItemSvg(
         ),
         Padding(
           padding: EdgeInsets.only(left: 25.0),
-          child: SizedBox(width: 180, child: Text(text)),
+          child: SizedBox(
+            width: 180,
+            child: Text(
+              text,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+          ),
         )
       ],
     ),
@@ -224,10 +280,43 @@ Widget createDrawerBodyItem(
         ),
         Padding(
           padding: EdgeInsets.only(left: 25.0),
-          child: SizedBox(width: 180, child: Text(text)),
+          child: SizedBox(
+            width: 180,
+            child: Text(
+              text,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+          ),
         )
       ],
     ),
     onTap: onTap,
   );
+}
+
+gotToWhatsapp() async {
+  DialogService _dialogService = locator<DialogService>();
+  String contact = "+33759676631";
+  String text = '';
+  String androidUrl = "whatsapp://send?phone=$contact&text=$text";
+  String iosUrl = "https://wa.me/$contact?text=${Uri.parse(text)}";
+  var confirm = await _dialogService.showDialog(
+      title: "Assalem Alaykoum",
+      description:
+          "Votre avis compte !\nDes idées ou améliorations ?\nPartagez-les pour améliorer Muslim Connect",
+      buttonTitleColor: fontDark,
+      buttonTitle: 'Contactez-nous !',
+      barrierDismissible: true);
+  if (confirm?.confirmed == true) {
+    if (Platform.isIOS) {
+      if (await canLaunchUrl(Uri.parse(iosUrl))) {
+        await launchUrl(Uri.parse(iosUrl));
+      }
+    } else {
+      if (await canLaunchUrl(Uri.parse(androidUrl))) {
+        await launchUrl(Uri.parse(androidUrl));
+      }
+    }
+  }
 }

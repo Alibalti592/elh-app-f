@@ -39,7 +39,7 @@ class NotificationService {
     }
   }
 
-  Future<bool> respondNotif(int notifId, String action) async {
+  Future<int> respondNotif(int notifId, String action) async {
     String token = await this.getUserToken();
 
     final res = await http.post(
@@ -50,7 +50,27 @@ class NotificationService {
       },
       body: jsonEncode({'action': action}),
     );
+    print('RespondNotif Response: ${res.statusCode} - ${res.body}');
 
-    return res.statusCode == 200;
+    return res.statusCode;
+  }
+
+  Future<Map<String, dynamic>> acknowledgeMany(List<int> ids) async {
+    String token = await this.getUserToken();
+    final uri = Uri.parse('$baseUrl/notifs/ack');
+    final res = await http.post(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'ids': ids}),
+    );
+
+    if (res.statusCode == 200) {
+      return jsonDecode(res.body) as Map<String, dynamic>;
+    } else {
+      throw Exception('acknowledgeMany failed: ${res.statusCode} ${res.body}');
+    }
   }
 }

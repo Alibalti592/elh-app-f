@@ -32,24 +32,8 @@ class AddObligationView extends StatefulWidget {
 class AddObligationViewState extends State<AddObligationView> {
   final String type;
   final Obligation? obligation;
-  final TrancheService _trancheService = TrancheService();
 
   AddObligationViewState(this.type, {this.obligation});
-  List<Tranche> _tranches = [];
-
-  @override
-  void initState() {
-    super.initState();
-    if (obligation != null) {
-      _loadTranches();
-    }
-  }
-
-  Future<void> _loadTranches() async {
-    final tranches = await _trancheService.getTranches(obligation!.id!);
-
-    setState(() => _tranches = tranches);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -369,7 +353,8 @@ class AddObligationViewState extends State<AddObligationView> {
 
                             const SizedBox(height: 10),
                             if (obligation?.remainingAmount != null)
-                              inputForm(controller, 'amount', "Montant restant",
+                              inputForm(controller, 'remainingAmount',
+                                  "Montant restant",
                                   type: 'number'),
 
                             const SizedBox(height: 10),
@@ -467,228 +452,6 @@ class AddObligationViewState extends State<AddObligationView> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (obligation != null) ...[
-                                  const Text(
-                                    "Déjà rendu :",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18,
-                                      color: Color.fromRGBO(55, 65, 81, 1),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  if (_tranches.isEmpty)
-                                    const Text(
-                                      "Aucun versement enregistré pour l'instant.",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 14,
-                                        color: Color.fromRGBO(55, 65, 81, 1),
-                                      ),
-                                    )
-                                  else
-                                    Column(
-                                      children: _tranches
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        final i = entry.key + 1;
-                                        final tranche = entry.value;
-                                        return Card(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 6),
-                                          child: ListTile(
-                                            title: Text("Tranche $i"),
-                                            subtitle: Text(
-                                              "${tranche.amount} ${obligation?.currency} le ${tranche.paidAt.toString()}",
-                                            ),
-                                            trailing: tranche.fileUrl != null
-                                                ? ElevatedButton(
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      backgroundColor:
-                                                          primaryColor,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                    ),
-                                                    onPressed: () async {
-                                                      if (tranche.fileUrl !=
-                                                              null &&
-                                                          tranche.fileUrl!
-                                                              .isNotEmpty) {
-                                                        try {
-                                                          final ref =
-                                                              FirebaseStorage
-                                                                  .instance
-                                                                  .refFromURL(
-                                                                      tranche
-                                                                          .fileUrl!);
-                                                          final downloadUrl =
-                                                              await ref
-                                                                  .getDownloadURL();
-
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (context) =>
-                                                                    Dialog(
-                                                              shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              12)),
-                                                              child: SizedBox(
-                                                                width: 300,
-                                                                height: 420,
-                                                                child: Column(
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child: Image
-                                                                          .network(
-                                                                        downloadUrl,
-                                                                        fit: BoxFit
-                                                                            .contain,
-                                                                        loadingBuilder: (context, child, loadingProgress) => loadingProgress ==
-                                                                                null
-                                                                            ? child
-                                                                            : const Center(child: CircularProgressIndicator()),
-                                                                        errorBuilder: (context,
-                                                                                error,
-                                                                                stackTrace) =>
-                                                                            const Center(child: Text("Impossible de charger l'image")),
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            12),
-                                                                    Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .spaceBetween,
-                                                                      children: [
-                                                                        // Modifier button
-                                                                        TextButton
-                                                                            .icon(
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.pop(context); // Close current dialog
-                                                                            _onModifyProof(context,
-                                                                                tranche); // Handle modification
-                                                                          },
-                                                                          label:
-                                                                              const Text(
-                                                                            "Modifier",
-                                                                            style:
-                                                                                TextStyle(
-                                                                              color: Colors.black87,
-                                                                              fontWeight: FontWeight.w600,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        // Fermer button
-                                                                        TextButton(
-                                                                          onPressed: () =>
-                                                                              Navigator.pop(context),
-                                                                          child:
-                                                                              const Text(
-                                                                            "Fermer",
-                                                                            style:
-                                                                                TextStyle(
-                                                                              color: Colors.black87,
-                                                                              fontWeight: FontWeight.w500,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        // Delete icon
-                                                                        Positioned(
-                                                                            top:
-                                                                                0,
-                                                                            right:
-                                                                                0,
-                                                                            child: TextButton(
-                                                                                child: Text("Supprimer"),
-                                                                                onPressed: () {
-                                                                                  Navigator.pop(context); // close current modify dialog
-                                                                                  // show confirmation
-                                                                                  showDialog(
-                                                                                    context: context,
-                                                                                    builder: (ctx) => AlertDialog(
-                                                                                      title: const Text("Supprimer la preuve"),
-                                                                                      content: const Text("Voulez-vous vraiment supprimer cette preuve ?"),
-                                                                                      actions: [
-                                                                                        TextButton(
-                                                                                          onPressed: () => Navigator.pop(ctx),
-                                                                                          child: const Text("Annuler"),
-                                                                                        ),
-                                                                                        TextButton(
-                                                                                          onPressed: () async {
-                                                                                            Navigator.pop(ctx); // close confirmation dialog
-                                                                                            // Call your delete method
-                                                                                            // await widget.controller.deleteTrancheProof(tranche.id);
-                                                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                                                              const SnackBar(content: Text("Preuve supprimée.")),
-                                                                                            );
-                                                                                          },
-                                                                                          child: const Text("Supprimer", style: TextStyle(color: Colors.red)),
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                  );
-                                                                                })),
-                                                                      ],
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            8),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          );
-                                                        } catch (e) {
-                                                          ScaffoldMessenger.of(
-                                                                  context)
-                                                              .showSnackBar(
-                                                            const SnackBar(
-                                                              content: Text(
-                                                                  "Impossible de charger l'image"),
-                                                            ),
-                                                          );
-                                                        }
-                                                      } else {
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                          const SnackBar(
-                                                            content: Text(
-                                                                "Pas de preuve disponible"),
-                                                          ),
-                                                        );
-                                                      }
-                                                    },
-                                                    child: const Text(
-                                                      "Voir preuve",
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14,
-                                                        fontFamily: 'inter',
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : const SizedBox.shrink(),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                ],
-                                const SizedBox(height: 20),
-
                                 // Upload / Display proof image
                                 if (obligation?.fileUrl == null)
                                   UploadFileWidget(controller: controller)
@@ -787,32 +550,60 @@ class AddObligationViewState extends State<AddObligationView> {
                             ValueListenableBuilder<bool>(
                               valueListenable: controller.isFormValid,
                               builder: (context, isValid, child) {
-                                return SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton(
-                                    onPressed: isValid
-                                        ? () {
-                                            controller.saveObligation();
-                                          }
-                                        : null, // disables button when false
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: isValid
-                                          ? primaryColor
-                                          : Colors.grey[400],
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 25, vertical: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                return ValueListenableBuilder<bool>(
+                                  valueListenable: controller.isSaving,
+                                  builder: (context, saving, _) {
+                                    final enabled = isValid && !saving;
+                                    return SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        onPressed: enabled
+                                            ? controller.saveObligation
+                                            : null,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: enabled
+                                              ? primaryColor
+                                              : Colors.grey[400],
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 25, vertical: 12),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        child: saving
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: const [
+                                                  SizedBox(
+                                                    width: 18,
+                                                    height: 18,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                            strokeWidth: 2),
+                                                  ),
+                                                  SizedBox(width: 10),
+                                                  Text(
+                                                    "Enregistrement…",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : const Text(
+                                                "Enregistrer",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
                                       ),
-                                    ),
-                                    child: Text(
-                                      "Enregistrer",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
+                                    );
+                                  },
                                 );
                               },
                             ),
@@ -898,7 +689,12 @@ class AddObligationViewState extends State<AddObligationView> {
     String type = 'string',
     TextEditingController? textController,
   }) {
-    String initValue = controller.obligation.get(key)?.toString() ?? '';
+    String initValue;
+    if (key == 'remainingAmount') {
+      initValue = (controller.obligation.remainingAmount ?? 0).toString();
+    } else {
+      initValue = controller.obligation.get(key)?.toString() ?? '';
+    }
     TextInputType keyboardType = TextInputType.multiline;
     List<TextInputFormatter>? inputFormatters = [];
 
@@ -1031,6 +827,10 @@ class AddObligationViewState extends State<AddObligationView> {
                 case "amount":
                   controller.obligation.amount =
                       num.tryParse(text.replaceAll(',', '.')) ?? 0;
+                  break;
+                case "remainingAmount":
+                  controller.obligation.remainingAmount =
+                      int.tryParse(text.replaceAll(',', '.')) ?? 0;
                   break;
                 default:
                   controller.obligation.set(key, text);

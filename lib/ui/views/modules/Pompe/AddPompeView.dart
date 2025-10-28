@@ -241,7 +241,7 @@ class AddPompeViewState extends State<AddPompeView> {
                                               padding: const EdgeInsets.only(
                                                   top: 35, left: 10, right: 10),
                                               child: Text(
-                                                  "Assalem alaykoum, l’inscription de votre pompe funèbre sera effective après la validation de l’équipe Muslim Connect. Une notification vous sera envoyée in sha allah.",
+                                                  "Assalem alaykoum, l’inscription de votre pompe funèbre sera effective après la validation de l’équipe Muslim Connect. Une notification te sera envoyée in sha allah.",
                                                   style:
                                                       TextStyle(fontSize: 16),
                                                   textAlign: TextAlign.center))
@@ -309,7 +309,7 @@ class AddPompeViewState extends State<AddPompeView> {
                   style: TextStyle(color: fontDark, fontSize: 17)),
               UIHelper.verticalSpace(15),
               Text(
-                  "Vous êtes une pompe funèbre musulmane et vous souhaitez proposer vos services grâce à notre plateforme de mise en relation.\n"
+                  "Tu es une pompe funèbre musulmane et tu souhaite proposer vos services grâce à notre plateforme de mise en relation.\n"
                   "Votre inscription est totalement gratuite.\n\nRejoignez-nous !",
                   style: TextStyle(color: fontDark, fontSize: 15)),
               UIHelper.verticalSpace(25),

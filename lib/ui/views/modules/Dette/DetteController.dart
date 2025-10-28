@@ -119,15 +119,15 @@ class DetteController extends FutureViewModel<dynamic> {
   deleteObligation(Obligation obligation) async {
     String title = "Supprimer la dette ?";
     String descr =
-        "Confirmer la supression de cette dette pour vous et pour la personne associée à cette dette";
+        "Confirmer la supression de cette dette pour toi et pour la personne associée à cette dette";
     if (obligation.type == 'onm') {
       title = "Supprimer le prêt ?";
       descr =
-          "Confirmer la supression de ce prêt  pour vous et pour la personne associée à ce prêt";
+          "Confirmer la supression de ce prêt  pour toi et pour la personne associée à ce prêt";
     } else if (obligation.type == 'amana') {
       title = "Supprimer la amana ?";
       descr =
-          "Confirmer la supression de cette amana  pour vous et pour la personne associée à cette amana";
+          "Confirmer la supression de cette amana  pour toi et pour la personne associée à cette amana";
     }
     var confirm = await _dialogService.showConfirmationDialog(
         title: title,

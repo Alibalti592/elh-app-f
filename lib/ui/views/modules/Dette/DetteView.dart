@@ -271,12 +271,12 @@ class DetteViewState extends State<DetteView> {
     }
     List<Widget> obligationWigets = [];
     if (obligations.isEmpty) {
-      String text = "Vous n’avez rien prêté pour l’instant";
+      String text = "Tu n’as rien prêté pour l’instant";
 
       if (type == 'amana') {
         text = "Aucune amana enregistrée";
       } else if (type == 'onm') {
-        text = "Vous n’avez rien emprunté pour l’instant";
+        text = "Tu n’as rien emprunté pour l’instant";
       }
       obligationWigets.add(Padding(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),

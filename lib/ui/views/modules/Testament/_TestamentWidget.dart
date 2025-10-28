@@ -49,7 +49,7 @@ class TestamentWidget extends StatelessWidget {
               UIHelper.verticalSpace(3),
               testament.location != null
                   ? Text(testament.location!, style: TextStyle(fontSize: 14))
-                  : Text("Vous n'avez rien renseigné", style: textDescription),
+                  : Text("Tu n'as rien renseigné", style: textDescription),
               UIHelper.verticalSpace(10),
               Text('Je souhaite que ma toilette mortuaire soit faite par :',
                   style: TextStyle(
@@ -58,7 +58,7 @@ class TestamentWidget extends StatelessWidget {
                       fontWeight: FontWeight.bold)),
               testament.toilette != null
                   ? Text(testament.toilette!, style: TextStyle(fontSize: 14))
-                  : Text("Vous n'avez rien renseigné", style: textDescription),
+                  : Text("Tu n'as rien renseigné", style: textDescription),
               UIHelper.verticalSpace(8),
               Text(
                   'Je souhaite que mon enterrement se fasse sans aucune innovation et dans les conditions suivantes :',
@@ -68,7 +68,7 @@ class TestamentWidget extends StatelessWidget {
                       fontWeight: FontWeight.bold)),
               testament.family != null
                   ? Text(testament.family!, style: TextStyle(fontSize: 14))
-                  : Text("Vous n'avez rien renseigné", style: textDescription),
+                  : Text("Tu n'as rien renseigné", style: textDescription),
               UIHelper.verticalSpace(8),
               Text(
                   'Je souhaite que l’on rembourse mes dettes de la manière suivante :',
@@ -78,17 +78,17 @@ class TestamentWidget extends StatelessWidget {
                       fontWeight: FontWeight.bold)),
               testament.fixe != null
                   ? Text(testament.fixe!, style: TextStyle(fontSize: 14))
-                  : Text("Vous n'avez rien renseigné", style: textDescription),
+                  : Text("Tu n'as rien renseigné", style: textDescription),
               UIHelper.verticalSpace(8),
               Text(
-                  'Je souhaite que l’argent prêté et qui vous sera rendu soit utilisé de la manière suivante :',
+                  'Je souhaite que l’argent prêté et qui te sera rendu soit utilisé de la manière suivante :',
                   style: TextStyle(
                       fontSize: 12.0,
                       color: fontGrey,
                       fontWeight: FontWeight.bold)),
               testament.goods != null
                   ? Text(testament.goods!, style: TextStyle(fontSize: 14))
-                  : Text("Vous n'avez rien renseigné", style: textDescription),
+                  : Text("Tu n'as rien renseigné", style: textDescription),
               UIHelper.verticalSpace(8),
               Text('Je souhaite laisser les recommandations suivantes :',
                   style: TextStyle(
@@ -97,7 +97,7 @@ class TestamentWidget extends StatelessWidget {
                       fontWeight: FontWeight.bold)),
               testament.lastwill != null
                   ? Text(testament.lastwill!, style: TextStyle(fontSize: 14))
-                  : Text("Vous n'avez rien renseigné", style: textDescription),
+                  : Text("Tu n'as rien renseigné", style: textDescription),
               UIHelper.verticalSpace(8),
               Text('Jours de jeûn à rattraper :',
                   style: TextStyle(

@@ -129,7 +129,7 @@ class EditTestamentViewState extends State<EditTestamentView> {
                                     "Je souhaite que l’on rembourse mes dettes de la manière suivante",
                                     maxLines: 7, maxLength: 3000),
                                 inputForm(controller, 'goods',
-                                    "Je souhaite que l’argent prêté et qui vous sera rendu soit utilisé de la manière suivante",
+                                    "Je souhaite que l’argent prêté et qui te sera rendu soit utilisé de la manière suivante",
                                     maxLines: 5, maxLength: 3000),
                                 UIHelper.verticalSpace(30),
                               ],

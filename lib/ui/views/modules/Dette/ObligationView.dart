@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
-
+import 'package:elh/ui/views/modules/Dette/AddObligationView.dart';
 import 'package:elh/services/BaseApi/ApiResponse.dart';
 import 'package:elh/services/TrancheService.dart';
 import 'package:elh/ui/views/modules/Dette/DetailVersementDialog.dart';
@@ -15,6 +15,15 @@ import 'package:elh/ui/shared/ui_helpers.dart';
 import 'package:elh/models/Obligation.dart';
 import 'package:elh/models/Tranche.dart'; // <-- pareil ici
 import 'package:elh/ui/views/modules/Dette/AddObligationController.dart';
+import 'package:elh/locator.dart';
+import 'package:stacked_services/stacked_services.dart';
+import 'package:elh/repository/DetteRepository.dart';
+import 'package:elh/services/ErrorMessageService.dart';
+import 'package:elh/ui/views/modules/Relation/SelectContactView.dart';
+import 'package:elh/models/Relation.dart';
+import 'package:elh/ui/views/modules/Dette/AddObligationView.dart';
+import 'package:elh/ui/views/modules/Dette/ObligationCard.dart';
+import 'package:elh/ui/views/common/popupCard/HeroDialogRoute.dart';
 
 class ObligationView extends StatefulWidget {
   final Obligation obligation;
@@ -31,6 +40,12 @@ class ObligationView extends StatefulWidget {
 }
 
 class _ObligationViewState extends State<ObligationView> {
+  final DetteRepository _detteRepository = locator<DetteRepository>();
+  final ErrorMessageService _errorMessageService =
+      locator<ErrorMessageService>();
+  final DialogService _dialogService = locator<DialogService>();
+  final NavigationService _navigationService = locator<NavigationService>();
+
   final TrancheService _trancheService = TrancheService();
   final _amountController = TextEditingController();
   final _dateController = TextEditingController();
@@ -60,6 +75,157 @@ class _ObligationViewState extends State<ObligationView> {
     _loadTranches();
   }
 
+  Future<void> _editObligation() async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AddObligationView(
+          widget.obligation.type,
+          obligation: widget.obligation,
+        ),
+      ),
+    );
+    if (result == true) {
+      await widget.onTrancheAdded?.call();
+      await _loadTranches();
+      setState(() {});
+    }
+  }
+
+  Future<void> _downloadObligationCard() async {
+    // Exact same UX as DetteController.openObligationCard(...)
+    Navigator.of(context).push(
+      HeroDialogRoute(
+        builder: (context) => Center(
+          child: ObligationCard(
+            obligation: widget.obligation,
+            directShare: true, // same flag used in DetteView
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _deleteObligation() async {
+    String title = "Supprimer la dette ?";
+    String descr =
+        "Confirmer la supression de cette dette pour toi et pour la personne associée à cette dette";
+    if (widget.obligation.type == 'onm') {
+      title = "Supprimer le prêt ?";
+      descr =
+          "Confirmer la supression de ce prêt pour toi et pour la personne associée à ce prêt";
+    } else if (widget.obligation.type == 'amana') {
+      title = "Supprimer l’amana ?";
+      descr =
+          "Confirmer la supression de cette amana pour toi et pour la personne associée à cette amana";
+    }
+
+    final confirm = await _dialogService.showConfirmationDialog(
+      title: title,
+      description: descr,
+      cancelTitle: 'Annuler',
+      confirmationTitle: 'Supprimer',
+    );
+    if (confirm?.confirmed == true) {
+      try {
+        final res = await _detteRepository.deleteDette(widget.obligation.id);
+        if (res.status == 200) {
+          // Go back and notify list to refresh
+          await widget.onTrancheAdded?.call();
+          if (mounted) Navigator.of(context).pop(true);
+        } else {
+          _errorMessageService.errorDefault();
+        }
+      } catch (_) {
+        _errorMessageService.errorOnAPICall();
+      }
+    }
+  }
+
+  Future<void> _toggleRefund() async {
+    final isRefunded = widget.obligation.status == 'refund';
+    final confirm = await _dialogService.showConfirmationDialog(
+      title: isRefunded
+          ? "Annuler le remboursement ?"
+          : "Marquer comme remboursé ?",
+      description: isRefunded
+          ? "Confirmer l'annulation du remboursement de cette obligation"
+          : "Confirmer le remboursement de cette obligation",
+      cancelTitle: 'Annuler',
+      confirmationTitle: 'Valider',
+    );
+    if (confirm?.confirmed == true) {
+      try {
+        final res = await _detteRepository.refundDette(
+            widget.obligation.id, isRefunded);
+        if (res.status == 200) {
+          await widget.onTrancheAdded?.call();
+          await _loadTranches();
+          setState(() {
+            widget.obligation.status = isRefunded ? 'processing' : 'refund';
+          });
+        } else {
+          _errorMessageService.errorDefault();
+        }
+      } catch (_) {
+        _errorMessageService.errorOnAPICall();
+      }
+    }
+  }
+
+  Future<void> _addRelatedTo() async {
+    final confirm = await _dialogService.showConfirmationDialog(
+      title: "",
+      description:
+          "Les partages d'un PRÊT/DETTE/AMANA avec un de vos contact MC seront automatiquement visibles sur son compte Muslim Connect",
+      cancelTitle: 'Annuler',
+      confirmationTitle: 'Partager',
+    );
+    if (confirm?.confirmed == true) {
+      final value = await _navigationService.navigateWithTransition(
+        SelectContactView(),
+        transitionStyle: Transition.downToUp,
+        duration: const Duration(milliseconds: 300),
+      );
+      if (value is Relation) {
+        try {
+          final res = await _detteRepository.setRelatedTo(
+            widget.obligation.id,
+            value.user.id,
+          );
+          if (res.status == 200) {
+            await widget.onTrancheAdded?.call();
+            setState(() {
+              widget.obligation.isRelatedToUser = true;
+            });
+          } else {
+            _errorMessageService.errorDefault();
+          }
+        } catch (_) {
+          _errorMessageService.errorOnAPICall();
+        }
+      }
+    }
+  }
+
+  Future<void> _goToEditObligation() async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AddObligationView(
+          widget.obligation.type,
+          obligation: widget.obligation,
+        ),
+        fullscreenDialog: false, // or true if you want iOS "modal" look
+      ),
+    );
+
+    // If the edit view returns true after save, refresh parent state
+    if (result == true) {
+      await widget.onTrancheAdded?.call();
+      await _loadTranches();
+      setState(() {});
+    }
+  }
+
   Future<void> _loadTranches() async {
     final tranches = await _trancheService.getTranches(widget.obligation.id!);
     setState(() => _tranches = tranches);
@@ -76,20 +242,37 @@ class _ObligationViewState extends State<ObligationView> {
     _amountController.clear();
     _dateController.clear();
     _selectedDate = null; // Reset previous selection
-
-    final scaffoldContext = context; // Outer context for SnackBars
+    print("Obligation : ${widget.obligation.toJson()}");
+    // 🔔 Banner d'erreur affiché SOUS le titre
+    String? _bannerError; // null => rien à afficher
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setStateDialog) => AlertDialog(
-          title: const Text(
-            "Ajouter un versement",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Color.fromRGBO(55, 65, 81, 1),
-            ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Ajouter un versement",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Color.fromRGBO(55, 65, 81, 1),
+                ),
+              ),
+              if (_bannerError != null) ...[
+                const SizedBox(height: 6),
+                Text(
+                  _bannerError!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ],
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -126,6 +309,12 @@ class _ObligationViewState extends State<ObligationView> {
                           horizontal: 10,
                         ),
                       ),
+                      onChanged: (_) {
+                        // efface le message dès que l'utilisateur retape
+                        if (_bannerError != null) {
+                          setStateDialog(() => _bannerError = null);
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -157,13 +346,18 @@ class _ObligationViewState extends State<ObligationView> {
 
                         if (pickedDate != null) {
                           // Save internally
-                          setState(() => _selectedDate = pickedDate);
+                          setStateDialog(() => _selectedDate = pickedDate);
 
                           // Display for user
                           _dateController.text =
                               "${pickedDate.day.toString().padLeft(2, '0')}/"
                               "${pickedDate.month.toString().padLeft(2, '0')}/"
                               "${pickedDate.year}";
+
+                          // efface l'éventuel message
+                          if (_bannerError != null) {
+                            setStateDialog(() => _bannerError = null);
+                          }
                         }
                       },
                       decoration: InputDecoration(
@@ -209,48 +403,49 @@ class _ObligationViewState extends State<ObligationView> {
                 final selectedDate = _selectedDate;
 
                 if (amountText.isEmpty || selectedDate == null) {
-                  ScaffoldMessenger.of(scaffoldContext)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(
-                          content: Text("Veuillez remplir tous les champs")),
-                    );
+                  setStateDialog(
+                      () => _bannerError = "Veuillez remplir tous les champs");
                   return;
                 }
 
                 // Compare with obligation date
                 final obligationDate = widget.obligation.date; // DateTime
                 if (selectedDate.isBefore(obligationDate)) {
-                  ScaffoldMessenger.of(scaffoldContext)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(
-                          content: Text(
-                              "La date du versement ne peut pas être antérieure à la date de l'obligation")),
-                    );
+                  setStateDialog(() => _bannerError =
+                      "La date du versement ne peut pas être antérieure à la date de l'obligation");
                   return;
                 }
 
                 final amount = double.tryParse(amountText);
+                final ObligationAmount = widget.obligation.amount;
+                final ObligationRemainingAmount =
+                    widget.obligation.remainingAmount ?? 0;
                 if (amount == null) {
-                  ScaffoldMessenger.of(scaffoldContext)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(content: Text("Montant invalide")),
-                    );
+                  setStateDialog(() => _bannerError = "Montant invalide");
                   return;
                 }
-
-                setStateDialog(() => _isLoading = true);
+                if (amount > ObligationRemainingAmount) {
+                  setStateDialog(() => _bannerError =
+                      "Le montant du versement dépasse le montant restant à rembourser");
+                  return;
+                }
+                setStateDialog(() {
+                  _bannerError = null; // clear
+                  _isLoading = true;
+                });
 
                 final obligationId = widget.obligation.id;
                 final emprunteurId = widget.obligation.getEmprunteurId();
 
                 try {
                   final newTranche = await _trancheService
-                      .createTranche(obligationId, emprunteurId, amount,
-                          selectedDate.toIso8601String(),
-                          filePath: _controller.obligation.file)
+                      .createTranche(
+                        obligationId,
+                        emprunteurId,
+                        amount,
+                        selectedDate.toIso8601String(),
+                        filePath: _controller.obligation.file,
+                      )
                       .timeout(const Duration(seconds: 10));
 
                   setStateDialog(() => _isLoading = false);
@@ -264,30 +459,15 @@ class _ObligationViewState extends State<ObligationView> {
 
                     setState(() => _tranches.add(newTranche));
                     await widget.onTrancheAdded?.call();
-                    Navigator.pop(context);
 
-                    ScaffoldMessenger.of(scaffoldContext)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        const SnackBar(
-                            content: Text("Tranche ajoutée avec succès !")),
-                      );
+                    // succès : on ferme la boîte de dialogue directement
+                    Navigator.pop(context);
                   } else {
-                    ScaffoldMessenger.of(scaffoldContext)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        const SnackBar(
-                            content:
-                                Text("Erreur lors de l'ajout de la tranche")),
-                      );
+                    setStateDialog(() =>
+                        _bannerError = "Erreur lors de l'ajout de la tranche");
                   }
                 } catch (e) {
-                  setStateDialog(() => _isLoading = false);
-                  ScaffoldMessenger.of(scaffoldContext)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      SnackBar(content: Text("Erreur réseau : $e")),
-                    );
+                  setStateDialog(() => _bannerError = "Erreur réseau : $e");
                 }
               },
               child: _isLoading
@@ -469,13 +649,131 @@ class _ObligationViewState extends State<ObligationView> {
             ),
           ),
         ),
-        actions: [],
+        actions: [
+          PopupMenuButton<String>(
+            elevation: 3,
+            offset: const Offset(0, 35),
+            icon: Icon(MdiIcons.dotsVerticalCircleOutline, color: Colors.white),
+            itemBuilder: (BuildContext context) {
+              final items = <PopupMenuEntry<String>>[];
+
+              // Download (always visible if there’s something to download)
+
+              items.add(
+                PopupMenuItem<String>(
+                  value: 'download',
+                  child: Row(
+                    children: [
+                      Icon(MdiIcons.download),
+                      const SizedBox(width: 8),
+                      const Text("Télécharger"),
+                    ],
+                  ),
+                ),
+              );
+
+              // Refund toggle
+              items.add(
+                PopupMenuItem<String>(
+                  value: 'refundObligation',
+                  child: Row(
+                    children: [
+                      Icon(widget.obligation.status == 'refund'
+                          ? MdiIcons.close
+                          : MdiIcons.check),
+                      const SizedBox(width: 8),
+                      Text(widget.obligation.status == 'refund'
+                          ? "Annuler le remboursement"
+                          : "Marquer comme remboursé"),
+                    ],
+                  ),
+                ),
+              );
+
+              // Share to member
+              if (!widget.obligation.isRelatedToUser) {
+                items.add(
+                  PopupMenuItem<String>(
+                    value: 'addRelatedTo',
+                    child: Row(
+                      children: [
+                        Icon(MdiIcons.shareOutline),
+                        const SizedBox(width: 8),
+                        const Text("Partager à un membre MC"),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              // Edit / Delete (only when allowed)
+              if (widget.obligation.canEdit) {
+                items.add(
+                  PopupMenuItem<String>(
+                    value: 'deleteObligation',
+                    child: Row(
+                      children: [
+                        Icon(MdiIcons.trashCanOutline),
+                        const SizedBox(width: 8),
+                        const Text("Supprimer"),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return items;
+            },
+            onSelected: (val) async {
+              switch (val) {
+                case 'deleteObligation':
+                  await _deleteObligation();
+                  break;
+                case 'refundObligation':
+                  await _toggleRefund();
+                  break;
+                case 'download':
+                  await _downloadObligationCard();
+                  break;
+                case 'addRelatedTo':
+                  await _addRelatedTo();
+                  break;
+              }
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (widget.obligation.canEdit &&
+                    widget.obligation.status != 'refund')
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: elhV2Color2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: _goToEditObligation,
+                    child: const Text(
+                      "Modifier",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontFamily: 'inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+
             if (obligation.fileUrl != null && obligation.fileUrl!.isNotEmpty)
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -614,8 +912,21 @@ class _ObligationViewState extends State<ObligationView> {
                         title: Row(
                           children: [
                             Text("Versement $i "),
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text(
-                              tranche.status,
+                              "${tranche.amount.toStringAsFixed(0)} ${obligation.currency} le ${DateFormat('dd-MM-yyyy').format(DateTime.parse(tranche.paidAt))}",
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              tranche.status == "en attente"
+                                  ? "En attente de validation par le prêteur"
+                                  : tranche.status == "validée"
+                                      ? "Validée"
+                                      : "Annulée",
                               style: TextStyle(
                                 color: tranche.status == "en attente"
                                     ? Colors.orange
@@ -626,9 +937,6 @@ class _ObligationViewState extends State<ObligationView> {
                               ),
                             ),
                           ],
-                        ),
-                        subtitle: Text(
-                          "${tranche.amount.toStringAsFixed(0)} ${obligation.currency} le ${DateFormat('dd-MM-yyyy').format(DateTime.parse(tranche.paidAt))}",
                         ),
                         trailing: ElevatedButton(
                           style: ElevatedButton.styleFrom(

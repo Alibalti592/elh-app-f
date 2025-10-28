@@ -391,7 +391,7 @@ class SelectContactViewState extends State<SelectContactView> {
               size: 48, color: Color.fromRGBO(107, 114, 128, 1)),
           const SizedBox(height: 12),
           const Text(
-            "Vous n’avez aucun membre dans votre communauté.",
+            "Tu n’as aucun membre dans ta communauté.",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,

@@ -161,7 +161,7 @@ class BBLocationController extends FutureViewModel<dynamic> {
         // your App should show an explanatory UI now.
         this.currentLocationLoading.value = false;
         _errorMessageService.errorShoMessage(
-            "Vous n'autorisez pas la localisation, activez et autorisez votre localisation.");
+            "Tu n'autorises pas la localisation, active et autorise ta localisation.");
         return Future.error(error);
       }
     }
@@ -172,7 +172,7 @@ class BBLocationController extends FutureViewModel<dynamic> {
       // Permissions are denied forever, handle appropriately.
       this.currentLocationLoading.value = false;
       _errorMessageService.errorShoMessage(
-          "Vous n'autorisez pas la localisation  utilisez la rechreche !");
+          "Tu n'autorises pas la localisation, utilise la recherche !");
       return Future.error(error);
     }
 

@@ -61,7 +61,7 @@ class DrawerViewModel extends FutureViewModel<dynamic> {
     if (this.isPF) {
       return 'Espace pompes funèbres';
     }
-    return "Vous êtes une pompe funèbre ? Enregistrez-vous !";
+    return "Tu es une pompe funèbre ? Enregistre-toi !";
   }
 
   getUserToken() async {
@@ -78,7 +78,7 @@ class DrawerViewModel extends FutureViewModel<dynamic> {
   Future logout() async {
     var confirm = await _dialogService.showConfirmationDialog(
         title: 'Déconnexion',
-        description: "Vous êtes certain de vouloir vous déconnecter ?",
+        description: "Tu es certain de vouloir te déconnecter ?",
         cancelTitle: 'Annuler',
         confirmationTitle: 'Confirmer');
     if (confirm?.confirmed == true) {

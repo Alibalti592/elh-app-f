@@ -68,7 +68,7 @@ class WelcomeDesign extends StatelessWidget {
                     // Description
                     Text(
                       "Muslim Connect, la seule application pensée pour chaque musulman : elle "
-                      "t'aide à suivre tes dettes et emprunts,à gérer ton testament et organiser "
+                      "t'aide à suivre tes dettes et emprunts, à gérer ton testament et organiser "
                       "tes actions de Sadaqa Jariya — simplement, en toute sérénité, selon les "
                       "principes de l'Islam.",
                       textAlign: TextAlign.center,

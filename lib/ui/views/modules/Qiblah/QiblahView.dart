@@ -81,13 +81,13 @@ class _QiblahViewState extends State<QiblahView> {
                         case LocationPermission.denied:
                           return LocationErrorWidget(
                             error:
-                                "Vous n'avez pas activé la localisation pour cette application !",
+                                "Tu n'as pas activé la localisation pour cette application !",
                             callback: _checkLocationStatus,
                           );
                         case LocationPermission.deniedForever:
                           return LocationErrorWidget(
                             error:
-                                "Vous avez refusé la localisation pour cette application !",
+                                "Tu as refusé la localisation pour cette application !",
                             callback: _checkLocationStatus,
                           );
                         // case GeolocationStatus.unknown:

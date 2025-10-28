@@ -171,7 +171,7 @@ class MosqueViewState extends State<MosqueView>
             padding: const EdgeInsets.only(bottom: 20, left: 15, right: 15),
             child: Column(
               children: [
-                Text("Vous n'avez pas trouvé votre mosquée ?",
+                Text("Tu n'as pas trouvé ta mosquée ?",
                     style: TextStyle(fontSize: 15),
                     textAlign: TextAlign.center),
                 UIHelper.verticalSpace(5),

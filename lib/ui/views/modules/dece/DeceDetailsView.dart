@@ -143,7 +143,7 @@ class DeceDetailsViewState extends State<DeceDetailsView> {
   List<Widget> demands(DeceDetailsController controller) {
     List<Widget> demands = [];
     if (controller.demands.length == 0) {
-      demands.add(Text("Vous avez notifié les pompes funèbres aux alentours",
+      demands.add(Text("Tu as notifié les pompes funèbres aux alentours",
           style: TextStyle(fontSize: 14, color: fontGreyLight),
           textAlign: TextAlign.center));
     }
@@ -180,7 +180,7 @@ class DeceDetailsViewState extends State<DeceDetailsView> {
                       style:
                           TextStyle(fontWeight: FontWeight.bold, color: color)),
                   demand.status == 'accepted'
-                      ? Text("Vous pouvez échanger depuis la messagerie")
+                      ? Text("Tu peux échanger depuis la messagerie")
                       : Container()
                 ],
               )

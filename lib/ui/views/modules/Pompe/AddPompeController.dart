@@ -116,7 +116,7 @@ class AddPompeController extends FutureViewModel<dynamic> {
       await this._dialogService.showDialog(
           title: 'Demande prise en compte',
           description:
-              "Assalem alaykoum, l’inscription de votre pompe funèbre sera effective après la validation de l’équipe Muslim Connect. Une notification vous sera envoyée in sha allah.");
+              "Assalem alaykoum, l’inscription de votre pompe funèbre sera effective après la validation de l’équipe Muslim Connect. Une notification te sera envoyée in sha allah.");
       this._navigationService.clearStackAndShow('/');
       this.isSaving.value = false;
     } else {

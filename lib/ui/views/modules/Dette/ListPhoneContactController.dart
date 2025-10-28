@@ -6,16 +6,17 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:app_settings/app_settings.dart';
 
-// ListPhoneContactController.dart  (unchanged core)
 class ListPhoneContactController extends FutureViewModel<dynamic> {
   final NavigationService _navigationService = locator<NavigationService>();
 
-  bool isLoading = false;
+  // STATES
+  bool hasCheckedPermission = false; // initial permission check completed
   bool permissionGranted = false;
+  bool isLoading = false; // loading contacts only
 
   List<Contact> contacts = [];
 
-  // We keep ONE controller here to persist across rebuilds
+  // Search
   final TextEditingController searchController = TextEditingController();
   final FocusNode focusNode = FocusNode();
 
@@ -23,33 +24,56 @@ class ListPhoneContactController extends FutureViewModel<dynamic> {
   Future<dynamic> futureToRun() => loadDatas();
 
   Future<void> loadDatas() async {
-    isLoading = true;
-    notifyListeners();
-
+    // 1) Check (and if needed, request) permission first (no spinner)
     permissionGranted = await FlutterContacts.requestPermission(readonly: true);
+    hasCheckedPermission = true;
+    notifyListeners();
 
     if (!permissionGranted) {
       contacts = [];
-      isLoading = false;
-      notifyListeners();
-      return;
+      return; // show stable NoPermission screen, no flicker
     }
 
-    contacts = await FlutterContacts.getContacts(
-      withProperties: true,
-      withThumbnail: true,
-    );
-    contacts.sort((a, b) => a.displayName.compareTo(b.displayName));
-
-    // DEBUG
-
-    isLoading = false;
+    // 2) Load contacts with spinner
+    isLoading = true;
     notifyListeners();
+    try {
+      contacts = await FlutterContacts.getContacts(
+        withProperties: true,
+        withThumbnail: true,
+      );
+      contacts.sort((a, b) => a.displayName.compareTo(b.displayName));
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
-  Future<void> refreshDatas() async => loadDatas();
+  Future<void> refreshDatas() async {
+    // Re-check permission (this will return immediately if already granted)
+    permissionGranted = await FlutterContacts.requestPermission(readonly: true);
+    notifyListeners();
 
-  Future<void> openSettings() async => AppSettings.openAppSettings();
+    if (!permissionGranted) return;
+
+    isLoading = true;
+    notifyListeners();
+    try {
+      contacts = await FlutterContacts.getContacts(
+        withProperties: true,
+        withThumbnail: true,
+      );
+      contacts.sort((a, b) => a.displayName.compareTo(b.displayName));
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> openSettings() async {
+    await AppSettings.openAppSettings();
+    // When coming back, your view's didChangeAppLifecycleState calls refreshDatas()
+  }
 
   void selectContact(Contact contact) =>
       _navigationService.back(result: contact);

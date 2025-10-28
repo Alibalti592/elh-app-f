@@ -46,6 +46,51 @@ class HomeViewState extends State<HomeView> {
     });
   }
 
+  // In HomeViewState (add these methods)
+
+  bool _isAutoAckTitle(String t) {
+    return t == "Un versement a été supprimé" ||
+        t == "Mise à jour d'un versement" ||
+        t == "Un nouveau versement a été ajouté";
+  }
+
+  Future<void> _ackAutoNotifsAfterClose() async {
+    try {
+      // Re-fetch pour avoir l'état le plus frais après que l'utilisateur a vu la liste
+      final latest = await NotificationService().fetchNotifications();
+
+      final toAck = latest
+          .where((n) => n.status == 'pending' && _isAutoAckTitle(n.title))
+          .map((n) => n.id)
+          .toList();
+
+      if (toAck.isEmpty) {
+        if (!mounted) return;
+        setState(() {
+          _notifications = latest; // au cas où ça a changé pendant l'ouverture
+        });
+        return;
+      }
+
+      // Appel backend: POST /elh-api/notifs/ack
+      await NotificationService().acknowledgeMany(toAck);
+
+      if (!mounted) return;
+      setState(() {
+        // Marquer comme "validée" localement + rafraîchir la source
+        for (final n in latest) {
+          if (toAck.contains(n.id)) {
+            n.status = 'validée';
+          }
+        }
+        _notifications = latest;
+      });
+    } catch (e) {
+      // Optionnel: log / snackbar
+      // print('Bulk ack after close failed: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<HomeController>.reactive(
@@ -85,68 +130,145 @@ class HomeViewState extends State<HomeView> {
     );
   }
 
-  void _showNotificationsModal(BuildContext context) {
-    showModalBottomSheet(
+  void _showNotificationsModal(BuildContext context) async {
+    // État local de la bannière d'erreur pour ce modal
+    String? errorText;
+    String? successText;
+
+    await showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // required to allow tall custom height
+      isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return FractionallySizedBox(
-          heightFactor: 0.7, // <-- 70% of screen height
+          heightFactor: 0.7,
           child: SafeArea(
-            top: false, // keep rounded corners visible
+            top: false,
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  // little drag handle (optional, looks nice)
-                  Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.black26,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
+              child: StatefulBuilder(
+                builder: (context, setStateModal) {
+                  return Column(
+                    children: [
+                      // handle
+                      Container(
+                        width: 40,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.black26,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
 
-                  // Content area
-                  Expanded(
-                    child: FutureBuilder<List<AppNotification>>(
-                      future: NotificationService().fetchNotifications(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return const Center(
-                            child: Text(
-                                "Erreur lors du chargement des notifications"),
-                          );
-                        } else {
-                          final pending = snapshot.data!
-                              .where((n) => n.status == 'pending')
-                              .toList();
+                      // --- BANNIÈRE D'ERREUR (rouge) ---
+                      if (errorText != null)
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade100,
+                            border: Border.all(color: Colors.red.shade300),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.error_outline,
+                                  color: Colors.red, size: 20),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  errorText!,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () => setStateModal(() {
+                                  errorText = null; // fermer la bannière
+                                }),
+                                child: const Icon(Icons.close,
+                                    color: Colors.red, size: 20),
+                              ),
+                            ],
+                          ),
+                        ),
+                      // --- BANNIÈRE DE SUCCÈS (verte) ---
+                      if (successText != null)
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade100,
+                            border: Border.all(color: Colors.green.shade300),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.check_circle_outline,
+                                  color: Colors.green, size: 20),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  successText!,
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () => setStateModal(() {
+                                  successText = null; // fermer la bannière
+                                }),
+                                child: const Icon(Icons.close,
+                                    color: Colors.green, size: 20),
+                              ),
+                            ],
+                          ),
+                        ),
+                      // Contenu principal
+                      Expanded(
+                        child: FutureBuilder<List<AppNotification>>(
+                          future: NotificationService().fetchNotifications(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return const Center(
+                                child: Text(
+                                    "Erreur lors du chargement des notifications"),
+                              );
+                            } else {
+                              final pending = snapshot.data!
+                                  .where((n) => n.status == 'pending')
+                                  .toList();
 
-                          if (pending.isEmpty) {
-                            return const Center(
-                              child: Text("Aucune notification en attente"),
-                            );
-                          }
+                              if (pending.isEmpty) {
+                                return const Center(
+                                  child: Text("Aucune notification en attente"),
+                                );
+                              }
 
-                          return StatefulBuilder(
-                            builder: (context, setStateModal) {
                               return ListView.builder(
                                 itemCount: pending.length,
                                 itemBuilder: (context, index) {
                                   final notif = pending[index];
-                                  final hideActions = notif.title ==
-                                          "Mise à jour d'un versement" ||
-                                      notif.title == "Versement supprimé";
+                                  final hideActions =
+                                      _isAutoAckTitle(notif.title);
 
                                   return Card(
                                     margin:
@@ -163,21 +285,41 @@ class HomeViewState extends State<HomeView> {
                                                   icon: const Icon(Icons.check,
                                                       color: Colors.green),
                                                   onPressed: () async {
-                                                    final ok =
+                                                    final res =
                                                         await NotificationService()
                                                             .respondNotif(
                                                                 notif.id,
                                                                 'accept');
-                                                    if (ok) {
+
+                                                    if (res == 200) {
+                                                      // succès : nettoyer l'erreur affichée si besoin
+
                                                       setStateModal(() {
+                                                        errorText = null;
                                                         notif.status = 'accept';
                                                         pending.removeAt(index);
                                                       });
                                                       setState(() {
-                                                        _notifications =
-                                                            List.from(
-                                                                _notifications);
+                                                        successText =
+                                                            "Versement accepté";
+                                                        final target =
+                                                            _notifications
+                                                                .firstWhere(
+                                                          (n) =>
+                                                              n.id == notif.id,
+                                                          orElse: () => notif,
+                                                        );
+                                                        target.status =
+                                                            'accept';
                                                       });
+                                                    } else if (res == 400) {
+                                                      // Afficher le message en haut en rouge
+                                                      setStateModal(() {
+                                                        errorText =
+                                                            "Impossible d'accepter le versement : "
+                                                            "le montant est supérieur au montant restant.";
+                                                      });
+                                                      // Optionnel: on ne change pas le statut local
                                                     }
                                                   },
                                                 ),
@@ -185,22 +327,35 @@ class HomeViewState extends State<HomeView> {
                                                   icon: const Icon(Icons.close,
                                                       color: Colors.red),
                                                   onPressed: () async {
-                                                    final ok =
+                                                    final res =
                                                         await NotificationService()
                                                             .respondNotif(
                                                                 notif.id,
                                                                 'decline');
-                                                    if (ok) {
+
+                                                    if (res == 200) {
                                                       setStateModal(() {
+                                                        errorText = null;
                                                         notif.status =
                                                             'decline';
                                                         pending.removeAt(index);
                                                       });
                                                       setState(() {
-                                                        _notifications =
-                                                            List.from(
-                                                                _notifications);
+                                                        successText =
+                                                            "Versement refusé";
+                                                        final target =
+                                                            _notifications
+                                                                .firstWhere(
+                                                          (n) =>
+                                                              n.id == notif.id,
+                                                          orElse: () => notif,
+                                                        );
+                                                        target.status =
+                                                            'decline';
                                                       });
+                                                    } else {
+                                                      // si besoin, un message spécifique pour decline
+                                                      // setStateModal(() { errorText = "…"; });
                                                     }
                                                   },
                                                 ),
@@ -210,19 +365,22 @@ class HomeViewState extends State<HomeView> {
                                   );
                                 },
                               );
-                            },
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ],
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
         );
       },
     );
+
+    // Après fermeture du modal : ACK auto des notifs info
+    await _ackAutoNotifsAfterClose();
   }
 
   _topBar(HomeController controller, int initialIndex) {
@@ -301,7 +459,7 @@ class HomeViewState extends State<HomeView> {
                                 firstName = name.split(' ')[0];
                               }
                               return Text(
-                                'Assalem Alaykoum, ${firstName}',
+                                '${firstName}',
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.white,

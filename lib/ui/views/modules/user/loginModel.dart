@@ -219,7 +219,7 @@ class LoginModel extends FutureViewModel<dynamic> {
     this.pageController = pageController;
     if (!this.acceptCondition) {
       _errorMessageService
-          .errorShoMessage("Vous devez accepter les conditions générales");
+          .errorShoMessage("Tu dois accepter les conditions générales");
       return;
     }
     if (!this.isRegistering.value) {

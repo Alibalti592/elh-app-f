@@ -403,7 +403,7 @@ class Login extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Vous n’avez pas un compte? ",
+                          "Tu n’as pas un compte? ",
                           style: TextStyle(
                             fontFamily: 'inter',
                             fontWeight: FontWeight.w600,
@@ -918,7 +918,7 @@ class Login extends StatelessWidget {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Text("Vous avez déjà un compte? ",
+                                      const Text("Tu as déjà un compte? ",
                                           style: TextStyle(
                                             fontFamily: 'inter',
                                             fontSize: 15,

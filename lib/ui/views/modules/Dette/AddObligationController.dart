@@ -357,10 +357,13 @@ class AddObligationController extends FutureViewModel<dynamic> {
   }
 
   void saveObligation() async {
+    // 🔒 Anti double-clic
+    if (isSaving.value) return;
+
     final form = formKey.currentState;
     if (form == null) return;
 
-    // Trigger all field validators (red borders show here)
+    // Déclenche la validation des champs
     final ok = form.validate();
     if (!ok) {
       _errorMessageService.showToaster(
@@ -368,7 +371,7 @@ class AddObligationController extends FutureViewModel<dynamic> {
       return;
     }
 
-    // Cross-field: Date due required and > start
+    // Cross-field: Date due requise et > start
     final startText = dateStartController.text.trim();
     final dueText = dateDueController.text.trim();
     final start = _parseFr(startText);
@@ -379,13 +382,13 @@ class AddObligationController extends FutureViewModel<dynamic> {
       return;
     }
 
-    // Safety check (amount already validated in field)
+    // Montant > 0
     if (obligation.amount <= 0) {
       _errorMessageService.showToaster('error', "Merci de saisir un montant");
       return;
     }
 
-    // Safety checks for names/tel (also done in field validators)
+    // Sécurité sur infos contact
     if ((obligation.firstname.trim().length < 2) ||
         (obligation.lastname.trim().length < 2) ||
         (obligation.tel.trim().isEmpty)) {
@@ -394,10 +397,10 @@ class AddObligationController extends FutureViewModel<dynamic> {
       return;
     }
 
+    // 🚦 ON PASSE EN MODE CHARGEMENT (désactive UI + bouton)
     isSaving.value = true;
 
     try {
-      // Keep your existing mapping
       final payload = {
         'id': obligation.id,
         'type': obligation.type,
@@ -413,26 +416,47 @@ class AddObligationController extends FutureViewModel<dynamic> {
         'currency': obligation.currency,
       };
 
-      print("Payload obligation: $payload");
-
       final apiResponse =
           await _detteRepository.saveDette(payload, filePath: obligation.file);
 
       if (apiResponse.status == 200) {
-        isSaving.value = false;
-        _navigationService.popRepeated(1);
+        // ✅ Mettre à jour les noms selon le type
+        final editedFullname =
+            "${obligation.firstname} ${obligation.lastname}".trim();
+
+        if (obligation.type == 'onm') {
+          // Moi = prêteur → j'édite l'emprunteur
+          obligation.emprunteurName = editedFullname;
+          obligation.emprunteurNum = obligation.tel;
+        } else {
+          // jed / amana → j'édite le prêteur
+          obligation.preteurName = editedFullname;
+          obligation.preteurNum = obligation.tel;
+        }
+
+        // Dates d'affichage
+        obligation.dateDisplay =
+            DateFormat('dd/MM/yyyy').format(obligation.date);
+        obligation.dateStartDisplay = obligation.dateStart != null
+            ? DateFormat('dd/MM/yyyy').format(obligation.dateStart!)
+            : obligation.dateStartDisplay;
+
+        // ✅ Retour avec résultat
+        _navigationService.back(result: obligation);
+        return;
       } else {
-        isSaving.value = false;
         _errorMessageService.errorOnAPICall();
       }
-    } catch (_) {
+    } catch (e) {
+      _errorMessageService.errorOnAPICall();
+    } finally {
+      // 🔚 Quoi qu'il arrive, on enlève le chargement
       isSaving.value = false;
     }
   }
 
   updateDateCreated(DateTime date) {
-    obligation.dateDisplay =
-        DateFormat("EEEE dd MMMM yyyy", 'fr_FR').format(date);
+    obligation.dateDisplay = DateFormat('dd/MM/yyyy').format(date);
     obligation.date = date;
     dateCreatedAtController.text = obligation.dateDisplay;
   }

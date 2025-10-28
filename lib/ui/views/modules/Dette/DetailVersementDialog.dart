@@ -186,7 +186,7 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
       context: context,
       builder: (c) => AlertDialog(
         title: const Text('Confirmer la suppression'),
-        content: const Text('Voulez-vous supprimer ce versement ?'),
+        content: const Text('Veux-tu supprimer ce versement ?'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(c, false),
@@ -299,7 +299,7 @@ class _DetailVersementDialogState extends State<DetailVersementDialog> {
 
   String convertToFirebaseUrl(String url) {
     if (url.contains('storage.googleapis.com')) {
-      final bucket = 'mc-connect-5bd22';
+      final bucket = 'elhapp-78deb.firebasestorage.app';
       // Extract the path after the bucket name
       final path = url.split('$bucket/').last;
       final encodedPath = Uri.encodeComponent(path);
