@@ -63,7 +63,7 @@ class PageContentViewState extends State<PageContentView>
                         },
                         backgroundColor: primaryColor,
                         label: const Text(
-                          'Contactez-nous !',
+                          'Contacte-nous !',
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,

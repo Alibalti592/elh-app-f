@@ -73,9 +73,9 @@ class CarteCardController extends FutureViewModel<dynamic> {
 
   String getBottom() {
     if (this.carte.type == 'death') {
-      return "C’est à Allah que nous appartenons et c’est à Lui que nous retournons";
+      return "Inna lillahi wa inna ilayhi raji'un\nإِنَّا لِلَّٰهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ";
     } else {
-      return "Qu'Allah vous accorde Jannat Al Firdaws";
+      return "Qu'Allah vous accorde Jannah Al Firdaws";
     }
   }
 

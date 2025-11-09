@@ -22,32 +22,36 @@ class Login extends StatelessWidget {
   Login({initialPage = 1}) {
     this.initialPage = 1;
   }
-  PageController _controller =
-      new PageController(initialPage: 1, viewportFraction: 1.0);
+  PageController _controller = new PageController(
+    initialPage: 1,
+    viewportFraction: 1.0,
+  );
 
   @override
   Widget build(BuildContext context) {
     final bool _keyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
     return ViewModelBuilder<LoginModel>.reactive(
-        builder: (context, model, child) => Container(
-            height: MediaQuery.of(context).size.height,
-            child: PageView(
-              controller: _controller,
-              physics: new AlwaysScrollableScrollPhysics(),
-              children: <Widget>[
-                loginPage(context, model, _keyboardVisible),
-                // homePage(context, model),
-                WelcomeDesign(
-                  model: model,
-                  onSignUpPressed: () => gotoSignup(model),
-                  onLoginPressed: () => gotoLogin(),
-                ),
+      builder: (context, model, child) => Container(
+        height: MediaQuery.of(context).size.height,
+        child: PageView(
+          controller: _controller,
+          physics: new AlwaysScrollableScrollPhysics(),
+          children: <Widget>[
+            loginPage(context, model, _keyboardVisible),
+            // homePage(context, model),
+            WelcomeDesign(
+              model: model,
+              onSignUpPressed: () => gotoSignup(model),
+              onLoginPressed: () => gotoLogin(),
+            ),
 
-                signUpPage(context, model)
-              ],
-              scrollDirection: Axis.horizontal,
-            )),
-        viewModelBuilder: () => LoginModel());
+            signUpPage(context, model),
+          ],
+          scrollDirection: Axis.horizontal,
+        ),
+      ),
+      viewModelBuilder: () => LoginModel(),
+    );
   }
 
   Widget homePage(context, model) {
@@ -64,8 +68,11 @@ class Login extends StatelessWidget {
                 _LogoAndName(model),
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  margin:
-                      const EdgeInsets.only(left: 30.0, right: 30.0, top: 60.0),
+                  margin: const EdgeInsets.only(
+                    left: 30.0,
+                    right: 30.0,
+                    top: 60.0,
+                  ),
                   alignment: Alignment.center,
                   child: Row(
                     children: <Widget>[
@@ -73,14 +80,17 @@ class Login extends StatelessWidget {
                         child: TextButton(
                           style: ButtonStyle(
                             visualDensity: VisualDensity.compact,
-                            foregroundColor:
-                                WidgetStateProperty.all<Color>(primaryColor),
-                            backgroundColor:
-                                WidgetStateProperty.all<Color>(primaryColor),
-                            shape:
-                                WidgetStateProperty.all(RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0),
-                            )),
+                            foregroundColor: WidgetStateProperty.all<Color>(
+                              primaryColor,
+                            ),
+                            backgroundColor: WidgetStateProperty.all<Color>(
+                              primaryColor,
+                            ),
+                            shape: WidgetStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0),
+                              ),
+                            ),
                           ),
                           onPressed: () => gotoSignup(model),
                           child: Container(
@@ -96,7 +106,9 @@ class Login extends StatelessWidget {
                                     "Créer un compte",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        color: Colors.white, fontSize: 23),
+                                      color: Colors.white,
+                                      fontSize: 23,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -110,8 +122,11 @@ class Login extends StatelessWidget {
                 // BOUTON LOGIN
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  margin:
-                      const EdgeInsets.only(left: 30.0, right: 30.0, top: 10.0),
+                  margin: const EdgeInsets.only(
+                    left: 30.0,
+                    right: 30.0,
+                    top: 10.0,
+                  ),
                   alignment: Alignment.center,
                   child: new Row(
                     children: <Widget>[
@@ -119,10 +134,11 @@ class Login extends StatelessWidget {
                         child: new TextButton(
                           style: ButtonStyle(
                             visualDensity: VisualDensity.compact,
-                            shape:
-                                WidgetStateProperty.all(RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0),
-                            )),
+                            shape: WidgetStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0),
+                              ),
+                            ),
                           ),
                           onPressed: () => gotoLogin(),
                           child: new Container(
@@ -152,7 +168,7 @@ class Login extends StatelessWidget {
                 UIHelper.verticalSpaceSmall(),
                 Center(child: Text('Version ${model.version}')),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -225,7 +241,7 @@ class Login extends StatelessWidget {
                       keyboardType: TextInputType.emailAddress,
                       autofillHints: const [
                         AutofillHints.email,
-                        AutofillHints.username
+                        AutofillHints.username,
                       ],
                       decoration: InputDecoration(
                         hintText: "exemple@gmail.com",
@@ -263,9 +279,11 @@ class Login extends StatelessWidget {
                         hintText: "************",
                         prefixIcon: const Icon(Icons.lock_outlined),
                         suffixIcon: IconButton(
-                          icon: Icon(model.obscureText
-                              ? Icons.visibility_off
-                              : Icons.visibility),
+                          icon: Icon(
+                            model.obscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
                           onPressed: () => model.toggleObscureText(),
                         ),
                         border: OutlineInputBorder(
@@ -330,10 +348,15 @@ class Login extends StatelessWidget {
                             ? BBloader()
                             : ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      const Color.fromRGBO(143, 151, 121, 1),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 15),
+                                  backgroundColor: const Color.fromRGBO(
+                                    143,
+                                    151,
+                                    121,
+                                    1,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 15,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -358,44 +381,46 @@ class Login extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    Row(
-                      children: const [
-                        Expanded(
-                          child: Divider(
-                            thickness: 2,
-                            color: Color.fromRGBO(143, 151, 121, 1),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Text(
-                            "Ou",
-                            style: TextStyle(
-                              fontFamily: 'inter',
-                              fontSize: 15,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            thickness: 2,
-                            color: Color.fromRGBO(143, 151, 121, 1),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    Container(
-                      width: MediaQuery.of(context)
-                          .size
-                          .width, // full width like other buttons
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 30.0, vertical: 10.0),
-                      child:
-                          GoogleSignInButton(), // just call it, no need to pass context
-                    ),
+                    // Row(
+                    //   children: const [
+                    //     Expanded(
+                    //       child: Divider(
+                    //         thickness: 2,
+                    //         color: Color.fromRGBO(143, 151, 121, 1),
+                    //       ),
+                    //     ),
+                    //     Padding(
+                    //       padding: EdgeInsets.symmetric(horizontal: 15),
+                    //       child: Text(
+                    //         "Ou",
+                    //         style: TextStyle(
+                    //           fontFamily: 'inter',
+                    //           fontSize: 15,
+                    //           color: Colors.black,
+                    //           fontWeight: FontWeight.w400,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       child: Divider(
+                    //         thickness: 2,
+                    //         color: Color.fromRGBO(143, 151, 121, 1),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 14),
+                    // Container(
+                    //   width: MediaQuery.of(
+                    //     context,
+                    //   ).size.width, // full width like other buttons
+                    //   margin: const EdgeInsets.symmetric(
+                    //     horizontal: 30.0,
+                    //     vertical: 10.0,
+                    //   ),
+                    //   child:
+                    //       GoogleSignInButton(), // just call it, no need to pass context
+                    // ),
                     const SizedBox(height: 30),
 
                     // Bottom text
@@ -473,7 +498,9 @@ class Login extends StatelessWidget {
                         child: Container(
                           color: Colors.white,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 22, vertical: 20),
+                            horizontal: 22,
+                            vertical: 20,
+                          ),
                           child: AutofillGroup(
                             child: Form(
                               key: model.registerFormKey,
@@ -490,8 +517,9 @@ class Login extends StatelessWidget {
                                     child: Text(
                                       "Créer un compte",
                                       style: const TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w700),
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: 20),
@@ -500,10 +528,11 @@ class Login extends StatelessWidget {
                                   const Text(
                                     "Adresse e-mail",
                                     style: TextStyle(
-                                        color: Color.fromRGBO(55, 65, 81, 1),
-                                        fontFamily: 'inter',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15),
+                                      color: Color.fromRGBO(55, 65, 81, 1),
+                                      fontFamily: 'inter',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                    ),
                                   ),
                                   const SizedBox(height: 5),
                                   TextFormField(
@@ -512,19 +541,27 @@ class Login extends StatelessWidget {
                                     autofillHints: const [AutofillHints.email],
                                     onChanged: (text) =>
                                         model.userRegistrationController(
-                                            'email', text),
+                                      'email',
+                                      text,
+                                    ),
                                     decoration: bbInputDecoration("").copyWith(
-                                      prefixIcon:
-                                          const Icon(Icons.email_outlined),
+                                      prefixIcon: const Icon(
+                                        Icons.email_outlined,
+                                      ),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(6),
                                         borderSide: const BorderSide(
-                                            color: Color.fromRGBO(
-                                                229, 231, 235, 1),
-                                            width: 2),
+                                          color: Color.fromRGBO(
+                                            229,
+                                            231,
+                                            235,
+                                            1,
+                                          ),
+                                          width: 2,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -549,7 +586,11 @@ class Login extends StatelessWidget {
                                                   "Prénom",
                                                   style: TextStyle(
                                                     color: Color.fromRGBO(
-                                                        55, 65, 81, 1),
+                                                      55,
+                                                      65,
+                                                      81,
+                                                      1,
+                                                    ),
                                                     fontFamily: 'inter',
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 15,
@@ -560,11 +601,13 @@ class Login extends StatelessWidget {
                                                   validator: ValidatorHelpers
                                                       .validateName,
                                                   autofillHints: const [
-                                                    AutofillHints.givenName
+                                                    AutofillHints.givenName,
                                                   ],
                                                   onChanged: (text) => model
                                                       .userRegistrationController(
-                                                          'firstname', text),
+                                                    'firstname',
+                                                    text,
+                                                  ),
                                                   decoration: InputDecoration(
                                                     isDense: true,
                                                     errorMaxLines:
@@ -583,17 +626,23 @@ class Login extends StatelessWidget {
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              6),
+                                                        6,
+                                                      ),
                                                     ),
                                                     enabledBorder:
                                                         OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              6),
+                                                        6,
+                                                      ),
                                                       borderSide:
                                                           const BorderSide(
                                                         color: Color.fromRGBO(
-                                                            229, 231, 235, 1),
+                                                          229,
+                                                          231,
+                                                          235,
+                                                          1,
+                                                        ),
                                                         width: 2,
                                                       ),
                                                     ),
@@ -614,7 +663,11 @@ class Login extends StatelessWidget {
                                                   "Nom",
                                                   style: TextStyle(
                                                     color: Color.fromRGBO(
-                                                        55, 65, 81, 1),
+                                                      55,
+                                                      65,
+                                                      81,
+                                                      1,
+                                                    ),
                                                     fontFamily: 'inter',
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 15,
@@ -625,11 +678,13 @@ class Login extends StatelessWidget {
                                                   validator: ValidatorHelpers
                                                       .validateName,
                                                   autofillHints: const [
-                                                    AutofillHints.familyName
+                                                    AutofillHints.familyName,
                                                   ],
                                                   onChanged: (text) => model
                                                       .userRegistrationController(
-                                                          'lastname', text),
+                                                    'lastname',
+                                                    text,
+                                                  ),
                                                   decoration: InputDecoration(
                                                     isDense: true,
                                                     errorMaxLines:
@@ -648,17 +703,23 @@ class Login extends StatelessWidget {
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              6),
+                                                        6,
+                                                      ),
                                                     ),
                                                     enabledBorder:
                                                         OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              6),
+                                                        6,
+                                                      ),
                                                       borderSide:
                                                           const BorderSide(
                                                         color: Color.fromRGBO(
-                                                            229, 231, 235, 1),
+                                                          229,
+                                                          231,
+                                                          235,
+                                                          1,
+                                                        ),
                                                         width: 2,
                                                       ),
                                                     ),
@@ -708,15 +769,21 @@ class Login extends StatelessWidget {
                                       fillColor: Colors.white,
                                       contentPadding:
                                           const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 14),
+                                        horizontal: 12,
+                                        vertical: 14,
+                                      ),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(6),
                                         borderSide: const BorderSide(
-                                          color:
-                                              Color.fromRGBO(229, 231, 235, 1),
+                                          color: Color.fromRGBO(
+                                            229,
+                                            231,
+                                            235,
+                                            1,
+                                          ),
                                           width: 2,
                                         ),
                                       ),
@@ -750,11 +817,13 @@ class Login extends StatelessWidget {
                                     validator:
                                         ValidatorHelpers.validatePassword,
                                     autofillHints: const [
-                                      AutofillHints.password
+                                      AutofillHints.password,
                                     ],
                                     onChanged: (text) {
                                       model.userRegistrationController(
-                                          'password', text);
+                                        'password',
+                                        text,
+                                      );
                                     },
                                     decoration: bbInputDecoration('').copyWith(
                                       suffixIcon: IconButton(
@@ -791,7 +860,8 @@ class Login extends StatelessWidget {
                                       Expanded(
                                         child: GestureDetector(
                                           onTap: () => model.openUrl(
-                                              "https://test.muslim-connect.fr/cgu"),
+                                            "https://muslim-connect.fr/cgu",
+                                          ),
                                           child: Align(
                                             alignment: Alignment.centerLeft,
                                             child: const Text.rich(
@@ -835,20 +905,28 @@ class Login extends StatelessWidget {
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor:
                                                       const Color.fromRGBO(
-                                                          143, 151, 121, 1),
+                                                    143,
+                                                    151,
+                                                    121,
+                                                    1,
+                                                  ),
                                                   padding: const EdgeInsets
-                                                      .symmetric(vertical: 12),
+                                                      .symmetric(
+                                                    vertical: 12,
+                                                  ),
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            12),
+                                                      12,
+                                                    ),
                                                   ),
                                                 ),
                                                 onPressed: () async {
                                                   TextInput
                                                       .finishAutofillContext();
-                                                  await model
-                                                      .register(_controller);
+                                                  await model.register(
+                                                    _controller,
+                                                  );
                                                 },
                                                 child: const Text(
                                                   "S'inscrire",
@@ -864,76 +942,75 @@ class Login extends StatelessWidget {
                                     },
                                   ),
                                   const SizedBox(height: 20),
-                                  Row(
-                                    children: const [
-                                      Expanded(
-                                        child: Divider(
-                                          thickness: 2,
-                                          color:
-                                              Color.fromRGBO(143, 151, 121, 1),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                        child: Text(
-                                          "Ou",
-                                          style: TextStyle(
-                                            fontFamily: 'inter',
-                                            fontSize: 15,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Divider(
-                                          thickness: 2,
-                                          color:
-                                              Color.fromRGBO(143, 151, 121, 1),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 14),
-                                  Container(
-                                    width: MediaQuery.of(context)
-                                        .size
-                                        .width, // full width like other buttons
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 30.0, vertical: 10.0),
-                                    child:
-                                        GoogleSignUpButton(), // just call it, no need to pass context
-                                  ),
-                                  const SizedBox(height: 15),
-
-                                  // Google Sign-in Button
-                                  // SizedBox(
-                                  //   width: double.infinity,
-                                  //   child: GoogleSignInButton(),
+                                  // Row(
+                                  //   children: const [
+                                  //     Expanded(
+                                  //       child: Divider(
+                                  //         thickness: 2,
+                                  //         color:
+                                  //             Color.fromRGBO(143, 151, 121, 1),
+                                  //       ),
+                                  //     ),
+                                  //     Padding(
+                                  //       padding: EdgeInsets.symmetric(
+                                  //           horizontal: 15),
+                                  //       child: Text(
+                                  //         "Ou",
+                                  //         style: TextStyle(
+                                  //           fontFamily: 'inter',
+                                  //           fontSize: 15,
+                                  //           color: Colors.black,
+                                  //           fontWeight: FontWeight.w400,
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //     Expanded(
+                                  //       child: Divider(
+                                  //         thickness: 2,
+                                  //         color:
+                                  //             Color.fromRGBO(143, 151, 121, 1),
+                                  //       ),
+                                  //     ),
+                                  //   ],
                                   // ),
-                                  const SizedBox(height: 20),
+                                  // const SizedBox(height: 15),
+                                  // Container(
+                                  //   width: MediaQuery.of(context)
+                                  //       .size
+                                  //       .width, // full width like other buttons
+                                  //   margin: const EdgeInsets.symmetric(
+                                  //     horizontal: 30.0,
+                                  //     vertical: 10.0,
+                                  //   ),
+                                  //   child:
+                                  //       GoogleSignUpButton(), // just call it, no need to pass context
+                                  // ),
+                                  const SizedBox(height: 15),
 
                                   // Already have account
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Text("Tu as déjà un compte? ",
+                                      const Text(
+                                        "Tu as déjà un compte? ",
+                                        style: TextStyle(
+                                          fontFamily: 'inter',
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () => gotoLogin(),
+                                        child: const Text(
+                                          "Se connecter",
                                           style: TextStyle(
                                             fontFamily: 'inter',
                                             fontSize: 15,
                                             fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          )),
-                                      GestureDetector(
-                                        onTap: () => gotoLogin(),
-                                        child: const Text("Se connecter",
-                                            style: TextStyle(
-                                              fontFamily: 'inter',
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600,
-                                              color: primaryColor,
-                                            )),
+                                            color: primaryColor,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -975,14 +1052,17 @@ class Login extends StatelessWidget {
   _backgroundImageGradient(color1, color2, color3, blend) {
     return BoxDecoration(
       gradient: new LinearGradient(
-          colors: [color3, color2, color1],
-          begin: const FractionalOffset(0.0, 0.0),
-          end: const FractionalOffset(1.0, 1.0),
-          stops: [0.0, 0.5, 1.0],
-          tileMode: TileMode.clamp),
+        colors: [color3, color2, color1],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(1.0, 1.0),
+        stops: [0.0, 0.5, 1.0],
+        tileMode: TileMode.clamp,
+      ),
       image: DecorationImage(
         colorFilter: new ColorFilter.mode(
-            Colors.black.withOpacity(blend), BlendMode.dstATop),
+          Colors.black.withOpacity(blend),
+          BlendMode.dstATop,
+        ),
         image: AssetImage('assets/images/bg_home.jpg'),
         fit: BoxFit.cover,
       ),
@@ -1002,9 +1082,11 @@ class Login extends StatelessWidget {
     return Column(
       children: [
         UIHelper.verticalSpace(25),
-        HtmlWidget(controller.introtext,
-            textStyle: TextStyle(fontSize: 16),
-            onTapUrl: (url) => controller.openUrl(url)),
+        HtmlWidget(
+          controller.introtext,
+          textStyle: TextStyle(fontSize: 16),
+          onTapUrl: (url) => controller.openUrl(url),
+        ),
         UIHelper.verticalSpace(20),
         TextButton(
           onPressed: () {
@@ -1026,9 +1108,11 @@ class Login extends StatelessWidget {
             visualDensity: VisualDensity.compact,
             foregroundColor: WidgetStateProperty.all<Color>(primaryColor),
             backgroundColor: WidgetStateProperty.all<Color>(primaryColor),
-            shape: WidgetStateProperty.all(RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(30.0),
-            )),
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(30.0),
+              ),
+            ),
           ),
         ),
         UIHelper.verticalSpace(40),
@@ -1047,19 +1131,21 @@ class _LogoAndName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: this._keyboardVisible
-            ? EdgeInsets.only(top: 30.0, bottom: 30.0)
-            : EdgeInsets.only(top: 120.0, bottom: 40.0),
-        child: Column(
-          children: <Widget>[
-            Container(
-              child: Center(
-                  child: Image(
+      margin: this._keyboardVisible
+          ? EdgeInsets.only(top: 30.0, bottom: 30.0)
+          : EdgeInsets.only(top: 120.0, bottom: 40.0),
+      child: Column(
+        children: <Widget>[
+          Container(
+            child: Center(
+              child: Image(
                 image: AssetImage("assets/images/logo-no-bg.png"),
                 height: this._keyboardVisible ? 110 : 180,
-              )),
+              ),
             ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 }

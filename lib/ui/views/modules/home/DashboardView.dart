@@ -9,10 +9,17 @@ import 'package:elh/common/theme.dart';
 import 'package:elh/ui/views/modules/home/DashboardController.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:stacked/stacked.dart';
+import 'package:elh/ui/views/modules/home/PageNavigationView.dart';
+import 'package:get/get.dart' hide Transition;
 
 class DashboardView extends StatefulWidget {
   final DashboardController controller;
-  DashboardView({required this.controller});
+  final ValueChanged<int>? goToTab;
+  const DashboardView({
+    Key? key,
+    required this.controller,
+    this.goToTab, // ✅ accept it
+  }) : super(key: key);
   @override
   DashboardViewState createState() => DashboardViewState();
 }
@@ -26,7 +33,7 @@ class DashboardViewState extends State<DashboardView>
   Widget build(BuildContext context) {
     super.build(context);
     return ViewModelBuilder<DashboardController>.reactive(
-      viewModelBuilder: () => DashboardController(),
+      viewModelBuilder: () => widget.controller,
       builder: (context, controller, child) => Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 600),
@@ -189,7 +196,7 @@ class DashboardViewState extends State<DashboardView>
 
                                   // Bottom Action
                                   Text(
-                                    'Gérez →',
+                                    'Géres →',
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -248,7 +255,7 @@ class DashboardViewState extends State<DashboardView>
                                 width: cardWidth,
                                 child: _buildCard(
                                   'Cartes Virtuelles de circonstance',
-                                  'Gérez vos cartes virtuelles de circonstance.',
+                                  'Gère tes cartes virtuelles de circonstance.',
                                   Image.asset(
                                     'assets/images/card-multiple.png',
                                     width: 18,
@@ -268,7 +275,7 @@ class DashboardViewState extends State<DashboardView>
                       SizedBox(height: 20),
                       // Découvrez Muslim Connect
                       Text(
-                        'Découvrez Muslim Connect',
+                        'Découvres Muslim Connect',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -277,24 +284,26 @@ class DashboardViewState extends State<DashboardView>
                       const SizedBox(height: 10),
                       _buildDiscoverCard(
                         'Guide Spirituel',
-                        'Accédez à la Qibla, aux horaires de prière, aux mosquées à proximité et apprenez les prières essentielles.',
+                        'Accède à la Qibla, aux horaires de prière, aux mosquées à proximité et apprends les prières essentielles.',
                         Image.asset(
                           color: primaryColor,
                           'assets/images/pray.png', // replace with your logo
                           width: 18,
                           height: 18,
                         ),
+                        onTap: () => widget.goToTab?.call(3),
                       ),
                       const SizedBox(height: 10),
                       _buildDiscoverCard(
                         'Œuvres Charitables',
-                        'Parrainez un orphelin, construisez un puits, offrez un Coran, contribuez à la construction d’une mosquée ou accomplissez le Hajj par procuration.',
+                        'Parraine un orphelin, construit un puits, offre un Coran, contribue à la construction d’une mosquée ...',
                         Image.asset(
                           color: primaryColor,
                           'assets/images/pray.png', // replace with your logo
                           width: 18,
                           height: 18,
                         ),
+                        onTap: () => widget.goToTab?.call(4),
                       ),
                     ],
                   ),
@@ -639,7 +648,7 @@ class DashboardViewState extends State<DashboardView>
                 ),
                 // Bottom: Action
                 Text(
-                  'Gérez →',
+                  'Gères →',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
@@ -655,49 +664,58 @@ class DashboardViewState extends State<DashboardView>
   }
 
   // ========= DISCOVER (full-width) =========
-  Widget _buildDiscoverCard(String title, String subtitle, Widget iconWidget) {
-    return Card(
-      elevation: 2,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center, // middle aligned
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: primaryColor.withOpacity(.12),
-                borderRadius: BorderRadius.circular(14),
+  Widget _buildDiscoverCard(
+    String title,
+    String subtitle,
+    Widget iconWidget, {
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(15),
+      child: Card(
+        elevation: 2,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0), // ✅ paramètre nommé
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: primaryColor.withOpacity(.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: iconWidget,
               ),
-              child:
-                  iconWidget, // 👈 directement ton widget (Icon, Image, SVG…)
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment:
-                    MainAxisAlignment.center, // center inside card
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 16),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    subtitle,
-                    style: TextStyle(color: fontGreyDark, fontSize: 13),
-                    softWrap: true,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      subtitle,
+                      style: TextStyle(color: fontGreyDark, fontSize: 13),
+                      softWrap: true,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

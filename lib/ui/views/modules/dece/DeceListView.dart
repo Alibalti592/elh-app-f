@@ -169,7 +169,7 @@ class DeceListViewState extends State<DeceListView> {
                         UIHelper.verticalSpace(3),
                         Text("Décèdé le ${dece.dateDisplay}", style: smallText),
                         UIHelper.verticalSpace(5),
-                        Text("Vos contacts avec les pompes funèbres : 0",
+                        Text("Tes contacts avec les pompes funèbres : 0",
                             style: smallText),
                       ],
                     ),

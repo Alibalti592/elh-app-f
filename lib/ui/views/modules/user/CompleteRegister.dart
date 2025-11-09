@@ -313,7 +313,7 @@ class CompleteRegister extends StatelessWidget {
                                       Expanded(
                                         child: GestureDetector(
                                           onTap: () => model.openUrl(
-                                              "https://test.muslim-connect.fr/cgu"),
+                                              "https://muslim-connect.fr/cgu"),
                                           child: Align(
                                             alignment: Alignment.centerLeft,
                                             child: const Text.rich(

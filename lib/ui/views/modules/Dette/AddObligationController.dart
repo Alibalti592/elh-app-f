@@ -419,6 +419,17 @@ class AddObligationController extends FutureViewModel<dynamic> {
       final apiResponse =
           await _detteRepository.saveDette(payload, filePath: obligation.file);
 
+      // Log full API response for debugging
+      try {
+        debugPrint('saveDette response: $apiResponse');
+        if (apiResponse != null) {
+          debugPrint('saveDette status: ${apiResponse.status}');
+          debugPrint('saveDette data: ${apiResponse.data}');
+        }
+      } catch (e) {
+        debugPrint('Error logging saveDette response: $e');
+      }
+
       if (apiResponse.status == 200) {
         // ✅ Mettre à jour les noms selon le type
         final editedFullname =

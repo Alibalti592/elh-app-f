@@ -29,7 +29,7 @@ class MosqueController extends FutureViewModel<dynamic> {
   TextEditingController cityTextController = TextEditingController();
   Bblocation? searchLocation;
   int distance = 10;
-  List<int> distances = <int> [5, 10, 20, 50, 100];
+  List<int> distances = <int>[5, 10, 20, 50, 100];
   bool isForSelect = false;
   bool isOwner = false;
   bool hasSearch = false;
@@ -58,11 +58,12 @@ class MosqueController extends FutureViewModel<dynamic> {
 
   Future loadDatas() async {
     String? locationString;
-    if(this.searchLocation!= null) {
+    if (this.searchLocation != null) {
       this.isLoading = true;
       notifyListeners();
       locationString = json.encode(this.searchLocation!.toJson());
-      ApiResponse apiResponse = await _mosqueRepository.loadMosques(locationString, this.distance.toString());
+      ApiResponse apiResponse = await _mosqueRepository.loadMosques(
+          locationString, this.distance.toString());
       this.hasSearch = true;
       if (apiResponse.status == 200) {
         var decodeData = json.decode(apiResponse.data);
@@ -87,13 +88,16 @@ class MosqueController extends FutureViewModel<dynamic> {
     this._navigationService.back(result: 'manual');
   }
 
-
   openSearchLocation(context) {
-    _navigationService.navigateWithTransition(BBLocationView(), transitionStyle: Transition.downToUp, duration:Duration(milliseconds: 300))?.then((value) {
-      if(value == "setLocation") {
+    _navigationService
+        .navigateWithTransition(BBLocationView(),
+            transitionStyle: Transition.downToUp,
+            duration: Duration(milliseconds: 300))
+        ?.then((value) {
+      if (value == "setLocation") {
         this.mosques = [];
         this.searchLocation = _locationStore.selectedLocation;
-        if(this.searchLocation != null) {
+        if (this.searchLocation != null) {
           cityTextController.text = this.searchLocation!.city;
           this.loadDatas();
         } else {
@@ -103,6 +107,7 @@ class MosqueController extends FutureViewModel<dynamic> {
     });
     //CALLBACK !!
   }
+
   setDistance(newDistance) {
     this.distance = newDistance;
     notifyListeners();
@@ -128,7 +133,9 @@ class MosqueController extends FutureViewModel<dynamic> {
     notifyListeners();
     ApiResponse apiResponse = await _mosqueRepository.markFavorite(mosque);
     if (apiResponse.status == 200) {
-      String message = mosque.isFavorite ? "Mosquée ajoutée aux favoris" : "Mosquée retirée des favoris";
+      String message = mosque.isFavorite
+          ? "Mosquée ajoutée aux favoris"
+          : "Mosquée retirée des favoris";
       _errorMessageService.showToaster('success', message);
     } else {
       mosque.isFavorite = !mosque.isFavorite;
@@ -142,7 +149,9 @@ class MosqueController extends FutureViewModel<dynamic> {
   }
 
   editMosque(Mosque mosque) async {
-    _navigationService.navigateToView(EditMosqueView(mosque: mosque))?.then((value) {
+    _navigationService
+        .navigateToView(EditMosqueView(mosque: mosque))
+        ?.then((value) {
       this.loadDatas();
     });
   }
@@ -156,7 +165,8 @@ class MosqueController extends FutureViewModel<dynamic> {
     if (await canLaunchUrl(googleMapsUri)) {
       await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication);
     } else {
-      _errorMessageService.errorShoMessage("Désolé impossible d'ouvrir la carte");
+      _errorMessageService
+          .errorShoMessage("Désolé impossible d'ouvrir la carte");
     }
   }
 
@@ -177,6 +187,8 @@ class MosqueController extends FutureViewModel<dynamic> {
   }
 
   showInfo() {
-    _errorMessageService.errorShoMessage(title: '', "Pour recevoir les notifications des publications des Salât Al-Janaza d'une mosquée, ajoutez-la en FAVORIS.");
+    _errorMessageService.errorShoMessage(
+        title: '',
+        "Pour recevoir les notifications des publications des Salât Al-Janaza d'une mosquée, ajoutes-la en FAVORIS.");
   }
 }

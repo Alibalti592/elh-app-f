@@ -7,11 +7,12 @@ import 'package:elh/ui/views/common/BBLocation/BBLocationView.dart';
 import 'package:elh/ui/views/modules/chat/ThreadsView.dart';
 import 'package:flutter/material.dart';
 import 'package:observable_ish/observable_ish.dart';
-import 'package:share_plus/share_plus.dart';
+
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:elh/services/UserInfosReactiveService.dart';
 import 'package:elh/models/userInfos.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomeController extends FutureViewModel<dynamic> {
   final PushNotificationService _pushNotificationService =
@@ -64,11 +65,21 @@ class HomeController extends FutureViewModel<dynamic> {
     //   _dashboardStore.youtubecontroller1!.pause();
     // }
   }
-  shareApp() {
-    //selon plateform lien Appstrore / android
-    Share.share(
-        subject: '',
-        "Télécharge l’application gratuite Muslim Connect pour gérer tes dettes, emprunts et testament, avec un partage sécurisé à tes proches, et reste connecté et informé des Salât al-Janaza dans ta mosquée : https://apps.apple.com/us/app/muslim-connect/id6478540540");
+  shareApp() async {
+    const text =
+        "Télécharge l’application gratuite Muslim Connect pour gérer tes dettes, emprunts et testament, avec un partage sécurisé à tes proches, et reste connecté et informé des Salât al-Janaza dans ta mosquée : https://apps.apple.com/us/app/muslim-connect/id6478540540";
+
+    final result = await SharePlus.instance.share(
+      ShareParams(
+        text: text,
+        subject: "Muslim Connect",
+        // title: "Partager", // (optional) chooser/share-sheet title
+        // sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size, // iPad/macOS popover (optional)
+      ),
+    );
+
+    // (optional) handle result
+    // if (result.status == ShareResultStatus.success) { ... }
   }
 
   @override
@@ -94,7 +105,7 @@ class HomeController extends FutureViewModel<dynamic> {
     if (this.pageIndex.value == 1) {
       return 'Mes comptes';
     } else if (this.pageIndex.value == 2) {
-      return 'À vos côtés dans l’épreuve';
+      return 'À ton côtés dans l’épreuve';
     } else if (this.pageIndex.value == 3) {
       return 'Prières';
     } else if (this.pageIndex.value == 4) {

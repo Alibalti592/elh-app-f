@@ -12,6 +12,7 @@ import 'package:elh/ui/views/modules/Priere/PriereView.dart';
 import 'package:elh/ui/views/modules/Relation/RelationView.dart';
 import 'package:elh/ui/views/modules/Testament/ListSharedTestamentView.dart';
 import 'package:elh/ui/views/modules/dece/DeceListView.dart';
+import 'package:elh/ui/views/modules/home/HomeView.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:elh/locator.dart';
@@ -151,6 +152,7 @@ class PushNotificationService {
   }
 
   void navigateFromMessage(RemoteMessage message) async {
+    print("Navigating from message with view: ${message.data['view']}");
     this._bbNavigationService.setFromView('notification');
     if (message.data['view'] == 'chatview') {
       navigateToChat(message);
@@ -177,7 +179,10 @@ class PushNotificationService {
     } else if (message.data['view'] == 'shared_testament_view') {
       _navigationService.navigateToView(ListSharedTestamentView());
     } else if (message.data['view'] == 'pray') {
-      _navigationService.navigateToView(PriereView());
+      _navigationService.navigateToView(HomeView());
+    } else {
+      //default
+      _navigationService.navigateToView(HomeView());
     }
   }
 

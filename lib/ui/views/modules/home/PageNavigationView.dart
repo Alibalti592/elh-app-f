@@ -789,7 +789,7 @@ class PageNavigationViewState extends State<PageNavigationView>
 
                 // Bottom: Action
                 Text(
-                  'Gérez →',
+                  'Gères →',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,

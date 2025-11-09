@@ -101,7 +101,7 @@ class _QiblahViewState extends State<QiblahView> {
                     } else {
                       return LocationErrorWidget(
                         error:
-                            "Pour activer la fonctionnalité de la Qiblah, autorisez la géolocalisation dans les paramètres de votre téléphone",
+                            "Pour activer la fonctionnalité de la Qiblah, autorises la géolocalisation dans les paramètres de ton téléphone",
                         callback: _checkLocationStatus,
                       );
                     }

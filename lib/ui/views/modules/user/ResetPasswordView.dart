@@ -540,7 +540,7 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
         ),
         const SizedBox(height: 170),
         const Text(
-          "Difficulté d’accès à votre compte ? Contactez-nous sur contact@muslim-connect.fr",
+          "Difficulté d’accès à votre compte ? Contacte-nous sur contact@muslim-connect.fr",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
@@ -668,7 +668,7 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
         ),
         const SizedBox(height: 110),
         const Text(
-          "Difficulté d’accès à votre compte ? Contactez-nous sur contact@muslim-connect.fr",
+          "Difficulté d’accès à votre compte ? Contacte-nous sur contact@muslim-connect.fr",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,

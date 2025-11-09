@@ -286,7 +286,7 @@ class _NoPermission extends StatelessWidget {
           const SizedBox(height: 8),
           const Text(
             "Accès aux contacts désactivé.\n"
-            "Activez-le dans Réglages pour afficher vos contacts.",
+            "Actives-le dans Réglages pour afficher tes contacts.",
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),

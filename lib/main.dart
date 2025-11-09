@@ -11,9 +11,10 @@ import 'package:elh/ui/bbRouter.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+final RouteObserver<PageRoute<dynamic>> routeObserver =
+    RouteObserver<PageRoute<dynamic>>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
   await Firebase.initializeApp();
 

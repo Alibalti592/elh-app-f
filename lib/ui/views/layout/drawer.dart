@@ -139,7 +139,7 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                     SizedBox(
                       width: 180,
                       child: Text(
-                        'Contactez le support',
+                        'Contacte-nous',
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           color: Colors
@@ -168,7 +168,7 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                     style: TextStyle(color: primaryColor, fontSize: 12)),
               ),
               onTap: () {
-                Uri _url = Uri.parse('https://test.muslim-connect.fr/cgu');
+                Uri _url = Uri.parse('https://muslim-connect.fr/cgu');
                 launchUrl(_url);
               },
             ),
@@ -179,8 +179,8 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                     style: TextStyle(color: primaryColor, fontSize: 12)),
               ),
               onTap: () {
-                Uri _url = Uri.parse(
-                    'https://test.muslim-connect.fr/mentions-legales');
+                Uri _url =
+                    Uri.parse('https://muslim-connect.fr/mentions-legales');
                 launchUrl(_url);
               },
             ),
@@ -304,9 +304,9 @@ gotToWhatsapp() async {
   var confirm = await _dialogService.showDialog(
       title: "Assalem Alaykoum",
       description:
-          "Votre avis compte !\nDes idées ou améliorations ?\nPartagez-les pour améliorer Muslim Connect",
+          "Ton avis compte !\nDes idées ou améliorations ?\nPartage-les pour améliorer Muslim Connect",
       buttonTitleColor: fontDark,
-      buttonTitle: 'Contactez-nous !',
+      buttonTitle: 'Contacte-nous !',
       barrierDismissible: true);
   if (confirm?.confirmed == true) {
     if (Platform.isIOS) {

@@ -122,7 +122,7 @@ class AddCarteController extends FutureViewModel<dynamic> {
     if (this.newCarte.type == 'death') {
       return "Inna lillahi wa inna ilayhi raji'un\nإِنَّا لِلَّٰهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ";
     } else if (this.newCarte.type != 'death') {
-      return "Qu'Allah vous accorde Jannat Al Firdaws";
+      return "Qu'Allah vous accorde Jannah Al Firdaws";
     } else {
       return "";
     }

@@ -17,6 +17,8 @@ import 'package:elh/common/elh_icons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:elh/services/TrancheNotificationHandler.dart';
 
+import 'package:elh/main.dart' show routeObserver;
+
 class HomeView extends StatefulWidget {
   final int initialIndex;
   const HomeView({Key? key, this.initialIndex = 0}) : super(key: key);
@@ -25,7 +27,7 @@ class HomeView extends StatefulWidget {
   HomeViewState createState() => HomeViewState();
 }
 
-class HomeViewState extends State<HomeView> {
+class HomeViewState extends State<HomeView> with RouteAware {
   List<AppNotification> _notifications = [];
 
   late final int initialIndex;
@@ -39,19 +41,44 @@ class HomeViewState extends State<HomeView> {
     _loadNotifications();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  /// Called when a covered route has been popped and this route shows again.
+  @override
+  void didPopNext() {
+    // HomeView is visible again -> refresh
+    _loadNotifications();
+  }
+
   void _loadNotifications() async {
     final notifications = await NotificationService().fetchNotifications();
+
+    if (!mounted) return;
     setState(() {
       _notifications = notifications;
     });
   }
-
   // In HomeViewState (add these methods)
 
   bool _isAutoAckTitle(String t) {
     return t == "Un versement a été supprimé" ||
         t == "Mise à jour d'un versement" ||
-        t == "Un nouveau versement a été ajouté";
+        t == "Un nouveau versement a été ajouté" ||
+        t == "Versement Accepté" ||
+        t == "Versement Refusé";
   }
 
   Future<void> _ackAutoNotifsAfterClose() async {
@@ -60,7 +87,7 @@ class HomeViewState extends State<HomeView> {
       final latest = await NotificationService().fetchNotifications();
 
       final toAck = latest
-          .where((n) => n.status == 'pending' && _isAutoAckTitle(n.title))
+          .where((n) => n.isRead == false && _isAutoAckTitle(n.title))
           .map((n) => n.id)
           .toList();
 
@@ -112,9 +139,13 @@ class HomeViewState extends State<HomeView> {
                   controller: controller.pageController,
                   onPageChanged: (pageNum) {
                     if (pageNum == 0) controller.refreshDashboard();
+                    _loadNotifications();
                   },
                   children: [
-                    DashboardView(controller: dashboardController),
+                    DashboardView(
+                      controller: dashboardController,
+                      goToTab: (index) => controller.setPageIndex(index),
+                    ),
                     PageNavigationView('dette'),
                     PageNavigationView('deuil'),
                     PageNavigationView('pray'),
@@ -267,8 +298,12 @@ class HomeViewState extends State<HomeView> {
                                 itemCount: pending.length,
                                 itemBuilder: (context, index) {
                                   final notif = pending[index];
-                                  final hideActions =
-                                      _isAutoAckTitle(notif.title);
+
+                                  final actions = notif.datas != null &&
+                                      (notif.datas is Map &&
+                                          (notif.datas as Map)
+                                              .containsKey('actions'));
+                                  final hideActions = !actions;
 
                                   return Card(
                                     margin:
@@ -320,6 +355,17 @@ class HomeViewState extends State<HomeView> {
                                                             "le montant est supérieur au montant restant.";
                                                       });
                                                       // Optionnel: on ne change pas le statut local
+                                                    } else if (res == 404) {
+                                                      setStateModal(() {
+                                                        errorText =
+                                                            "Ce versement a déjà été supprimé.";
+                                                      });
+                                                      pending.removeAt(index);
+                                                    } else {
+                                                      setStateModal(() {
+                                                        errorText =
+                                                            "Erreur lors de l'acceptation du versement. Veuillez réessayer.";
+                                                      });
                                                     }
                                                   },
                                                 ),
@@ -353,9 +399,17 @@ class HomeViewState extends State<HomeView> {
                                                         target.status =
                                                             'decline';
                                                       });
+                                                    } else if (res == 404) {
+                                                      setStateModal(() {
+                                                        errorText =
+                                                            "Ce versement a déjà été supprimé.";
+                                                      });
+                                                      pending.removeAt(index);
                                                     } else {
-                                                      // si besoin, un message spécifique pour decline
-                                                      // setStateModal(() { errorText = "…"; });
+                                                      setStateModal(() {
+                                                        errorText =
+                                                            "Erreur lors de l'acceptation du versement. Veuillez réessayer.";
+                                                      });
                                                     }
                                                   },
                                                 ),

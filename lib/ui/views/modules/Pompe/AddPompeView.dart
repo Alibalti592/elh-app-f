@@ -309,8 +309,8 @@ class AddPompeViewState extends State<AddPompeView> {
                   style: TextStyle(color: fontDark, fontSize: 17)),
               UIHelper.verticalSpace(15),
               Text(
-                  "Tu es une pompe funèbre musulmane et tu souhaite proposer vos services grâce à notre plateforme de mise en relation.\n"
-                  "Votre inscription est totalement gratuite.\n\nRejoignez-nous !",
+                  "Tu es une pompe funèbre musulmane et tu souhaite proposer tes services grâce à notre plateforme de mise en relation.\n"
+                  "Ton inscription est totalement gratuite.\n\nRejoignez-nous !",
                   style: TextStyle(color: fontDark, fontSize: 15)),
               UIHelper.verticalSpace(25),
               Text('BISMILLAH',

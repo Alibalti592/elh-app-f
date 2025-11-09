@@ -98,7 +98,7 @@ class SalatListViewState extends State<SalatListView> {
                       "Aucune Salât Al-Janaza annoncée. Pour recevoir les alertes de Salât al-Janaza d'une mosquée, ",
                 ),
                 TextSpan(
-                  text: "ajoutez la mosquée en favoris",
+                  text: "ajoutes la mosquée en favoris",
                   style: const TextStyle(
                     color: primaryColor,
                     fontWeight: FontWeight.bold,

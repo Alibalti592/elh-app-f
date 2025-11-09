@@ -219,7 +219,7 @@ class DetteController extends FutureViewModel<dynamic> {
     var confirm = await _dialogService.showConfirmationDialog(
         title: "",
         description:
-            "Les partages d'un PRÊT/DETTE/AMANA avec un de vos contact MC, seront automatiquement visibles sur son compte Muslim Connect",
+            "Les partages d'un PRÊT/DETTE/AMANA avec un de tes contact MC, seront automatiquement visibles sur son compte Muslim Connect",
         cancelTitle: 'Annuler',
         confirmationTitle: 'Partager');
     if (confirm?.confirmed == true) {

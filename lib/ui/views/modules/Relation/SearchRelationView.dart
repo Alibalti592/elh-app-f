@@ -27,7 +27,7 @@ class SearchRelationViewState extends State<SearchRelationView> {
         builder: (context, controller, child) => Scaffold(
             backgroundColor: bgLightV2,
             appBar: AppBar(
-              title: Text('Rechercher par nom', style: headerTextWhite),
+              title: Text('Rechercher un contact', style: headerTextWhite),
               iconTheme: new IconThemeData(color: Colors.white),
               backgroundColor: Colors.transparent,
               leading: IconButton(

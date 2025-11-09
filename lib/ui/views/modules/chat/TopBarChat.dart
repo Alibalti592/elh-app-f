@@ -23,88 +23,83 @@ class TopBarChat extends StatelessWidget {
     return ViewModelBuilder<TopBarController>.reactive(
         viewModelBuilder: () => TopBarController(),
         onViewModelReady: (controller) => controller.periodicHasMessage(),
-        onDispose:  (controller) => controller.cleanTimer(),
+        onDispose: (controller) => controller.cleanTimer(),
         builder: (context, controller, child) => Row(
-          children: [
-            Container(
-              width: 60,
-              child: Stack(children: [
-                Positioned(
-                  bottom: 3,
-                  right: 5,
-                  child: Container(
-                    height: 45,
-                    width: 45,
-                    margin: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(50)
-                    ),
-                    child: IconButton(
-                      icon: SizedBox(
-                        width: 25,
-                        child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.center,
-                            child: SvgPicture.asset(
-                              'assets/icon/bubbles.svg',
-                              color: fontGreyDark,
-                              height: 22,
-                              width: 22.0,
-                              // fit: BoxFit.fill,
-                            )
+              children: [
+                Container(
+                  width: 60,
+                  child: Stack(children: [
+                    Positioned(
+                      bottom: 3,
+                      right: 5,
+                      child: Container(
+                        height: 45,
+                        width: 45,
+                        margin: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(50)),
+                        child: IconButton(
+                          icon: SizedBox(
+                            width: 25,
+                            child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.center,
+                                child: SvgPicture.asset(
+                                  'assets/icon/bubbles.svg',
+                                  color: fontGreyDark,
+                                  height: 22,
+                                  width: 22.0,
+                                  // fit: BoxFit.fill,
+                                )),
+                          ),
+                          onPressed: () => {controller.navigateToChat()},
                         ),
                       ),
-                      onPressed: () => {controller.navigateToChat()},
                     ),
+                    ValueListenableBuilder<bool>(
+                      builder: (BuildContext context, bool hasMessage,
+                          Widget? child) {
+                        return UIHelper.dotNotif(hasMessage, 7.0, 12.0);
+                      },
+                      valueListenable: controller.hasNotifMessage,
+                    )
+                  ]),
+                ),
+                Container(
+                  height: 45,
+                  width: 45,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(50)),
+                  child: IconButton(
+                    padding: const EdgeInsets.only(bottom: 2, left: 2),
+                    icon: Icon(
+                      MdiIcons.whatsapp,
+                      color: fontGreyDark,
+                      size: 25,
+                    ),
+                    onPressed: () => {controller.gotToWhatsapp()},
                   ),
                 ),
-                ValueListenableBuilder<bool>(
-                  builder: (BuildContext context, bool hasMessage, Widget? child) {
-                    return UIHelper.dotNotif(hasMessage, 7.0, 12.0);
-                  },
-                  valueListenable: controller.hasNotifMessage,
-                )
-              ]),
-            ),
-            Container(
-              height: 45,
-              width: 45,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(50)
-              ),
-              child: IconButton(
-                padding: const EdgeInsets.only(bottom:2, left: 2),
-                icon: Icon(
-                  MdiIcons.whatsapp,
-                  color: fontGreyDark,
-                  size: 25,
+                IconButton(
+                  icon: SizedBox(
+                    width: 35,
+                    child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.center,
+                        child: SvgPicture.asset(
+                          'assets/icon/send.svg',
+                          color: fontGreyDark,
+                          height: 25,
+                          width: 25.0,
+                          // fit: BoxFit.fill,
+                        )),
+                  ),
+                  onPressed: () => {controller.shareApp()},
                 ),
-                onPressed: () => {controller.gotToWhatsapp()},
-              ),
-            ),
-            IconButton(
-              icon: SizedBox(
-                width: 35,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.center,
-                  child: SvgPicture.asset(
-                    'assets/icon/send.svg',
-                    color: fontGreyDark,
-                    height: 25,
-                    width: 25.0,
-                    // fit: BoxFit.fill,
-                  )
-                ),
-              ),
-              onPressed: () => {controller.shareApp()},
-            ),
-
-          ],
-        )
-    );
+              ],
+            ));
   }
 }
 
@@ -116,7 +111,7 @@ class TopBarController extends ChangeNotifier {
   Timer? activeTimer;
 
   cleanTimer() {
-    if(this.activeTimer != null) {
+    if (this.activeTimer != null) {
       this.activeTimer!.cancel();
     }
   }
@@ -130,7 +125,7 @@ class TopBarController extends ChangeNotifier {
 
   checkIfMessageApiCall() async {
     ApiResponse apiResponse = await _chatRepository.hasMessage();
-    if(apiResponse.status == 200) {
+    if (apiResponse.status == 200) {
       int nbNotifications = json.decode(apiResponse.data)['nbNotifications'];
       this.hasNotifMessage.value = nbNotifications > 0;
     }
@@ -138,14 +133,23 @@ class TopBarController extends ChangeNotifier {
 
   navigateToChat() {
     this.hasNotifMessage.value = false;
-    _navigationService.navigateWithTransition(ThreadsView(title: '',), transition: 'rightToLeft', duration:Duration(milliseconds: 200))?.then((value) {
+    _navigationService
+        .navigateWithTransition(
+            ThreadsView(
+              title: '',
+            ),
+            transition: 'rightToLeft',
+            duration: Duration(milliseconds: 200))
+        ?.then((value) {
       this.checkIfMessageApiCall();
     });
   }
 
   shareApp() {
     //selon plateform lien Appstrore / android
-    Share.share(subject: '', "Télécharge l’application gratuite Muslim Connect pour gérer tes dettes, emprunts et testament, avec un partage sécurisé à tes proches, et reste connecté et informé des Salât al-Janaza dans ta mosquée : https://apps.apple.com/us/app/muslim-connect/id6478540540");
+    Share.share(
+        subject: '',
+        "Télécharge l’application gratuite Muslim Connect pour gérer tes dettes, emprunts et testament, avec un partage sécurisé à tes proches, et reste connecté et informé des Salât al-Janaza dans ta mosquée : https://apps.apple.com/us/app/muslim-connect/id6478540540");
   }
 
   gotToWhatsapp() async {
@@ -154,10 +158,13 @@ class TopBarController extends ChangeNotifier {
     String androidUrl = "whatsapp://send?phone=$contact&text=$text";
     String iosUrl = "https://wa.me/$contact?text=${Uri.parse(text)}";
     var confirm = await _dialogService.showDialog(
-        title: "Assalem Alaykoum", description: "Votre avis compte !\nDes idées ou améliorations ?\nPartagez-les pour améliorer Muslim Connect",
+        title: "Assalem Alaykoum",
+        description:
+            "Ton avis compte !\nDes idées ou améliorations ?\nPartages-les pour améliorer Muslim Connect",
         buttonTitleColor: fontDark,
-        buttonTitle: 'Contactez-nous !', barrierDismissible: true);
-    if(confirm?.confirmed == true) {
+        buttonTitle: 'Contacte-nous !',
+        barrierDismissible: true);
+    if (confirm?.confirmed == true) {
       if (Platform.isIOS) {
         if (await canLaunchUrl(Uri.parse(iosUrl))) {
           await launchUrl(Uri.parse(iosUrl));

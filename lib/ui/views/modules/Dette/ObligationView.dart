@@ -176,7 +176,7 @@ class _ObligationViewState extends State<ObligationView> {
     final confirm = await _dialogService.showConfirmationDialog(
       title: "",
       description:
-          "Les partages d'un PRÊT/DETTE/AMANA avec un de vos contact MC seront automatiquement visibles sur son compte Muslim Connect",
+          "Les partages d'un PRÊT/DETTE/AMANA avec un de tes contact MC seront automatiquement visibles sur son compte Muslim Connect",
       cancelTitle: 'Annuler',
       confirmationTitle: 'Partager',
     );
@@ -242,7 +242,7 @@ class _ObligationViewState extends State<ObligationView> {
     _amountController.clear();
     _dateController.clear();
     _selectedDate = null; // Reset previous selection
-    print("Obligation : ${widget.obligation.toJson()}");
+
     // 🔔 Banner d'erreur affiché SOUS le titre
     String? _bannerError; // null => rien à afficher
 
@@ -451,7 +451,7 @@ class _ObligationViewState extends State<ObligationView> {
                   setStateDialog(() => _isLoading = false);
 
                   if (newTranche != null) {
-                    if (newTranche.status == 'validée') {
+                    if (newTranche.status == 'validé') {
                       int newAmount = amount.toInt();
                       widget.obligation.remainingAmount =
                           (widget.obligation.remainingAmount ?? 0) - newAmount;
@@ -925,7 +925,7 @@ class _ObligationViewState extends State<ObligationView> {
                               tranche.status == "en attente"
                                   ? "En attente de validation par le prêteur"
                                   : tranche.status == "validée"
-                                      ? "Validée"
+                                      ? "Validé"
                                       : "Annulée",
                               style: TextStyle(
                                 color: tranche.status == "en attente"

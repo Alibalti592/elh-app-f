@@ -166,7 +166,7 @@ class MyTestamentController extends FutureViewModel<dynamic> {
         }
       } catch (e) {
         _errorMessageService.errorShoMessage(
-            "Erreur lors de l'ouverture du document, merci de regarder vos documents téléchargés");
+            "Erreur lors de l'ouverture du document, merci de regarder tes documents téléchargés");
       }
       this.pdfLoading = false;
       notifyListeners();
