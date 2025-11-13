@@ -10,12 +10,12 @@ const bool isProduction = bool.fromEnvironment('dart.vm.product');
 const Map<String, String> devConfig = {
   'baseApiUrl':
       'https://test.muslim-connect.fr/elh-api', // points to PC localhost from emulator
-  'baseApiUrlPublic': 'https://test.muslim-connect.fr',
+  'baseApiUrlPublic': 'https://test.muslim-connect.fr/',
 };
 
 const Map<String, String> productionConfig = {
   'baseApiUrl': 'https://test.muslim-connect.fr/elh-api',
-  'baseApiUrlPublic': 'https://test.muslim-connect.fr',
+  'baseApiUrlPublic': 'https://test.muslim-connect.fr/',
 };
 
 final Map<String, String> environment =

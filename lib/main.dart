@@ -29,10 +29,6 @@ void main() async {
   );
   print('User granted permission: ${settings.authorizationStatus}');
 
-  // ✅ Get the FCM token
-  String? token = await messaging.getToken();
-
-  print('FCM Token: $token'); // Now this works
   setupLocator();
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();

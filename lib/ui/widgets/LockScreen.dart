@@ -25,7 +25,7 @@ class _LockScreenState extends State<LockScreen> {
     final hasPin = await PinService.hasPin();
     setState(() {
       _creatingPin = !hasPin; // if no PIN yet, switch to create mode
-      _message = hasPin ? 'Enter your PIN' : 'Create your 4-digit PIN';
+      _message = hasPin ? 'Entrez votre PIN' : 'Créez votre PIN à 4 chiffres';
     });
   }
 
@@ -37,7 +37,7 @@ class _LockScreenState extends State<LockScreen> {
       await PinService.savePin(input);
       setState(() {
         _creatingPin = false;
-        _message = 'PIN created! Please authenticate';
+        _message = 'PIN créé ! Veuillez vous authentifier';
         _controller.clear();
       });
       return;
@@ -47,7 +47,7 @@ class _LockScreenState extends State<LockScreen> {
     if (correct) {
       widget.onUnlocked();
     } else {
-      setState(() => _message = 'Incorrect PIN. Try again.');
+      setState(() => _message = 'PIN incorrect. Réessayez.');
       _controller.clear();
     }
   }
@@ -126,7 +126,7 @@ class _LockScreenState extends State<LockScreen> {
                   ),
                 ),
                 child: Text(
-                  _creatingPin ? 'Save PIN' : 'Unlock',
+                  _creatingPin ? 'Sauvegarder le PIN' : 'Débloquer',
                   style: const TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
@@ -135,7 +135,7 @@ class _LockScreenState extends State<LockScreen> {
               TextButton(
                 onPressed: _useBiometric,
                 child: const Text(
-                  'Use Fingerprint / Face ID',
+                  'Utiliser l\'empreinte digitale / Face ID',
                   style: TextStyle(
                     fontSize: 16,
                     decoration: TextDecoration.underline,

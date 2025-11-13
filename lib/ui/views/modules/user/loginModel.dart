@@ -68,19 +68,24 @@ class LoginModel extends FutureViewModel<dynamic> {
   Future<dynamic> futureToRun() => iniLoginPage();
 
   Future iniLoginPage() async {
+    print("Initializing Login Page");
     setAppVersion();
     bool isOnline = await this.hasNetwork();
+    print("Network status: $isOnline");
     if (!isOnline) {
       _errorMessageService.noConnexion();
-    } else {
-      ApiResponse apiResponse = await userRepository.getIntroText();
-      if (apiResponse.status == 200) {
-        var data = json.decode(apiResponse.data);
-        this.introtext = data['text'];
-        this.showTextBeforeRegister = true;
-        notifyListeners();
-      }
     }
+    // else {
+    //   ApiResponse apiResponse = await userRepository.getIntroText();
+    //   print(
+    //       "Intro Text API Response: ${apiResponse.status} - ${apiResponse.data}");
+    //   if (apiResponse.status == 200) {
+    //     var data = json.decode(apiResponse.data);
+    //     this.introtext = data['text'];
+    //     this.showTextBeforeRegister = true;
+    //     notifyListeners();
+    //   }
+    // }
   }
 
   resetShowIntro() {
@@ -183,6 +188,7 @@ class LoginModel extends FutureViewModel<dynamic> {
 
     ApiResponse apiResponse =
         await _authenticationService.login(username.trim(), password);
+    print("Login API Response: ${apiResponse.status} - ${apiResponse.data}");
 
     isLogging.value = false;
 

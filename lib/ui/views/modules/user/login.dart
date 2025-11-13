@@ -412,14 +412,14 @@ class Login extends StatelessWidget {
                     // const SizedBox(height: 14),
                     // Container(
                     //   width: MediaQuery.of(
-                    //     context,
+                    //     context
                     //   ).size.width, // full width like other buttons
                     //   margin: const EdgeInsets.symmetric(
                     //     horizontal: 30.0,
                     //     vertical: 10.0,
                     //   ),
                     //   child:
-                    //       GoogleSignInButton(), // just call it, no need to pass context
+                    // GoogleSignInButton(), // just call it, no need to pass context
                     // ),
                     const SizedBox(height: 30),
 

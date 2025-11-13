@@ -42,7 +42,7 @@ class OtpScreenState extends State<OtpScreen> {
     setState(() {
       isLoading = true;
     });
-    final url = Uri.parse('http://10.0.2.2:8000/send-otp');
+    final url = Uri.parse('https://test.muslim-connect.fr/send-otp');
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
@@ -71,7 +71,7 @@ class OtpScreenState extends State<OtpScreen> {
       isLoading = true;
     });
 
-    final url = Uri.parse('http://10.0.2.2:8000/verify-otp');
+    final url = Uri.parse('https://test.muslim-connect.fr/verify-otp');
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
@@ -93,12 +93,14 @@ class OtpScreenState extends State<OtpScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['message'] ?? 'OTP verification failed')),
+          SnackBar(
+              content: Text(
+                  data['message'] ?? 'Échec de la vérification du code OTP')),
         );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error verifying OTP')),
+        SnackBar(content: Text('Code de vérification invalide')),
       );
     }
 
