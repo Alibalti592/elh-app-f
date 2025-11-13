@@ -129,16 +129,29 @@ class OtpScreenState extends State<OtpScreen> {
             width: double.infinity,
             color: primaryColor,
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 50,
+              top: MediaQuery.of(context).padding.top, // status bar padding
               bottom: 20,
+              left: 10,
+              right: 10,
             ),
-            child: Column(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(
-                  "assets/images/logo-no-bg.png",
-                  height: 80,
+                IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    _navigationService.navigateTo('login');
+                  },
                 ),
-                const SizedBox(height: 10),
+                Expanded(
+                  child: Center(
+                    child: Image.asset(
+                      "assets/images/logo-no-bg.png",
+                      height: 80,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 48), // space to balance IconButton
               ],
             ),
           ),

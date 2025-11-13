@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:elh/locator.dart';
 import 'package:elh/models/AppNotification.dart';
 import 'package:elh/services/NotificationService.dart';
 import 'package:elh/ui/views/modules/chat/ThreadsView.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:stacked/stacked.dart';
 import 'package:badges/badges.dart' as badges;
@@ -18,6 +22,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:elh/services/TrancheNotificationHandler.dart';
 
 import 'package:elh/main.dart' show routeObserver;
+import 'package:stacked_services/stacked_services.dart';
 
 class HomeView extends StatefulWidget {
   final int initialIndex;
@@ -29,13 +34,27 @@ class HomeView extends StatefulWidget {
 
 class HomeViewState extends State<HomeView> with RouteAware {
   List<AppNotification> _notifications = [];
+  NavigationService _navigationService = locator<NavigationService>();
 
   late final int initialIndex;
   final DashboardController dashboardController = DashboardController();
   var scaffoldKey = GlobalKey<ScaffoldState>();
+  Future<void> navigateBasedOnStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? status = prefs.getString('user_status') ?? "unactive";
+
+    Timer(Duration(seconds: 1), () {
+      if (status == "unactive") {
+        _navigationService.navigateTo('otp-screen');
+      } else {
+        _navigationService.navigateTo('/');
+      }
+    });
+  }
 
   @override
   void initState() {
+    navigateBasedOnStatus();
     super.initState();
     initialIndex = widget.initialIndex;
     _loadNotifications();
