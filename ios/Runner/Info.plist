@@ -71,6 +71,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+<key>NSFaceIDUsageDescription</key>
+<string>Use Face ID to quickly authenticate into the app</string>
 
 	<!-- Modes de fond (pour notifications, etc.) -->
 	<key>UIBackgroundModes</key>

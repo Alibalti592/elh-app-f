@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:elh/models/userInfos.dart';
 import 'package:elh/ui/views/modules/user/ResetPasswordView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -197,9 +198,8 @@ class LoginModel extends FutureViewModel<dynamic> {
       print(token);
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('jwt_token', token);
-      Timer(const Duration(milliseconds: 500), () {
-        _navigationService.clearStackAndShow('/');
-      });
+      await fetchDataUser();
+      navigateBasedOnStatus();
     } else {
       if (apiResponse.status == 401) {
         globalError.value = "Identifiant ou mot de passe incorrect";
@@ -215,11 +215,47 @@ class LoginModel extends FutureViewModel<dynamic> {
     _navigationService.navigateTo('/reset-password');
   }
 
+  Future<void> fetchDataUser() async {
+    try {
+      UserInfos? infos =
+          await _userInfoReactiveService.getUserInfos(cache: true);
+      String userName = infos?.fullname ?? "Utilisateur";
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (infos?.email != null) {
+        await prefs.setString('user_email_check', infos!.email!);
+      }
+      if (infos?.status != null) {
+        await prefs.setString('user_status_check', infos!.status!);
+      }
+
+      print(
+          "User info saved: $userName, email: ${infos?.email}, status: ${infos?.status}");
+    } catch (e) {
+      print("Error fetching user info: $e");
+    }
+  }
+
+  Future<void> navigateBasedOnStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? status = prefs.getString('user_status') ?? "unactive";
+
+    Timer(Duration(seconds: 1), () {
+      if (status == "unactive") {
+        _navigationService.navigateTo('otp-screen');
+      } else {
+        _navigationService.navigateTo('/');
+      }
+
+      this.isRegistering.value = false;
+    });
+  }
+
   register(pageController) async {
     this.pageController = pageController;
     if (!this.acceptCondition) {
       _errorMessageService
-          .errorShoMessage("Tu dois accepter les conditions générales");
+          .errorShoMessage("Vous devez accepter les conditions générales");
       return;
     }
     if (!this.isRegistering.value) {
@@ -247,10 +283,8 @@ class LoginModel extends FutureViewModel<dynamic> {
           //login
           await _authenticationService.login(
               userRegistration.email!, userRegistration.password!);
-          Timer(Duration(seconds: 1), () {
-            _navigationService.navigateTo('/');
-            this.isRegistering.value = false;
-          });
+          await fetchDataUser();
+          navigateBasedOnStatus();
         } else {
           //alert message
           _errorMessageService.errorShoMessage(apiResponse.data);

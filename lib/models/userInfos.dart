@@ -17,6 +17,7 @@ class UserInfos {
     this.email,
     required this.photo,
     this.socialProfileSlug,
+    this.status,
   });
 
   int? id;
@@ -30,30 +31,37 @@ class UserInfos {
   String? email;
   String photo;
   String? socialProfileSlug;
+  String? status;
 
   factory UserInfos.fromJson(Map<String, dynamic> json) => UserInfos(
-    id: json["id"],
-    firstname: json["firstname"],
-    lastname: json["lastname"],
-    fullname: "${json["firstname"]} ${json["lastname"]}",
-    phone: json["phone"],
-    city: json["city"] == null ? "" : json["city"],
-    phonePrefix: json["phonePrefix"] == null ? "+33" : json["phonePrefix"],
-    birthdate: json["birthdate"] != '' && json["birthdate"] != null ? DateTime.parse(json["birthdate"]) : null,
-    email: json["email"],
-    photo: json["photo"] == null ? "" : json["photo"],
-    socialProfileSlug: json["socialProfileSlug"] ?? "",
-  );
+        id: json["id"],
+        firstname: json["firstname"],
+        lastname: json["lastname"],
+        fullname: "${json["firstname"]} ${json["lastname"]}",
+        phone: json["phone"],
+        city: json["city"] == null ? "" : json["city"],
+        phonePrefix: json["phonePrefix"] == null ? "+33" : json["phonePrefix"],
+        birthdate: json["birthdate"] != '' && json["birthdate"] != null
+            ? DateTime.parse(json["birthdate"])
+            : null,
+        email: json["email"],
+        photo: json["photo"] == null ? "" : json["photo"],
+        socialProfileSlug: json["socialProfileSlug"] ?? "",
+        status: json["status"] ?? "unactive",
+      );
 
   Map<String, dynamic> toJson() => {
-    "firstname": firstname,
-    "lastname": lastname,
-    "phone": phone,
-    "phonePrefix": phonePrefix,
-    "city": city,
-    "birthdate": birthdate == null ? '' : "${birthdate!.year.toString().padLeft(4, '0')}-${birthdate!.month.toString().padLeft(2, '0')}-${birthdate!.day.toString().padLeft(2, '0')}",
-    "email": email,
-    "photo": photo,
-    "socialProfileSlug": socialProfileSlug,
-  };
+        "firstname": firstname,
+        "lastname": lastname,
+        "phone": phone,
+        "phonePrefix": phonePrefix,
+        "city": city,
+        "birthdate": birthdate == null
+            ? ''
+            : "${birthdate!.year.toString().padLeft(4, '0')}-${birthdate!.month.toString().padLeft(2, '0')}-${birthdate!.day.toString().padLeft(2, '0')}",
+        "email": email,
+        "photo": photo,
+        "socialProfileSlug": socialProfileSlug,
+        "status": status ?? "unactive",
+      };
 }
