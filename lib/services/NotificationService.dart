@@ -6,7 +6,7 @@ import 'package:elh/services/AuthenticationService.dart';
 import 'package:http/http.dart' as http;
 
 class NotificationService {
-  final String baseUrl = 'https://muslim-connect.fr/elh-api';
+  final String baseUrl = 'https://test.muslim-connect.fr/elh-api';
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
   Future<String> getUserToken() async {
@@ -24,7 +24,8 @@ class NotificationService {
         'Content-Type': 'application/json',
       },
     );
-
+    print('Response status: ${res.statusCode}');
+    print('Response body: ${res.body}');
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
 

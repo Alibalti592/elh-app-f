@@ -168,7 +168,7 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                     style: TextStyle(color: primaryColor, fontSize: 12)),
               ),
               onTap: () {
-                Uri _url = Uri.parse('https://muslim-connect.fr/cgu');
+                Uri _url = Uri.parse('https://test.muslim-connect.fr/cgu');
                 launchUrl(_url);
               },
             ),
@@ -179,8 +179,8 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                     style: TextStyle(color: primaryColor, fontSize: 12)),
               ),
               onTap: () {
-                Uri _url =
-                    Uri.parse('https://muslim-connect.fr/mentions-legales');
+                Uri _url = Uri.parse(
+                    'https://test.muslim-connect.fr/mentions-legales');
                 launchUrl(_url);
               },
             ),

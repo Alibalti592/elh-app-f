@@ -67,7 +67,7 @@ class HomeController extends FutureViewModel<dynamic> {
   }
   shareApp() async {
     const text =
-        "Télécharge l’application gratuite Muslim Connect pour gérer tes dettes, emprunts et testament, avec un partage sécurisé à tes proches, et reste connecté et informé des Salât al-Janaza dans ta mosquée : https://apps.apple.com/us/app/muslim-connect/id6478540540";
+        "Télécharge l’application gratuite Muslim Connect pour gérer tes dettes, emprunts et testament, avec un partage sécurisé à tes proches, et reste connecté et informé des Salât al-Janaza dans ta mosquée : https://test.muslim-connect.fr/app";
 
     final result = await SharePlus.instance.share(
       ShareParams(

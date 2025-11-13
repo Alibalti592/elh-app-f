@@ -860,7 +860,7 @@ class Login extends StatelessWidget {
                                       Expanded(
                                         child: GestureDetector(
                                           onTap: () => model.openUrl(
-                                            "https://muslim-connect.fr/cgu",
+                                            "https://test.muslim-connect.fr/cgu",
                                           ),
                                           child: Align(
                                             alignment: Alignment.centerLeft,
