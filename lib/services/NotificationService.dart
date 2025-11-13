@@ -24,7 +24,8 @@ class NotificationService {
         'Content-Type': 'application/json',
       },
     );
-
+    print('Response status: ${res.statusCode}');
+    print('Response body: ${res.body}');
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
 

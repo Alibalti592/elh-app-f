@@ -285,7 +285,7 @@ class HomeViewState extends State<HomeView> with RouteAware {
                               );
                             } else {
                               final pending = snapshot.data!
-                                  .where((n) => n.status == 'pending')
+                                  .where((n) => n.isRead == false)
                                   .toList();
 
                               if (pending.isEmpty) {
@@ -532,9 +532,9 @@ class HomeViewState extends State<HomeView> with RouteAware {
                 IconButton(
                   icon: badges.Badge(
                     showBadge: _notifications
-                        .any((n) => n.status == 'pending'), // check dynamically
+                        .any((n) => n.isRead == false), // check dynamically
                     badgeContent: Text(
-                      '${_notifications.where((n) => n.status == 'pending').length}',
+                      '${_notifications.where((n) => n.isRead == false).length}',
                       style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                     badgeStyle: const badges.BadgeStyle(
