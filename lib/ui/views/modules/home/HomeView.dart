@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:elh/locator.dart';
 import 'package:elh/models/AppNotification.dart';
+import 'package:elh/models/userInfos.dart';
 import 'package:elh/services/NotificationService.dart';
+import 'package:elh/services/UserInfosReactiveService.dart';
 import 'package:elh/ui/views/modules/chat/ThreadsView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,9 +41,32 @@ class HomeViewState extends State<HomeView> with RouteAware {
   late final int initialIndex;
   final DashboardController dashboardController = DashboardController();
   var scaffoldKey = GlobalKey<ScaffoldState>();
+  final UserInfoReactiveService _userInfoReactiveService =
+      locator<UserInfoReactiveService>();
+  Future<void> fetchDataUser() async {
+    try {
+      UserInfos? infos =
+          await _userInfoReactiveService.getUserInfos(cache: true);
+      String userName = infos?.fullname ?? "Utilisateur";
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (infos?.email != null) {
+        await prefs.setString('user_email_check', infos!.email!);
+      }
+      if (infos?.status != null) {
+        await prefs.setString('user_status_check', infos!.status!);
+      }
+
+      print(
+          "User info saved: $userName, email: ${infos?.email}, status: ${infos?.status}");
+    } catch (e) {
+      print("Error fetching user info: $e");
+    }
+  }
+
   Future<void> navigateBasedOnStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? status = prefs.getString('user_status') ?? "unactive";
+    String? status = prefs.getString('user_status_check') ?? "unactive";
 
     Timer(Duration(seconds: 1), () {
       if (status == "unactive") {
@@ -54,6 +79,7 @@ class HomeViewState extends State<HomeView> with RouteAware {
 
   @override
   void initState() {
+    fetchDataUser();
     navigateBasedOnStatus();
     super.initState();
     initialIndex = widget.initialIndex;

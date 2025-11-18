@@ -244,7 +244,7 @@ class LoginModel extends FutureViewModel<dynamic> {
 
   Future<void> navigateBasedOnStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? status = prefs.getString('user_status') ?? "unactive";
+    String? status = prefs.getString('user_status_check') ?? "unactive";
 
     Timer(Duration(seconds: 1), () {
       if (status == "unactive") {

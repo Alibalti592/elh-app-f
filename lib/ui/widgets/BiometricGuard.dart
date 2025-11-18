@@ -34,21 +34,24 @@ class _BiometricGuardState extends State<BiometricGuard>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.paused) {
+      // store the time when app went to background
       _backgroundTime = DateTime.now();
     } else if (state == AppLifecycleState.resumed) {
+      // Only re-lock if the app was in background for the threshold
       if (_backgroundTime != null) {
         final diff = DateTime.now().difference(_backgroundTime!);
-        if (diff.inMinutes >= 3) {
+        const thresholdMinutes = 3;
+        if (diff.inMinutes >= thresholdMinutes) {
           setState(() => _locked = true);
         }
-      } else {
-        // Cold start after app closed
-        setState(() => _locked = true);
       }
+      // else: do NOT re-lock: this avoids re-locks caused by biometric dialogs
     }
   }
 
   void _unlock() {
+    // when unlocking manually, reset background time to avoid re-lock race
+    _backgroundTime = null;
     setState(() => _locked = false);
   }
 
