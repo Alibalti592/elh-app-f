@@ -56,7 +56,6 @@ class HomeViewState extends State<HomeView> with RouteAware {
       if (infos?.status != null) {
         await prefs.setString('user_status_check', infos!.status!);
       }
-
       print(
           "User info saved: $userName, email: ${infos?.email}, status: ${infos?.status}");
     } catch (e) {
@@ -71,8 +70,6 @@ class HomeViewState extends State<HomeView> with RouteAware {
     Timer(Duration(seconds: 1), () {
       if (status == "unactive") {
         _navigationService.navigateTo('otp-screen');
-      } else {
-        _navigationService.navigateTo('/');
       }
     });
   }
