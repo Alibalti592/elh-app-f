@@ -128,7 +128,7 @@ class SalatListViewState extends State<SalatListView> {
     }
     widgets.add(Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      child: Text('Mes Salâts Al-Janaza ajoutées', style: labelSmallStyle),
+      child: Text('Mes Salâts Al-Janaza ajoutée', style: labelSmallStyle),
     ));
     if (controller.salats.isEmpty) {
       widgets.add(Padding(

@@ -75,22 +75,6 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                   }
                 }),
 
-            // createDrawerBodyItemSvg(
-            //     imageName:  'icon/salat-icon.png',
-            //     size: 30.0,
-            //     type: 'png',
-            //     text: model.pfLabel(),
-            //     onTap: () {
-            //       Navigator.pop(context); //close drawer
-            //       if( model.isPF){
-            //         model.navigateToView(MyPompeView());
-            //       } else {
-            //         model.navigateToView(AddPompeView());
-            //       }
-            //
-            //     }
-            // ),
-
             createDrawerBodyItemSvg(
                 imageName: 'Icon_Details.svg',
                 size: 25.0,
@@ -108,6 +92,7 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                   model.navigateToView(QsnView());
                 }),
 
+            // ---- Bouton CONTACTE-NOUS (WhatsApp) ----
             InkWell(
               onTap: () => gotToWhatsapp(),
               borderRadius: BorderRadius.circular(50),
@@ -130,8 +115,7 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                         child: Icon(
                           MdiIcons.whatsapp,
                           color: fontGrey,
-                          size:
-                              25, // même logique que 'size' dans ton widget menu
+                          size: 25,
                         ),
                       ),
                     ),
@@ -142,8 +126,7 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                         'Contacte-nous',
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          color: Colors
-                              .black, // même couleur que l’icône SVG du menu
+                          color: Colors.black,
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                         ),
@@ -153,13 +136,59 @@ class NavigationDrawerState extends State<BBNavigationDrawer>
                 ),
               ),
             ),
+
+            // ---- NOUVEAU BOUTON : Évaluer l'application ----
+            UIHelper.verticalSpaceSmall(),
+            InkWell(
+              onTap: () => goToStoreRating(),
+              borderRadius: BorderRadius.circular(50),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 19),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    UIHelper.horizontalSpace(6),
+                    SizedBox(
+                      width: 35,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.star_rate_rounded,
+                          color: fontGrey,
+                          size: 25,
+                        ),
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.only(left: 25.0)),
+                    SizedBox(
+                      width: 180,
+                      child: Text(
+                        'Évaluer l\'application',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
             createDrawerBodyItem(
                 iconData: Icons.exit_to_app,
                 text: 'Se déconnecter',
                 onTap: () {
                   model.logout();
                 }),
-            // Divider(),
             UIHelper.verticalSpace(200),
 
             GestureDetector(
@@ -238,7 +267,6 @@ Widget createDrawerBodyItemSvg(
                     color: fontGreyDark,
                     height: size,
                     width: 20.0,
-                    // fit: BoxFit.fill,
                   )
                 : Image(
                     image: AssetImage("assets/$imageName"),
@@ -317,6 +345,24 @@ gotToWhatsapp() async {
       if (await canLaunchUrl(Uri.parse(androidUrl))) {
         await launchUrl(Uri.parse(androidUrl));
       }
+    }
+  }
+}
+
+/// Ouvre la page de notation de l'application selon l'OS
+Future<void> goToStoreRating() async {
+  final Uri iosUrl =
+      Uri.parse('https://apps.apple.com/us/app/muslim-connect/id6478540540');
+  final Uri androidUrl = Uri.parse(
+      'https://play.google.com/store/apps/details?id=com.elh.app&pli=1');
+
+  if (Platform.isIOS) {
+    if (await canLaunchUrl(iosUrl)) {
+      await launchUrl(iosUrl);
+    }
+  } else if (Platform.isAndroid) {
+    if (await canLaunchUrl(androidUrl)) {
+      await launchUrl(androidUrl);
     }
   }
 }

@@ -140,7 +140,7 @@ class MosqueViewState extends State<MosqueView>
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'Contactez nous',
+                            'Contacte-nous',
                             style: TextStyle(
                               color: Colors.white,
                               fontFamily: 'Karla',

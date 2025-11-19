@@ -196,7 +196,7 @@ class DashboardViewState extends State<DashboardView>
 
                                   // Bottom Action
                                   Text(
-                                    'Géres →',
+                                    'Gère →',
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -648,7 +648,7 @@ class DashboardViewState extends State<DashboardView>
                 ),
                 // Bottom: Action
                 Text(
-                  'Gères →',
+                  'Gère →',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,

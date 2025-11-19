@@ -25,24 +25,22 @@ class MaraudeController extends FutureViewModel<dynamic> {
   TextEditingController cityTextController = TextEditingController();
   Bblocation? searchLocation;
   int distance = 10;
-  List<int> distances = <int> [5, 10, 20, 50, 100];
+  List<int> distances = <int>[5, 10, 20, 50, 100];
   bool myMaraudesView = false;
 
   @override
   Future<dynamic> futureToRun() => loadSettings();
 
-  Future loadSettings() async {
-
-  }
-
+  Future loadSettings() async {}
 
   Future loadDatas() async {
     String? locationString;
-    if(this.searchLocation!= null || this.myMaraudesView) {
-      if(!myMaraudesView) {
+    if (this.searchLocation != null || this.myMaraudesView) {
+      if (!myMaraudesView) {
         locationString = json.encode(this.searchLocation!.toJson());
       }
-      ApiResponse apiResponse = await _maraudeRepository.loadMaraudes(locationString, this.distance.toString(), this.myMaraudesView);
+      ApiResponse apiResponse = await _maraudeRepository.loadMaraudes(
+          locationString, this.distance.toString(), this.myMaraudesView);
       if (apiResponse.status == 200) {
         var decodeData = json.decode(apiResponse.data);
         this.maraudes = maraudeFromJson(json.encode(decodeData['maraudes']));
@@ -55,11 +53,15 @@ class MaraudeController extends FutureViewModel<dynamic> {
   }
 
   openSearchLocation(context) {
-    _navigationService.navigateWithTransition(BBLocationView(), transitionStyle: Transition.downToUp, duration:Duration(milliseconds: 300))?.then((value) {
-      if(value == "setLocation") {
+    _navigationService
+        .navigateWithTransition(BBLocationView(),
+            transitionStyle: Transition.downToUp,
+            duration: Duration(milliseconds: 300))
+        ?.then((value) {
+      if (value == "setLocation") {
         this.maraudes = [];
         this.searchLocation = _locationStore.selectedLocation;
-        if(this.searchLocation != null) {
+        if (this.searchLocation != null) {
           cityTextController.text = this.searchLocation!.city;
           this.loadDatas();
         } else {
@@ -69,6 +71,7 @@ class MaraudeController extends FutureViewModel<dynamic> {
     });
     //CALLBACK !!
   }
+
   setDistance(newDistance) {
     this.distance = newDistance;
     notifyListeners();
@@ -90,10 +93,10 @@ class MaraudeController extends FutureViewModel<dynamic> {
   }
 
   setMyMaraudes() {
-   this.myMaraudesView = true;
-   this.title = 'Mes maraudes ajoutées';
-   this.loadDatas();
-   notifyListeners();
+    this.myMaraudesView = true;
+    this.title = 'Mes maraudes ajoutée';
+    this.loadDatas();
+    notifyListeners();
   }
 
   setAllMaraudes() {
@@ -103,11 +106,9 @@ class MaraudeController extends FutureViewModel<dynamic> {
     notifyListeners();
   }
 
-
   addMaraude() {
     _navigationService.navigateWithTransition(AddMaraudeView())?.then((value) {
       this.loadSettings();
     });
   }
-
 }
