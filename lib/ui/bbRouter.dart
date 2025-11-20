@@ -20,34 +20,46 @@ class BBRouter {
       case 'no-connexion':
         return MaterialPageRoute(builder: (_) => NoConnexion());
       case 'profileInfos':
-        final arguments = settings.arguments;
+        final arguments = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (_) => ProfileView(userInfos: arguments['userInfos']),
-        );
-      case 'navigationParameters':
-        final arguments = settings.arguments;
-        return SlideRightRoute(
-          page: NavigationParametersView(userInfos: arguments['userInfos']),
+          builder: (_) => BiometricGuard(
+            child: ProfileView(userInfos: arguments['userInfos']),
+          ),
         );
 
+      case 'navigationParameters':
+        final arguments = settings.arguments as Map<String, dynamic>;
+        return SlideRightRoute(
+          page: BiometricGuard(
+            child: NavigationParametersView(
+              userInfos: arguments['userInfos'],
+            ),
+          ),
+        );
       case 'chatThread':
-        final arguments = settings.arguments;
+        final arguments = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (_) => ChatView(thread: arguments['thread']),
+          builder: (_) => BiometricGuard(
+            child: ChatView(thread: arguments['thread']),
+          ),
         );
 
       case 'deceDetails':
-        final arguments = settings.arguments;
+        final arguments = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (_) => DeceDetailsView(arguments['dece']),
+          builder: (_) => BiometricGuard(
+            child: DeceDetailsView(arguments['dece']),
+          ),
         );
       case 'completeRegister':
         return MaterialPageRoute(builder: (_) => CompleteRegister());
 
       case 'carteListView':
-        final arguments = settings.arguments;
+        final arguments = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (_) => CarteListView(openCarte: arguments['openCarte']),
+          builder: (_) => BiometricGuard(
+            child: CarteListView(openCarte: arguments['openCarte']),
+          ),
         );
       case 'otp-screen':
         return MaterialPageRoute(builder: (_) => OtpScreen());
