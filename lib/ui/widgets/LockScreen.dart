@@ -27,7 +27,11 @@ class LockScreen extends StatefulWidget {
 }
 
 class _LockScreenState extends State<LockScreen> {
+  // main controllers
   final _pinController = TextEditingController();
+  // NEW: confirm controller for create-pin
+  final _confirmPinController = TextEditingController();
+
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
   final UserInfoReactiveService _userInfoReactiveService =
@@ -45,6 +49,14 @@ class _LockScreenState extends State<LockScreen> {
     super.initState();
     fetchDataUser();
     _initStage();
+  }
+
+  // NEW: dispose controllers
+  @override
+  void dispose() {
+    _pinController.dispose();
+    _confirmPinController.dispose();
+    super.dispose();
   }
 
   Future<void> _enterBiometricOnlyStage() async {
@@ -156,7 +168,7 @@ class _LockScreenState extends State<LockScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Pin oublié'),
+          title: const Text('Code à 4 chiffres oublié?'),
           content: TextField(
             controller: pwdController,
             obscureText: true,
@@ -206,7 +218,7 @@ class _LockScreenState extends State<LockScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Entrez un nouveau PIN'),
+          title: const Text('Entrez un nouveau code à 4 chiffres'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -215,14 +227,15 @@ class _LockScreenState extends State<LockScreen> {
                 keyboardType: TextInputType.number,
                 maxLength: 4,
                 obscureText: true,
-                decoration: const InputDecoration(hintText: 'Nouveau PIN'),
+                decoration: const InputDecoration(
+                    hintText: 'Nouveau code à 4 chiffres'),
               ),
               TextField(
                 controller: newPin2Controller,
                 keyboardType: TextInputType.number,
                 maxLength: 4,
                 obscureText: true,
-                decoration: const InputDecoration(hintText: 'Confirmer PIN'),
+                decoration: const InputDecoration(hintText: 'Enregistrer'),
               ),
             ],
           ),
@@ -293,9 +306,16 @@ class _LockScreenState extends State<LockScreen> {
     }
   }
 
+  // UPDATED: create pin now requires confirmation
   Future<void> _handleCreatePin() async {
     final pin = _pinController.text.trim();
-    if (pin.length != 4) return;
+
+    if (pin.length != 4) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Le code doit contenir 4 chiffres')),
+      );
+      return;
+    }
 
     await PinService.savePin(pin);
     await PinService.saveUnlockMethod('pin');
@@ -306,6 +326,10 @@ class _LockScreenState extends State<LockScreen> {
       _stage = LockStage.enterPin;
       _message = 'Utilise ton code à 4 chiffres';
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Code enregistré avec succès')),
+    );
   }
 
   Future<void> _handleEnterPin() async {
@@ -317,7 +341,7 @@ class _LockScreenState extends State<LockScreen> {
       widget.onUnlocked();
     } else {
       setState(() {
-        _message = 'PIN incorrect. Réessayez.';
+        _message = 'Code à 4 chiffres incorrect. Réessayez.';
         _pinController.clear();
       });
     }
@@ -443,13 +467,23 @@ class _LockScreenState extends State<LockScreen> {
     );
   }
 
-  Widget _pinField() {
+  // small helper to build a PIN field for any controller
+  Widget _pinFieldFor(
+    TextEditingController controller, {
+    String hintText = '****',
+  }) {
     return TextField(
-      controller: _pinController,
+      controller: controller,
       keyboardType: TextInputType.number,
       maxLength: 4,
       obscureText: true,
+      obscuringCharacter: '*', // shows ****
       decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(
+          letterSpacing: 8,
+          fontSize: 20,
+        ),
         filled: true,
         fillColor: Colors.white,
         counterText: '',
@@ -461,7 +495,10 @@ class _LockScreenState extends State<LockScreen> {
         ),
       ),
       textAlign: TextAlign.center,
-      style: const TextStyle(fontSize: 20, letterSpacing: 8),
+      style: const TextStyle(
+        fontSize: 20,
+        letterSpacing: 8,
+      ),
     );
   }
 
@@ -499,10 +536,20 @@ class _LockScreenState extends State<LockScreen> {
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
-        _whiteButton('Code à 4 chiffres', () {
-          setState(() {
-            _stage = LockStage.createPin;
-          });
+        // UPDATED: check if PIN already exists — if yes show enterPin, else show createPin
+        _whiteButton('Code à 4 chiffres', () async {
+          final hasPin = await PinService.hasPin();
+          if (!mounted) return;
+          if (hasPin) {
+            setState(() {
+              _stage = LockStage.enterPin;
+              _message = 'Utilise ton code à 4 chiffres';
+            });
+          } else {
+            setState(() {
+              _stage = LockStage.createPin;
+            });
+          }
         }),
       ],
     );
@@ -519,7 +566,11 @@ class _LockScreenState extends State<LockScreen> {
           style: TextStyle(color: darkGreen, fontSize: 14),
         ),
         const SizedBox(height: 8),
-        _pinField(),
+        // only one field
+        _pinFieldFor(
+          _pinController,
+          hintText: '****',
+        ),
         const SizedBox(height: 16),
         _greenButton('Enregistrer', _handleCreatePin),
         const SizedBox(height: 24),
@@ -551,7 +602,7 @@ class _LockScreenState extends State<LockScreen> {
           style: TextStyle(color: darkGreen, fontSize: 14),
         ),
         const SizedBox(height: 8),
-        _pinField(),
+        _pinFieldFor(_pinController),
         const SizedBox(height: 16),
         _greenButton('Déverrouiller', _handleEnterPin),
         const SizedBox(height: 8),
@@ -591,8 +642,17 @@ class _LockScreenState extends State<LockScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        _whiteButton('Utilise le code à 4 chiffres', () {
-          setState(() => _stage = LockStage.enterPin);
+        _whiteButton('Utilise le code à 4 chiffres', () async {
+          final hasPin = await PinService.hasPin();
+          if (!mounted) return;
+          if (hasPin) {
+            setState(() => _stage = LockStage.enterPin);
+            _message = 'Utilise ton code à 4 chiffres';
+          } else {
+            // no PIN yet -> show create PIN
+            setState(() => _stage = LockStage.createPin);
+            _message = null;
+          }
         }),
       ],
     );

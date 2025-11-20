@@ -257,49 +257,62 @@ class LoginModel extends FutureViewModel<dynamic> {
     });
   }
 
-  register(pageController) async {
+  register(PageController? pageController) async {
     this.pageController = pageController;
     if (!this.acceptCondition) {
       _errorMessageService
           .errorShoMessage("Vous devez accepter les conditions générales");
       return;
     }
+
     if (!this.isRegistering.value) {
       this.isRegistering.value = true;
-      //form valide
-      if (registerFormKey.currentState.validate()) {
-        userRegistration.acceptNewsletter = this.acceptNewsletter;
-        ApiResponse apiResponse =
-            await userRepository.registerUser(userRegistration);
-        if (apiResponse.status == 409) {
-          DialogResponse? response = await this
-              ._dialogService
-              .showConfirmationDialog(
-                  title: 'Ce compte existe déjà',
-                  cancelTitle: "Modifier l'email",
-                  confirmationTitle: 'Se connecter');
-          if (response?.confirmed == true && this.pageController != null) {
-            this.pageController!.animateToPage(
-                  0,
-                  duration: Duration(milliseconds: 400),
-                  curve: Curves.easeOut,
-                );
+      bool navigated = false;
+
+      try {
+        // form valid?
+        if (registerFormKey.currentState.validate()) {
+          userRegistration.acceptNewsletter = this.acceptNewsletter;
+
+          ApiResponse apiResponse =
+              await userRepository.registerUser(userRegistration);
+
+          if (apiResponse.status == 409) {
+            DialogResponse? response =
+                await this._dialogService.showConfirmationDialog(
+                      title: 'Ce compte existe déjà',
+                      cancelTitle: "Modifier l'email",
+                      confirmationTitle: 'Se connecter',
+                    );
+
+            this.isRegistering.value = false;
+
+            if (response?.confirmed == true && this.pageController != null) {
+              this.pageController!.animateToPage(
+                    0,
+                    duration: Duration(milliseconds: 400),
+                    curve: Curves.easeOut,
+                  );
+            }
+          } else if (apiResponse.status == 200) {
+            await _authenticationService.login(
+              userRegistration.email!,
+              userRegistration.password!,
+            );
+            await fetchDataUser();
+            navigateBasedOnStatus();
+            navigated = true;
+          } else {
+            _errorMessageService.errorShoMessage(apiResponse.data);
           }
-        } else if (apiResponse.status == 200) {
-          //login
-          await _authenticationService.login(
-              userRegistration.email!, userRegistration.password!);
-          await fetchDataUser();
-          navigateBasedOnStatus();
         } else {
-          //alert message
-          _errorMessageService.errorShoMessage(apiResponse.data);
-          this.isRegistering.value = false;
+          autoValidate = true;
+          _errorMessageService.errorShoMessage("Vérfiez les données saisies");
         }
-      } else {
-        autoValidate = true;
-        _errorMessageService.errorShoMessage("Vérfiez les données saisies");
-        this.isRegistering.value = false;
+      } catch (e) {
+        _errorMessageService.errorShoMessage(e.toString());
+      } finally {
+        if (!navigated) this.isRegistering.value = false;
       }
     }
   }
