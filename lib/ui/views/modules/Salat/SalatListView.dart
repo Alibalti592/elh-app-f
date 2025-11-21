@@ -98,7 +98,7 @@ class SalatListViewState extends State<SalatListView> {
                       "Aucune Salât Al-Janaza annoncée. Pour recevoir les alertes de Salât al-Janaza d'une mosquée, ",
                 ),
                 TextSpan(
-                  text: "ajoutes la mosquée en favoris",
+                  text: "ajoute la mosquée en favoris",
                   style: const TextStyle(
                     color: primaryColor,
                     fontWeight: FontWeight.bold,
@@ -128,12 +128,12 @@ class SalatListViewState extends State<SalatListView> {
     }
     widgets.add(Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      child: Text('Mes Salâts Al-Janaza ajoutée', style: labelSmallStyle),
+      child: Text('Mes Salâts Al-Janaza ajoutées', style: labelSmallStyle),
     ));
     if (controller.salats.isEmpty) {
       widgets.add(Padding(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
-        child: Center(child: Text('Aucune Salât Al-Janaza ajoutée')),
+        child: Center(child: Text('Aucune Salât Al-Janaza ajoutées')),
       ));
     } else {
       int loop = 0;

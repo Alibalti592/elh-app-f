@@ -80,7 +80,7 @@ class ShareToViewState extends State<ShareToView> {
       relationList.add(Container(
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
           child: Text(
-              "Tu n'as aucun contact, cliques sur 'Mes contacts' et ajoutes tes connaissances.")));
+              "Tu n'as aucun contact, cliques sur 'Mes contacts' et ajoute tes connaissances.")));
     }
     relationList.add(UIHelper.verticalSpace(15));
 

@@ -155,8 +155,9 @@ class LoginModel extends FutureViewModel<dynamic> {
     if (username.isEmpty) {
       emailError.value = "Veuillez saisir votre e-mail";
       isValid = false;
-    } else if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$")
-        .hasMatch(username)) {
+    } else if (!RegExp(
+      r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
+    ).hasMatch(username)) {
       emailError.value = "Email invalide";
       isValid = false;
     } else {
@@ -186,8 +187,10 @@ class LoginModel extends FutureViewModel<dynamic> {
     FlutterSecureStorage storage = const FlutterSecureStorage();
     await storage.deleteAll();
 
-    ApiResponse apiResponse =
-        await _authenticationService.login(username.trim(), password);
+    ApiResponse apiResponse = await _authenticationService.login(
+      username.trim(),
+      password,
+    );
     print("Login API Response: ${apiResponse.status} - ${apiResponse.data}");
 
     isLogging.value = false;
@@ -221,10 +224,24 @@ class LoginModel extends FutureViewModel<dynamic> {
     _navigationService.navigateTo('/reset-password');
   }
 
+  Future<void> _persistUserStatus(
+      SharedPreferences prefs, String? newStatus) async {
+    if (newStatus == null) return;
+    final bool override = prefs.getBool('otp_status_override') ?? false;
+    if (override && newStatus != 'active') {
+      return;
+    }
+    await prefs.setString('user_status_check', newStatus);
+    if (newStatus == 'active' && override) {
+      await prefs.remove('otp_status_override');
+    }
+  }
+
   Future<void> fetchDataUser() async {
     try {
-      UserInfos? infos =
-          await _userInfoReactiveService.getUserInfos(cache: true);
+      UserInfos? infos = await _userInfoReactiveService.getUserInfos(
+        cache: true,
+      );
       String userName = infos?.fullname ?? "Utilisateur";
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -232,11 +249,12 @@ class LoginModel extends FutureViewModel<dynamic> {
         await prefs.setString('user_email_check', infos!.email!);
       }
       if (infos?.status != null) {
-        await prefs.setString('user_status_check', infos!.status!);
+        await _persistUserStatus(prefs, infos!.status!);
       }
 
       print(
-          "User info saved: $userName, email: ${infos?.email}, status: ${infos?.status}");
+        "User info saved: $userName, email: ${infos?.email}, status: ${infos?.status}",
+      );
     } catch (e) {
       print("Error fetching user info: $e");
     }
@@ -260,8 +278,9 @@ class LoginModel extends FutureViewModel<dynamic> {
   register(PageController? pageController) async {
     this.pageController = pageController;
     if (!this.acceptCondition) {
-      _errorMessageService
-          .errorShoMessage("Vous devez accepter les conditions générales");
+      _errorMessageService.errorShoMessage(
+        "Vous devez accepter les conditions générales",
+      );
       return;
     }
 
@@ -274,25 +293,43 @@ class LoginModel extends FutureViewModel<dynamic> {
         if (registerFormKey.currentState.validate()) {
           userRegistration.acceptNewsletter = this.acceptNewsletter;
 
-          ApiResponse apiResponse =
-              await userRepository.registerUser(userRegistration);
+          ApiResponse apiResponse = await userRepository.registerUser(
+            userRegistration,
+          );
 
           if (apiResponse.status == 409) {
-            DialogResponse? response =
-                await this._dialogService.showConfirmationDialog(
-                      title: 'Ce compte existe déjà',
-                      cancelTitle: "Modifier l'email",
-                      confirmationTitle: 'Se connecter',
+            if (apiResponse.data.contains("email")) {
+              DialogResponse? response =
+                  await this._dialogService.showConfirmationDialog(
+                        title: 'Ce compte existe déjà',
+                        cancelTitle: "Modifier l'email",
+                        confirmationTitle: 'Se connecter',
+                      );
+              this.isRegistering.value = false;
+
+              if (response?.confirmed == true && this.pageController != null) {
+                this.pageController!.animateToPage(
+                      0,
+                      duration: Duration(milliseconds: 400),
+                      curve: Curves.easeOut,
                     );
+              }
+            } else if (apiResponse.data.contains("téléphone")) {
+              DialogResponse? response =
+                  await this._dialogService.showConfirmationDialog(
+                        title: 'Ce numéro de téléphone existe déjà',
+                        cancelTitle: "Modifier le numéro",
+                        confirmationTitle: 'Se connecter',
+                      );
+              this.isRegistering.value = false;
 
-            this.isRegistering.value = false;
-
-            if (response?.confirmed == true && this.pageController != null) {
-              this.pageController!.animateToPage(
-                    0,
-                    duration: Duration(milliseconds: 400),
-                    curve: Curves.easeOut,
-                  );
+              if (response?.confirmed == true && this.pageController != null) {
+                this.pageController!.animateToPage(
+                      0,
+                      duration: Duration(milliseconds: 400),
+                      curve: Curves.easeOut,
+                    );
+              }
             }
           } else if (apiResponse.status == 200) {
             await _authenticationService.login(

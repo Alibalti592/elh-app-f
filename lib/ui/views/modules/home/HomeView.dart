@@ -43,6 +43,18 @@ class HomeViewState extends State<HomeView> with RouteAware {
   var scaffoldKey = GlobalKey<ScaffoldState>();
   final UserInfoReactiveService _userInfoReactiveService =
       locator<UserInfoReactiveService>();
+  Future<void> _persistUserStatus(
+      SharedPreferences prefs, String? newStatus) async {
+    if (newStatus == null) return;
+    final bool override = prefs.getBool('otp_status_override') ?? false;
+    if (override && newStatus != 'active') {
+      return;
+    }
+    await prefs.setString('user_status_check', newStatus);
+    if (newStatus == 'active' && override) {
+      await prefs.remove('otp_status_override');
+    }
+  }
   Future<void> fetchDataUser() async {
     try {
       UserInfos? infos =
@@ -54,7 +66,7 @@ class HomeViewState extends State<HomeView> with RouteAware {
         await prefs.setString('user_email_check', infos!.email!);
       }
       if (infos?.status != null) {
-        await prefs.setString('user_status_check', infos!.status!);
+        await _persistUserStatus(prefs, infos!.status!);
       }
       print(
           "User info saved: $userName, email: ${infos?.email}, status: ${infos?.status}");

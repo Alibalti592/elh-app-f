@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
+import 'package:elh/services/UserInfosReactiveService.dart';
 
 class OtpScreen extends StatefulWidget {
   @override
@@ -20,6 +21,8 @@ class OtpScreenState extends State<OtpScreen> {
   String? codeSent;
   bool isLoading = false;
   NavigationService _navigationService = locator<NavigationService>();
+  final UserInfoReactiveService _userInfoReactiveService =
+      locator<UserInfoReactiveService>();
 
   @override
   void initState() {
@@ -43,7 +46,7 @@ class OtpScreenState extends State<OtpScreen> {
     setState(() {
       isLoading = true;
     });
-    final url = Uri.parse('https://test.muslim-connect.fr/send-otp');
+    final url = Uri.parse('https://muslim-connect.fr/send-otp');
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
@@ -72,7 +75,7 @@ class OtpScreenState extends State<OtpScreen> {
       isLoading = true;
     });
 
-    final url = Uri.parse('https://test.muslim-connect.fr/verify-otp');
+    final url = Uri.parse('https://muslim-connect.fr/verify-otp');
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
@@ -82,15 +85,18 @@ class OtpScreenState extends State<OtpScreen> {
         "codeSent": codeSent,
       }),
     );
-
+    print(response.body);
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data['success'] == true) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.remove('user_email_check');
-        Timer(Duration(seconds: 4), () {
-          _navigationService.navigateTo('/');
-        });
+        if (data['status'] != null) {
+          await prefs.setString('user_status_check', data['status']);
+          await prefs.setBool('otp_status_override', true);
+        }
+        await _userInfoReactiveService.resetUserInfos();
+        _navigationService.navigateTo('/');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'])),
         );

@@ -94,7 +94,7 @@ class MaraudeController extends FutureViewModel<dynamic> {
 
   setMyMaraudes() {
     this.myMaraudesView = true;
-    this.title = 'Mes maraudes ajoutée';
+    this.title = 'Mes maraudes ajoutées';
     this.loadDatas();
     notifyListeners();
   }

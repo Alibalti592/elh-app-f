@@ -401,7 +401,7 @@ class SelectContactViewState extends State<SelectContactView> {
           ),
           const SizedBox(height: 12),
           const Text(
-            "Ajoutes ton premier membre pour commencer.",
+            "ajoute ton premier membre pour commencer.",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,

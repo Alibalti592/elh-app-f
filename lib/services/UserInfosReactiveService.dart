@@ -27,7 +27,7 @@ class UserInfoReactiveService with ReactiveServiceMixin {
   /*
    * Est utilisé comme cache car on ne fait le call qu'une seule fois !
    */
-  Future getUserInfos({cache = true}) async {
+  Future getUserInfos({cache = false}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool cacheDataValid =
         await _cacheDataService.dataInCacheAndValid('userInfos', 1);

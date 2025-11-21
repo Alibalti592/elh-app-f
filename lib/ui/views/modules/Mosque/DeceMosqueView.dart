@@ -82,7 +82,7 @@ class DeceMosqueViewState extends State<DeceMosqueView> {
       padding: const EdgeInsets.only(top: 25, bottom: 10),
       child: Center(
           child: Text(
-              "Pour recevoir les notifications des publications des Salât Al-Janaza d'une mosquée, ajoutes-la en FAVORIS.",
+              "Pour recevoir les notifications des publications des Salât Al-Janaza d'une mosquée, ajoute-la en FAVORIS.",
               style: noResultStyleDark,
               textAlign: TextAlign.center)),
     ));

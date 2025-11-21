@@ -19,7 +19,7 @@ class AuthService {
   Future<void> sendTokenToBackend(String idToken) async {
     final response = await http.post(
       Uri.parse(
-          "https://test.muslim-connect.fr/api/auth/google"), // Android emulator uses 10.0.2.2 for localhost
+          "https://muslim-connect.fr/api/auth/google"), // Android emulator uses 10.0.2.2 for localhost
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({"idToken": idToken}),
     );

@@ -99,7 +99,7 @@ class _LockScreenState extends State<LockScreen> {
     if (hasPin && method == 'pin') {
       setState(() {
         _stage = LockStage.enterPin;
-        _message = 'Utilise ton code à 4 chiffres';
+        _message = 'Saisis ton code à 4 chiffres';
       });
       return;
     }
@@ -114,6 +114,19 @@ class _LockScreenState extends State<LockScreen> {
     });
   }
 
+  Future<void> _persistUserStatus(
+      SharedPreferences prefs, String? newStatus) async {
+    if (newStatus == null) return;
+    final bool override = prefs.getBool('otp_status_override') ?? false;
+    if (override && newStatus != 'active') {
+      return;
+    }
+    await prefs.setString('user_status_check', newStatus);
+    if (newStatus == 'active' && override) {
+      await prefs.remove('otp_status_override');
+    }
+  }
+
   Future<void> fetchDataUser() async {
     try {
       UserInfos? infos =
@@ -124,7 +137,7 @@ class _LockScreenState extends State<LockScreen> {
         await prefs.setString('user_email_check', infos!.email!);
       }
       if (infos?.status != null) {
-        await prefs.setString('user_status_check', infos!.status!);
+        await _persistUserStatus(prefs, infos!.status!);
       }
 
       debugPrint(
@@ -158,32 +171,53 @@ class _LockScreenState extends State<LockScreen> {
     if (email == null || email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text("Impossible de récupérer l'email de l'utilisateur.")),
+          content: Text("Impossible de récupérer l'email de l'utilisateur."),
+        ),
       );
       return;
     }
 
     final pwdController = TextEditingController();
+    bool obscurePwd =
+        true; // <-- pour gérer l'état de visibilité du mot de passe
+
     final pwd = await showDialog<String?>(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Code à 4 chiffres oublié?'),
-          content: TextField(
-            controller: pwdController,
-            obscureText: true,
-            decoration:
-                const InputDecoration(hintText: 'Mot de passe du compte'),
-          ),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(context, null),
-                child: const Text('Annuler')),
-            ElevatedButton(
-                onPressed: () =>
-                    Navigator.pop(context, pwdController.text.trim()),
-                child: const Text('Valider')),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Code à 4 chiffres oublié?'),
+              content: TextField(
+                controller: pwdController,
+                obscureText: obscurePwd,
+                decoration: InputDecoration(
+                  hintText: 'Mot de passe du compte',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      obscurePwd ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        obscurePwd = !obscurePwd;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, null),
+                  child: const Text('Annuler'),
+                ),
+                ElevatedButton(
+                  onPressed: () =>
+                      Navigator.pop(context, pwdController.text.trim()),
+                  child: const Text('Valider'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -228,7 +262,8 @@ class _LockScreenState extends State<LockScreen> {
                 maxLength: 4,
                 obscureText: true,
                 decoration: const InputDecoration(
-                    hintText: 'Nouveau code à 4 chiffres'),
+                  hintText: 'Nouveau code à 4 chiffres',
+                ),
               ),
               TextField(
                 controller: newPin2Controller,
@@ -241,8 +276,9 @@ class _LockScreenState extends State<LockScreen> {
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Annuler')),
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler'),
+            ),
             ElevatedButton(
               onPressed: () {
                 final a = newPin1Controller.text.trim();
@@ -263,7 +299,7 @@ class _LockScreenState extends State<LockScreen> {
       );
       setState(() {
         _stage = LockStage.enterPin;
-        _message = 'Utilise ton code à 4 chiffres';
+        _message = 'Saisis ton code à 4 chiffres';
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -324,7 +360,7 @@ class _LockScreenState extends State<LockScreen> {
     setState(() {
       _pinController.clear();
       _stage = LockStage.enterPin;
-      _message = 'Utilise ton code à 4 chiffres';
+      _message = 'Saisis ton code à 4 chiffres';
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -543,7 +579,7 @@ class _LockScreenState extends State<LockScreen> {
           if (hasPin) {
             setState(() {
               _stage = LockStage.enterPin;
-              _message = 'Utilise ton code à 4 chiffres';
+              _message = 'Saisis ton code à 4 chiffres';
             });
           } else {
             setState(() {
@@ -574,7 +610,7 @@ class _LockScreenState extends State<LockScreen> {
         const SizedBox(height: 16),
         _greenButton('Enregistrer', _handleCreatePin),
         const SizedBox(height: 24),
-        _whiteButton('Utilise FaceID/ Empreinte', () async {
+        _whiteButton('Saisis FaceID/ Empreinte', () async {
           final hasBio = await BiometricHelper.hasEnrolledBiometrics();
           if (!hasBio) {
             if (!mounted) return;
@@ -598,7 +634,7 @@ class _LockScreenState extends State<LockScreen> {
         _lockIcon(),
         const SizedBox(height: 24),
         const Text(
-          'Utilise ton code à 4 chiffres',
+          'Saisis ton code à 4 chiffres',
           style: TextStyle(color: darkGreen, fontSize: 14),
         ),
         const SizedBox(height: 8),
@@ -617,7 +653,7 @@ class _LockScreenState extends State<LockScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        _whiteButton('Utilise FaceID/ Empreinte', _useBiometric),
+        _whiteButton('Saisis FaceID/ Empreinte', _useBiometric),
       ],
     );
   }
@@ -631,7 +667,7 @@ class _LockScreenState extends State<LockScreen> {
         RichText(
           textAlign: TextAlign.center,
           text: const TextSpan(
-            text: 'Utilise ton FaceID / ',
+            text: 'Saisis ton FaceID / ',
             style: TextStyle(color: darkGreen, fontSize: 14),
             children: [
               TextSpan(
@@ -642,12 +678,12 @@ class _LockScreenState extends State<LockScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        _whiteButton('Utilise le code à 4 chiffres', () async {
+        _whiteButton('Saisis le code à 4 chiffres', () async {
           final hasPin = await PinService.hasPin();
           if (!mounted) return;
           if (hasPin) {
             setState(() => _stage = LockStage.enterPin);
-            _message = 'Utilise ton code à 4 chiffres';
+            _message = 'Saisis ton code à 4 chiffres';
           } else {
             // no PIN yet -> show create PIN
             setState(() => _stage = LockStage.createPin);

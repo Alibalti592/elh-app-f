@@ -189,6 +189,6 @@ class MosqueController extends FutureViewModel<dynamic> {
   showInfo() {
     _errorMessageService.errorShoMessage(
         title: '',
-        "Pour recevoir les notifications des publications des Salât Al-Janaza d'une mosquée, ajoutes-la en FAVORIS.");
+        "Pour recevoir les notifications des publications des Salât Al-Janaza d'une mosquée, ajoute-la en FAVORIS.");
   }
 }
