@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:elh/locator.dart';
 import 'package:flutter/material.dart';
@@ -87,7 +88,9 @@ class OtpScreenState extends State<OtpScreen> {
       if (data['success'] == true) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.remove('user_email_check');
-        _navigationService.navigateTo('/');
+        Timer(Duration(seconds: 4), () {
+          _navigationService.navigateTo('/');
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'])),
         );
