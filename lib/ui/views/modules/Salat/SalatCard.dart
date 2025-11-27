@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:elh/common/theme.dart';
 import 'package:elh/models/salat.dart';
 import 'package:elh/ui/shared/ui_helpers.dart';
@@ -12,10 +14,11 @@ class SalatCard extends StatefulWidget {
   bool shareDirect = false;
   SalatCard({required this.salat, this.shareDirect = false});
   @override
-  SalatCardState createState() => SalatCardState(salat: salat, shareDirect: this.shareDirect);
+  SalatCardState createState() =>
+      SalatCardState(salat: salat, shareDirect: this.shareDirect);
 }
 
-class SalatCardState extends State<SalatCard>  {
+class SalatCardState extends State<SalatCard> {
   Salat salat;
   bool shareDirect = false;
   SalatCardState({required this.salat, this.shareDirect = false}) {
@@ -25,250 +28,364 @@ class SalatCardState extends State<SalatCard>  {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<SalatCardController>.reactive(
-        viewModelBuilder: () => SalatCardController(salat: salat, shareDirect: this.shareDirect),
-    builder: (context, controller, child) => Center(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          double screenWidth = constraints.maxWidth;
-          double containerWidth = screenWidth * 0.98; // 95% of screen width
-          double containerHeight = containerWidth * (1350 / 1080);
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Hero(
-              tag: "salat-tag-${salat.id}",
-              createRectTween: (begin, end) {
-                return CustomRectTween(begin: begin, end: end);
-              },
-              child: RepaintBoundary(
-                key: controller.globalKey,
-                child: Material(
-                  color: primaryColor,
-                  elevation: 2,
-                  child: Container(
-                    width: containerWidth,
-                    height: containerHeight,
-                    decoration: BoxDecoration(
-                        image: backgroundImageSimple()
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            child: SizedBox(
-                                width: 200,
-                                height: 120,
-                                child: Image.asset(
-                                  'assets/images/rosace.png',
-                                  fit: BoxFit.contain,
-                                  // color: primaryColor.withOpacity(0.4),
-                                  // colorBlendMode: BlendMode.modulate,
-                                ))
-                        ),
-                        SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, bottom: 10, left: 20, right: 20),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('Salât Al-Janaza', style: TextStyle(
-                                    color: white,
-                                    fontFamily: 'Karla',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 22),),
-                                UIHelper.verticalSpace(7),
-                                _item(MdiIcons.accountOutline,
-                                    "${salat.firstname} ${salat.lastname}",
-                                    title: "Sur notre ${salat
-                                        .afiliationLabel}"),
-                                UIHelper.verticalSpace(7),
-                                _item(
-                                    MdiIcons.calendarOutline, salat.dateDisplay,
-                                    title: 'Date de la Salat'),
-                                UIHelper.verticalSpace(7),
-                                _item(MdiIcons.clockOutline, salat.timeDisplay,
-                                    title: 'Heure de la Salat'),
-                                salat.mosque != null ? Column(
-                                  children: [
-                                    UIHelper.verticalSpace(7),
-                                    _item(MdiIcons.mosqueOutline,
-                                        salat.mosque!.name, title: "Mosquée"),
-                                    UIHelper.verticalSpace(7),
-                                    _item(MdiIcons.mapMarkerOutline,
-                                        "${salat.mosque!.location.adress}${salat
-                                            .mosque!.location.adress != ''
-                                            ? ','
-                                            : '' } ${salat.mosque!.location
-                                            .city}",
-                                        title: "Localisation de la mosquée",
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 12.0),
-                                  ],
-                                ) : Container(),
-                                UIHelper.verticalSpace(7),
-                                salat.mosque == null && salat.mosqueName != ""
-                                    ? Column(
-                                  children: [
-                                    UIHelper.verticalSpace(7),
-                                    _item(MdiIcons.mosqueOutline,
-                                        salat.mosqueName, title: "Mosquée"),
-                                  ],
-                                )
-                                    : Container(),
-                                UIHelper.verticalSpace(7),
-                                _item(MdiIcons.graveStone, salat.cimetary,
-                                    title: 'Cimetière'),
-                                // salat.content.length > 1 ? Column(
-                                //   children: [
-                                //     UIHelper.verticalSpace(15),
-                                //     _item(MdiIcons.pencilOutline, salat.content),
-                                //   ],
-                                // ) : Container(),
-                                UIHelper.verticalSpace(7),
-                                // Text("Le messager d'Allah a dit : "
-                                //     "il n’y a aucun mort sur qui prie un groupe de musulmans dont le"
-                                //     "nombre atteint cent, tous invoquant pour lui, sans que leurs demandes"
-                                //     "(pour le mort) ne soient acceptées",
-                                //     style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.white,
-                                //         fontFamily: 'Karla'),
-                                //   textAlign: TextAlign.center,
-                                // ),
-                                Text("Inna lillah wa inna ilayhi raji’un",
-                                  style: TextStyle(fontWeight: FontWeight.w700,
-                                      fontSize: 15,
-                                      color: Color(0xFFFFFFFF),
-                                      fontFamily: 'Karla'),
-                                  textAlign: TextAlign.center,
-                                ),
-                                UIHelper.verticalSpace(4),
-                              ],
-                            ),
+      viewModelBuilder: () =>
+          SalatCardController(salat: salat, shareDirect: this.shareDirect),
+      builder: (context, controller, child) => Center(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            double screenWidth = constraints.maxWidth;
+            double containerWidth = screenWidth * 0.98; // 95% of screen width
+            double targetHeight = containerWidth * (2000 / 1080);
+            double maxHeight = constraints.maxHeight.isFinite
+                ? constraints.maxHeight * 0.98
+                : targetHeight;
+            double containerHeight = math.min(targetHeight, maxHeight);
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Hero(
+                tag: "salat-tag-${salat.id}",
+                createRectTween: (begin, end) {
+                  return CustomRectTween(begin: begin, end: end);
+                },
+                child: RepaintBoundary(
+                  key: controller.globalKey,
+                  child: Material(
+                    color: Colors.transparent,
+                    elevation: 6,
+                    shadowColor: Colors.black26,
+                    borderRadius: BorderRadius.circular(28),
+                    child: Container(
+                      width: containerWidth,
+                      height: containerHeight,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(28),
+                        color: primaryColorLight,
+                        border:
+                            Border.all(color: Colors.white.withOpacity(0.08)),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color.fromARGB(35, 0, 0, 0),
+                            blurRadius: 18,
+                            offset: Offset(0, 10),
                           ),
-                        ),
-                        //CLOSE
-                        ValueListenableBuilder<bool>(
-                          builder: (BuildContext context, bool isSharing,
-                              Widget? child) {
-                            return isSharing
-                                ? Container(height: 10)
-                                : Positioned(
-                                top: 10,
-                                right: 5,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Icon(Icons.close, color: Colors.white,
-                                      size: 18),
-                                  style: ElevatedButton.styleFrom(
-                                      elevation: 1,
-                                      shape: CircleBorder(),
-                                      padding: EdgeInsets.all(10),
-                                      backgroundColor: Colors.black54
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(28),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              top: 6,
+                              left: 0,
+                              right: 0,
+                              child: Center(
+                                child: SizedBox(
+                                  width: 220,
+                                  height: 130,
+                                  child: Image.asset(
+                                    'assets/images/rosace.png',
+                                    fit: BoxFit.contain,
+                                    color: Colors.white.withOpacity(0.08),
+                                    colorBlendMode: BlendMode.srcATop,
                                   ),
-                                )
-                            );
-                          },
-                          valueListenable: controller.isSharing,
-                        ),
-                        //pbs le bouton est dessus : cacher le bout onClick ?!
-                        ValueListenableBuilder<bool>(
-                          builder: (BuildContext context, bool isSharing,
-                              Widget? child) {
-                            return isSharing
-                                ? Container(height: 50)
-                                : Positioned(
-                                bottom: 10,
-                                right: 10,
-                                child: GestureDetector(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        controller.shareSalat();
-                                      },
-                                      child: Icon(MdiIcons.shareVariantOutline,
-                                          color: Colors.white),
-                                      style: ElevatedButton.styleFrom(
-                                          shape: CircleBorder(),
-                                          padding: EdgeInsets.all(24),
-                                          backgroundColor: darken(
-                                              primaryColor, 0.1)
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.04),
+                              ),
+                            ),
+                            SingleChildScrollView(
+                              padding: const EdgeInsets.only(
+                                  top: 12, bottom: 80, left: 18, right: 18),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  UIHelper.verticalSpace(45),
+                                  Text(
+                                    'Salât Al-Janaza',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'Karla',
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 34,
+                                      letterSpacing: 0.5,
+                                      shadows: [
+                                        Shadow(
+                                          color: Colors.black.withOpacity(0.25),
+                                          blurRadius: 10,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  UIHelper.verticalSpace(8),
+                                  Container(
+                                    height: 1,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.white.withOpacity(0.3),
+                                          Colors.white.withOpacity(0.1),
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
                                       ),
-                                    )
-                                )
-                            );
-                          },
-                          valueListenable: controller.isSharing,
+                                    ),
+                                  ),
+                                  UIHelper.verticalSpace(8),
+                                  _item(
+                                    MdiIcons.accountOutline,
+                                    "${salat.firstname} ${salat.lastname}",
+                                    title: "Sur notre ${salat.afiliationLabel}",
+                                  ),
+                                  UIHelper.verticalSpace(6),
+                                  _item(
+                                    MdiIcons.calendarOutline,
+                                    salat.dateDisplay,
+                                  ),
+                                  UIHelper.verticalSpace(6),
+                                  _item(
+                                    MdiIcons.clockOutline,
+                                    salat.timeDisplay,
+                                  ),
+                                  salat.mosque != null
+                                      ? Column(
+                                          children: [
+                                            UIHelper.verticalSpace(6),
+                                            _item(
+                                              MdiIcons.mosqueOutline,
+                                              salat.mosque!.name,
+                                              title: "Mosquée",
+                                            ),
+                                            UIHelper.verticalSpace(6),
+                                            _item(
+                                              MdiIcons.mapMarkerOutline,
+                                              "${salat.mosque!.location.adress}${salat.mosque!.location.adress != '' ? ',' : ''} ${salat.mosque!.location.city}",
+                                            ),
+                                          ],
+                                        )
+                                      : Container(),
+                                  UIHelper.verticalSpace(6),
+                                  salat.mosque == null && salat.mosqueName != ""
+                                      ? Column(
+                                          children: [
+                                            UIHelper.verticalSpace(6),
+                                            _item(
+                                              MdiIcons.mosqueOutline,
+                                              salat.mosqueName,
+                                              title: "Mosquée",
+                                            ),
+                                          ],
+                                        )
+                                      : Container(),
+                                  UIHelper.verticalSpace(6),
+                                  _item(
+                                    MdiIcons.graveStone,
+                                    salat.cimetary,
+                                    title: 'Cimetière',
+                                  ),
+                                  UIHelper.verticalSpace(12),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(18),
+                                      border: Border.all(
+                                          color:
+                                              Colors.white.withOpacity(0.16)),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          "Inna lillah wa inna ilayhi raji’un",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 18.5,
+                                            color: Colors.white,
+                                            fontFamily: 'Karla',
+                                            letterSpacing: 0.25,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        UIHelper.verticalSpace(6),
+                                        Text(
+                                          "إِنَّا لِلَّٰهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                            letterSpacing: 0.3,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  UIHelper.verticalSpace(10),
+                                ],
+                              ),
+                            ),
+                            //CLOSE
+                            ValueListenableBuilder<bool>(
+                              builder: (BuildContext context, bool isSharing,
+                                  Widget? child) {
+                                return isSharing
+                                    ? Container(height: 10)
+                                    : Positioned(
+                                        top: 10,
+                                        right: 5,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Icon(Icons.close,
+                                              color: Colors.white, size: 18),
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            shape: const CircleBorder(),
+                                            padding: const EdgeInsets.all(10),
+                                            backgroundColor:
+                                                Colors.white.withOpacity(0.2),
+                                            foregroundColor: Colors.white,
+                                          ),
+                                        ),
+                                      );
+                              },
+                              valueListenable: controller.isSharing,
+                            ),
+                            //pbs le bouton est dessus : cacher le bout onClick ?!
+                            ValueListenableBuilder<bool>(
+                              builder: (BuildContext context, bool isSharing,
+                                  Widget? child) {
+                                return isSharing
+                                    ? Container(height: 50)
+                                    : Positioned(
+                                        bottom: 10,
+                                        right: 10,
+                                        child: GestureDetector(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              controller.shareSalat();
+                                            },
+                                            child: Icon(
+                                                MdiIcons.shareVariantOutline,
+                                                color: Colors.white),
+                                            style: ElevatedButton.styleFrom(
+                                              shape: const CircleBorder(),
+                                              padding: const EdgeInsets.all(24),
+                                              backgroundColor:
+                                                  Colors.white.withOpacity(0.2),
+                                              foregroundColor: Colors.white,
+                                              elevation: 0,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                              },
+                              valueListenable: controller.isSharing,
+                            ),
+                            Positioned(
+                              bottom: 10,
+                              left: 0,
+                              right: 0,
+                              child: Center(
+                                child: Image(
+                                  image: const AssetImage(
+                                      "assets/images/logo-no-bg.png"),
+                                  height: 70,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        Positioned(
-                          bottom: 10,
-                          left: 0,
-                          right: 0,
-                          child: Center(
-                            child: Image(image: AssetImage("assets/images/logo-no-bg.png"), height: 70),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        }
-      )
-    ));
-  }
-
-  Widget _item(icon, text, {title, fontWeight = FontWeight.w700, fontSize = 13.0 }) {
-    return SizedBox(
-      width: double.infinity,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            constraints: BoxConstraints(
-                minHeight: 35, minWidth: double.infinity),
-            decoration: BoxDecoration(
-              color: Color(0xfffcedde),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            margin: const EdgeInsets.only(left: 15),
-            padding: const EdgeInsets.only(top: 2, left: 0, right: 15, bottom: 2),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                UIHelper.horizontalSpace(15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    title != null ? Text(title, style: TextStyle(color: fontGrey,fontSize: 10 ), textAlign: TextAlign.center, ) : Container(),
-                    Container(
-                      width: 190,
-                        child: Text(text, style: TextStyle(fontWeight: fontWeight, fontSize: fontSize, color: Colors.black),  textAlign: TextAlign.center)
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            left: 0,
-            top: 0,
-            child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: bgLightV2,
-                  border: Border.all(color: fontGrey),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical:5),
-                child: Icon(icon, color: Colors.black54))
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }
 
+  Widget _item(IconData icon, String? text,
+      {String? title,
+      FontWeight fontWeight = FontWeight.w700,
+      double fontSize = 19.0}) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: primaryColor.withOpacity(0.25)),
+        boxShadow: const [
+          BoxShadow(
+              color: Color.fromARGB(20, 0, 0, 0),
+              blurRadius: 10,
+              offset: Offset(0, 8))
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(colors: [
+                primaryColor.withOpacity(0.95),
+                darken(primaryColor, 0.1).withOpacity(0.85)
+              ]),
+              boxShadow: const [
+                BoxShadow(
+                    color: Color.fromARGB(14, 0, 0, 0),
+                    blurRadius: 7,
+                    offset: Offset(0, 3))
+              ],
+              border: Border.all(color: primaryColor.withOpacity(0.4)),
+            ),
+            child: Icon(icon, color: Colors.white, size: 19),
+          ),
+          UIHelper.horizontalSpace(8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (title != null)
+                  Text(
+                    title,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.2),
+                  ),
+                Text(
+                  text ?? '',
+                  style: TextStyle(
+                    fontWeight: fontWeight,
+                    fontSize: fontSize,
+                    color: Colors.white,
+                    height: 1.25,
+                    fontFamily: 'Karla',
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }

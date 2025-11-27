@@ -60,7 +60,11 @@ class OtpScreenState extends State<OtpScreen> {
       });
       print("OTP sent: $codeSent");
     } else {
-      print("Failed to send OTP");
+      final data = jsonDecode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(data['message'] ?? "Échec de l'envoi du code OTP")),
+      );
     }
     setState(() {
       isLoading = false;

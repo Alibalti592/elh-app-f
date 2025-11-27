@@ -263,9 +263,10 @@ class LoginModel extends FutureViewModel<dynamic> {
   Future<void> navigateBasedOnStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? status = prefs.getString('user_status_check') ?? "unactive";
+    final bool override = prefs.getBool('otp_status_override') ?? false;
 
     Timer(Duration(seconds: 1), () {
-      if (status == "unactive") {
+      if (!override && status == "unactive") {
         _navigationService.navigateTo('otp-screen');
       } else {
         _navigationService.navigateTo('/');

@@ -19,33 +19,31 @@ class ResetPasswordController extends FutureViewModel<dynamic> {
   bool isLoading = false;
   bool obscureText = true;
 
-
   @override
   Future<dynamic> futureToRun() => loadDatas();
 
-  Future loadDatas() async {
-
-  }
-
+  Future loadDatas() async {}
 
   goBack() {
     _navigationService.back();
   }
 
-
- resetPassword(String username) async {
+  resetPassword(String username) async {
     this.isLoading = true;
     notifyListeners();
+    print("resetPassword for $username");
     try {
       ApiResponse apiResponse = await userRepository.resetPassword(username);
-      if(apiResponse.status == 200) {
+      print("API Response: ${apiResponse.status} - ${apiResponse.data}");
+      if (apiResponse.status == 200) {
         this.showResetUI = true;
       } else {
         _errorMessageService.errorShoMessage(apiResponse.data);
       }
       this.isLoading = false;
       notifyListeners();
-    } catch(e) {
+    } catch (e) {
+      print("Error during resetPassword: $e");
       this.isLoading = false;
       notifyListeners();
     }
@@ -58,23 +56,23 @@ class ResetPasswordController extends FutureViewModel<dynamic> {
     var code = this.codeController.text.trim();
     var email = this.usernameController.text.trim();
     try {
-      ApiResponse apiResponse = await userRepository.confirmResetPassword(password, code, email);
-      if(apiResponse.status == 200) {
+      ApiResponse apiResponse =
+          await userRepository.confirmResetPassword(password, code, email);
+      if (apiResponse.status == 200) {
         _navigationService.clearStackAndShowView(Login(initialPage: 1));
       } else {
         _errorMessageService.errorShoMessage(apiResponse.data);
       }
       this.isLoading = false;
       notifyListeners();
-    } catch(e) {
+    } catch (e) {
       this.isLoading = false;
       notifyListeners();
     }
   }
 
-
   toogleobscureText() {
-    if(obscureText) {
+    if (obscureText) {
       obscureText = false;
     } else {
       obscureText = true;
