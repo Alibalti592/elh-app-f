@@ -1,2 +1,0 @@
-/home/boris/Applications/elhapp/android/app/.cxx/RelWithDebInfo/2t314b15/x86_64/CMakeFiles/edit_cache.dir
-/home/boris/Applications/elhapp/android/app/.cxx/RelWithDebInfo/2t314b15/x86_64/CMakeFiles/rebuild_cache.dir
