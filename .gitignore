@@ -34,3 +34,4 @@ ios/GoogleService-Info.plist
 
 # Misc
 pubspec.lock
+**/.cxx/
